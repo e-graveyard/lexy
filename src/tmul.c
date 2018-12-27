@@ -1,0 +1,40 @@
+#include <stdbool.h>
+
+#include "eval.h"
+#include "parser.h"
+#include "prompt.h"
+
+int main()
+{
+    puts("TMUL: Version 0.1.0");
+    puts("Press CTRL+c to Exit\n");
+
+    mpc_parser_t* parser = init_parser();
+
+    while(true)
+    {
+        char* input = prompt();
+
+        mpc_result_t r;
+        if(mpc_parse("<stdin>", input, parser, &r))
+        {
+            mpc_ast_print(r.output);
+            mpc_ast_delete(r.output);
+        }
+        else
+        {
+            mpc_err_print(r.error);
+            mpc_err_delete(r.error);
+        }
+
+        free(input);
+    }
+
+    mpc_cleanup(4,
+            number_symbol,
+            operator_symbol,
+            expression_definition,
+            lisp_expression);
+
+    return 0;
+}
