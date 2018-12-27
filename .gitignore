@@ -1,1 +1,2 @@
-tmul/tmul
+# ignore the binary
+src/tmul
