@@ -1,18 +1,27 @@
 #include "eval.h"
 
+bool equals(char* ref, char* txt)
+{
+    int len = (unsigned)strlen(txt);
+    return strncmp(ref, txt, len) == 0;
+}
+
 float eval_op(char* op, float x, float y)
 {
-    if(strcmp(op, "+") == 0)
+    if(equals(op, "+") || equals(op, "add"))
         return x + y;
 
-    if(strcmp(op, "-") == 0)
+    if(equals(op, "-") || equals(op, "sub"))
         return x - y;
 
-    if(strcmp(op, "*") == 0)
+    if(equals(op, "*") || equals(op, "mul"))
         return x * y;
 
-    if(strcmp(op, "/") == 0)
+    if(equals(op, "/") || equals(op, "div"))
         return x / y;
+
+    if(equals(op, "^") || equals(op, "pow"))
+        return pow(x, y);
 
     return 0;
 }
