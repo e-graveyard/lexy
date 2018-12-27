@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 #include "eval.h"
 #include "parser.h"
 #include "prompt.h"
@@ -11,7 +9,7 @@ int main()
 
     mpc_parser_t* parser = init_parser();
 
-    while(true)
+    for(;;)
     {
         char* input = prompt();
 
