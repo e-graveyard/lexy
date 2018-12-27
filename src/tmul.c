@@ -16,9 +16,9 @@ int main()
         mpc_result_t r;
         if(mpc_parse("<stdin>", input, parser, &r))
         {
-            long result = eval(r.output);
+            float result = eval(r.output);
 
-            printf("=> %ld\n\n", result);
+            printf("=> %f\n\n", result);
             mpc_ast_delete(r.output);
         }
         else

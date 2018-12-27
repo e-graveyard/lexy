@@ -1,6 +1,6 @@
 #include "eval.h"
 
-long eval_op(char* op, long x, long y)
+float eval_op(char* op, float x, float y)
 {
     if(strcmp(op, "+") == 0)
         return x + y;
@@ -17,16 +17,16 @@ long eval_op(char* op, long x, long y)
     return 0;
 }
 
-long eval(mpc_ast_t* t)
+float eval(mpc_ast_t* t)
 {
     if(strstr(t->tag, "numb"))
     {
-        return atol(t->contents);
+        return atof(t->contents);
     }
 
     char* op = t->children[1]->contents;
 
-    long x = eval(t->children[2]);
+    float x = eval(t->children[2]);
 
     int i = 3;
     while(strstr(t->children[i]->tag, "expr"))

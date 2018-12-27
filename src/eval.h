@@ -1,4 +1,4 @@
 #include "mpc.h"
 
-long eval_op(char* op, long x, long y);
-long eval(mpc_ast_t* t);
+float eval_op(char* op, float x, float y);
+float eval(mpc_ast_t* t);
