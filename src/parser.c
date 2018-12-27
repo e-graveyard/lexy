@@ -39,14 +39,15 @@ int main()
 
     mpca_lang(MPCA_LANG_DEFAULT,
             "                                  \
-                numb: /-?[0-9]+/ ;             \
+                numb: /-?[0-9]+\\.?[0-9]*/ ;   \
                                                \
                 oper: ('+' | \"add\") |        \
                       ('-' | \"sub\") |        \
                       ('*' | \"mul\") |        \
                       ('/' | \"div\") |        \
                       ('%' | \"mod\") |        \
-                      \"pow\" | \"sqrt\" ;     \
+                      ('^' | \"pow\") |        \
+                      \"sqrt\" ;               \
                                                \
                 expr: <numb> |                 \
                       '(' <oper> <expr>+ ')' ; \
