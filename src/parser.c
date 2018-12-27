@@ -38,11 +38,20 @@ int main()
     mpc_parser_t* Tmul       = mpc_new("tmul");
 
     mpca_lang(MPCA_LANG_DEFAULT,
-            " \
-                numb: /-?[0-9]+/ ;                      \
-                oper: '+' | '-' | '*' | '/' ;           \
-                expr: <numb> | '(' <oper> <expr>+ ')' ; \
-                tmul: /^/ <oper> <expr>+ /$/ ;          \
+            "                                  \
+                numb: /-?[0-9]+/ ;             \
+                                               \
+                oper: ('+' | \"add\") |        \
+                      ('-' | \"sub\") |        \
+                      ('*' | \"mul\") |        \
+                      ('/' | \"div\") |        \
+                      ('%' | \"mod\") |        \
+                      \"pow\" | \"sqrt\" ;     \
+                                               \
+                expr: <numb> |                 \
+                      '(' <oper> <expr>+ ')' ; \
+                                               \
+                tmul: /^/ <oper> <expr>+ /$/ ; \
             ",
             Number, Operator, Expression, Tmul);
 
