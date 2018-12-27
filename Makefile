@@ -1,12 +1,22 @@
 .DEFAULT_GOAL := build
 
 CC = cc
+GDB = gdb
+
+FILES = eval.c mpc.c tmul.c parser.c prompt.c
 CFLAGS = -Wall -Wextra -pedantic -std=c99
 LFLAGS = -ledit -lm
-FILES = tmul.c prompt.c parser.c mpc.c
+
+ARTIFACT = tmul
 
 build:
-	cd src && $(CC) $(FILES) $(LFLAGS) -o tmul $(CFLAGS)
+	cd src && $(CC) $(CFLAGS) $(FILES) $(LFLAGS) -o $(ARTIFACT)
+
+dev: CFLAGS += -g
+dev: build
+
+debug: dev
+	cd src && $(GDB) $(ARTIFACT)
 
 run:
-	cd src && ./tmul
+	cd src && ./$(ARTIFACT)
