@@ -23,6 +23,12 @@ float eval_op(char* op, float x, float y)
     if(equals(op, "^") || equals(op, "pow"))
         return pow(x, y);
 
+    if(equals(op, "min"))
+        return (x > y) ? y : x;
+
+    if(equals(op, "max"))
+        return (x > y) ? x : y;
+
     return 0;
 }
 
