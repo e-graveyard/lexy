@@ -1,7 +1,12 @@
 .DEFAULT_GOAL := build
 
+CC = gcc
+LINKS = -ledit
+FLAGS = -Wall -Wextra -pedantic
+STD = -std=c99
+
 build:
-	cd tmul && $(CC) tmul.c -o tmul -Wall -Wextra -pedantic -std=c99
+	cd src && $(CC) tmul.c $(LINKS) -o tmul $(FLAGS) $(STD)
 
 run:
-	cd tmul && ./tmul
+	cd src && ./tmul
