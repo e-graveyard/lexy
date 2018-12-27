@@ -6,7 +6,7 @@ LFLAGS = -ledit -lm
 FILES = tmul.c prompt.c parser.c mpc.c
 
 build:
-	cd src && $(CC) $(FILES) $(LFLAGS) -o parser $(CFLAGS)
+	cd src && $(CC) $(FILES) $(LFLAGS) -o tmul $(CFLAGS)
 
 run:
-	cd src && ./parser
+	cd src && ./tmul
