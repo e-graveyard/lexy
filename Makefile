@@ -1,12 +1,13 @@
 .DEFAULT_GOAL := build
 
 CC = gcc
-LINKS = -ledit
+LINKS = -ledit -lm
 FLAGS = -Wall -Wextra -pedantic
 STD = -std=c99
+MPC = mpc.c
 
 build:
-	cd src && $(CC) tmul.c $(LINKS) -o tmul $(FLAGS) $(STD)
+	cd src && $(CC) parser.c $(MPC) $(LINKS) -o parser $(FLAGS) $(STD)
 
 run:
-	cd src && ./tmul
+	cd src && ./parser
