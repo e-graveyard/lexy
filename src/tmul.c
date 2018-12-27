@@ -1,6 +1,8 @@
-#include<stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-static char input[2048];
+#include <editline/readline.h>
+#include <editline/history.h>
 
 int main()
 {
@@ -9,11 +11,11 @@ int main()
 
     while(1)
     {
-        fputs("tmul > ", stdout);
+        char* input = readline("tmul > ");
+        add_history(input);
 
-        fgets(input, 2048, stdin);
-
-        printf("=> %s", input);
+        printf("=> %s\n\n", input);
+        free(input);
     }
 
     return 0;
