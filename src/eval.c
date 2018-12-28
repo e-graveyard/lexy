@@ -1,47 +1,92 @@
 #include "eval.h"
 
+tlval tlval_num(float val)
+{
+    tlval v;
+    v.type = TLVAL_NUM;
+    v.number = val;
+
+    return v;
+}
+
+tlval tlval_err(int e)
+{
+    tlval v;
+    v.type = TLVAL_ERR;
+    v.error = e;
+
+    return v;
+}
+
 bool equals(char* ref, char* txt)
 {
     int len = (unsigned)strlen(txt);
     return strncmp(ref, txt, len) == 0;
 }
 
-float eval_op(char* op, float x, float y)
+tlval eval_op(char* op, tlval x, tlval y)
 {
+    if(x.type == TLVAL_ERR) { return x; }
+    if(y.type == TLVAL_ERR) { return y; }
+
     if(equals(op, "+") || equals(op, "add"))
-        return x + y;
+    {
+        return tlval_num(x.number + y.number);
+    }
 
     if(equals(op, "-") || equals(op, "sub"))
-        return x - y;
+    {
+        return tlval_num(x.number - y.number);
+    }
 
     if(equals(op, "*") || equals(op, "mul"))
-        return x * y;
+    {
+        return tlval_num(x.number * y.number);
+    }
 
     if(equals(op, "/") || equals(op, "div"))
-        return x / y;
+    {
+        return (y.number == 0)
+            ? tlval_err(LERR_DIV_ZERO)
+            : tlval_num(x.number / y.number);
+    }
 
     if(equals(op, "^") || equals(op, "pow"))
-        return pow(x, y);
+    {
+        return tlval_num(pow(x.number, y.number));
+    }
 
     if(equals(op, "min"))
-        return (x > y) ? y : x;
+    {
+        return (x.number > y.number)
+            ? tlval_num(y.number)
+            : tlval_num(x.number);
+    }
 
     if(equals(op, "max"))
-        return (x > y) ? x : y;
+    {
+        return (x.number > y.number)
+            ? tlval_num(y.number)
+            : tlval_num(x.number);
+    }
 
-    return 0;
+    return tlval_err(LERR_BAD_OP);
 }
 
-float eval(mpc_ast_t* t)
+tlval eval(mpc_ast_t* t)
 {
     if(strstr(t->tag, "numb"))
     {
-        return atof(t->contents);
+        errno = 0;
+        float f = strtof(t->contents, NULL);
+
+        return (errno != ERANGE)
+            ? tlval_num(f)
+            : tlval_err(LERR_BAD_NUM);
     }
 
     char* op = t->children[1]->contents;
-
-    float x = eval(t->children[2]);
+    tlval x = eval(t->children[2]);
 
     int i = 3;
     while(strstr(t->children[i]->tag, "expr"))
