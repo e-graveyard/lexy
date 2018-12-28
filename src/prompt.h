@@ -28,3 +28,4 @@ void add_history(char* unused) {}
 #endif
 
 char* prompt();
+void printlv();
