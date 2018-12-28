@@ -51,6 +51,11 @@ tlval eval_op(char* op, tlval x, tlval y)
             : tlval_num(x.number / y.number);
     }
 
+    if(equals(op, "%") || equals(op, "mod"))
+    {
+        return tlval_num(fmodf(x.number, y.number));
+    }
+
     if(equals(op, "^") || equals(op, "pow"))
     {
         return tlval_num(pow(x.number, y.number));
