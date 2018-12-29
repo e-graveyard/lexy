@@ -1,35 +1,40 @@
 #include "parser.h"
 
-mpc_parser_t* init_parser()
+parser_T init_parser()
 {
-    number_symbol         = mpc_new("numb");
-    operator_symbol       = mpc_new("oper");
-    expression_definition = mpc_new("expr");
-    lisp_expression       = mpc_new("lisp");
+    parser_T p;
+
+    p.Number = mpc_new("numb");
+    p.Symbol = mpc_new("symb");
+    p.SExpr  = mpc_new("sexp");
+    p.PExpr  = mpc_new("pexp");
+    p.TLisp  = mpc_new("lisp");
 
     mpca_lang(MPCA_LANG_DEFAULT,
 
-            " numb: /-?[0-9]+\\.?[0-9]*/ ;   "
-            "                                "
-            " oper: ('+' | \"add\") |        "
-            "       ('-' | \"sub\") |        "
-            "       ('*' | \"mul\") |        "
-            "       ('/' | \"div\") |        "
-            "       ('%' | \"mod\") |        "
-            "       ('^' | \"pow\") |        "
-            "       \"sqrt\" |               "
-            "       \"min\" |                "
-            "       \"max\" ;                "
-            "                                "
-            " expr: <numb> |                 "
-            "       '(' <oper> <expr>+ ')' ; "
-            "                                "
-            " lisp: /^/ <oper> <expr>+ /$/ ; ",
+            " numb: /-?[0-9]+\\.?[0-9]*/ ;     "
+            "                                  "
+            " symb: ('+' | \"add\") |          "
+            "       ('-' | \"sub\") |          "
+            "       ('*' | \"mul\") |          "
+            "       ('/' | \"div\") |          "
+            "       ('%' | \"mod\") |          "
+            "       ('^' | \"pow\") |          "
+            "       \"sqrt\" |                 "
+            "       \"min\" |                  "
+            "       \"max\" ;                  "
+            "                                  "
+            " sexp: '(' <pexp>* ')' ;          "
+            "                                  "
+            " pexp: <numb> | <symb> | <sexp> ; "
+            "                                  "
+            " lisp: /^/ <pexp>* /$/ ;          ",
 
-            number_symbol,
-            operator_symbol,
-            expression_definition,
-            lisp_expression);
+            p.Number,
+            p.Symbol,
+            p.SExpr,
+            p.PExpr,
+            p.TLisp);
 
-    return lisp_expression;
+    return p;
 }
