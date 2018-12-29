@@ -1,22 +1,36 @@
+#include <signal.h>
+
+#include "tmul.h"
 #include "eval.h"
 #include "parser.h"
-#include "prompt.h"
 
-int main()
+void interrupt(int sign);
+void tl_print(tlval_T* t);
+void tl_sexp_print(tlval_T* t, char openc, char closec);
+char* prompt();
+
+static parser_T p;
+
+int main(void)
 {
-    puts("TMUL: Version 0.1.0");
+    signal(SIGINT, interrupt);
+
+    puts("TMUL: Version ");
     puts("Press CTRL+c to Exit\n");
 
-    mpc_parser_t* parser = init_parser();
+    p = init_parser();
 
     for(;;)
     {
         char* input = prompt();
 
         mpc_result_t r;
-        if(mpc_parse("<stdin>", input, parser, &r))
+        if(mpc_parse("<stdin>", input, p.TLisp, &r))
         {
-            printlv(eval(r.output));
+            tlval_T* t = tlval_eval(tlval_read(r.output));
+            tl_print(t);
+            tlval_del(t);
+
             mpc_ast_delete(r.output);
         }
         else
@@ -28,11 +42,62 @@ int main()
         free(input);
     }
 
-    mpc_cleanup(4,
-            number_symbol,
-            operator_symbol,
-            expression_definition,
-            lisp_expression);
-
     return 0;
+}
+
+void interrupt(int sign)
+{
+    mpc_cleanup(5,
+            p.Number,
+            p.Symbol,
+            p.SExpr,
+            p.PExpr,
+            p.TLisp);
+
+    exit(0);
+}
+
+char* prompt()
+{
+    char* input = readline("tmul > ");
+    add_history(input);
+
+    return input;
+}
+
+void tl_sexp_print(tlval_T* t, char openc, char closec)
+{
+    putchar(openc);
+    for(int i = 0; i < t->counter; i++)
+    {
+        tl_print(t->cell[i]);
+
+        if(i != (t->counter - 1))
+            putchar(' ');
+    }
+    putchar(closec);
+}
+
+void tl_print(tlval_T* t)
+{
+    fputs("=> ", stdout);
+    switch(t->type)
+    {
+        case TLVAL_NUM:
+            printf("%f", t->number);
+            break;
+
+        case TLVAL_ERR:
+            printf("Error: %s.", t->error);
+            break;
+
+        case TLVAL_SYM:
+            printf("%s", t->symbol);
+            break;
+
+        case TLVAL_SEXPR:
+            tl_sexp_print(t, '(', ')');
+            break;
+    }
+    fputs("\n\n", stdout);
 }

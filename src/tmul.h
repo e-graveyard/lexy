@@ -26,6 +26,3 @@ void add_history(char* unused) {}
 #include <editline/readline.h>
 #include <editline/history.h>
 #endif
-
-char* prompt();
-void printlv();
