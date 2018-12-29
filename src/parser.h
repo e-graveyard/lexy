@@ -1,8 +1,13 @@
 #include "mpc.h"
 
-static mpc_parser_t* number_symbol;
-static mpc_parser_t* operator_symbol;
-static mpc_parser_t* expression_definition;
-static mpc_parser_t* lisp_expression;
+typedef struct parser_S
+{
+    mpc_parser_t* Number;
+    mpc_parser_t* Symbol;
+    mpc_parser_t* SExpr;
+    mpc_parser_t* PExpr;
+    mpc_parser_t* TLisp;
+}
+parser_T;
 
-mpc_parser_t* init_parser();
+parser_T init_parser();
