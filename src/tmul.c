@@ -1,5 +1,6 @@
 #include <signal.h>
 
+#include "fmt.h"
 #include "tmul.h"
 #include "eval.h"
 #include "parser.h"
@@ -78,13 +79,25 @@ void tl_sexp_print(tlval_T* t, char openc, char closec)
     putchar(closec);
 }
 
+void tl_num_print(float n)
+{
+    if(isfint(n))
+    {
+        printf("%d", (int)n);
+    }
+    else
+    {
+        printf("%f", n);
+    }
+}
+
 void tl_print(tlval_T* t)
 {
     fputs("=> ", stdout);
     switch(t->type)
     {
         case TLVAL_NUM:
-            printf("%f", t->number);
+            tl_num_print(t->number);
             break;
 
         case TLVAL_ERR:
