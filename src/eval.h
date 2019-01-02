@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include "mpc.h"
 
 #define TLERR_BAD_OP      "Invalid operator"
@@ -40,5 +39,3 @@ tlval_T* tlval_sexpr(void);
 tlval_T* tlval_sym(char* s);
 tlval_T* tlval_take(tlval_T* t, int i);
 tlval_T* builtin_op(tlval_T* t, char* op);
-
-bool equals(char* ref, char* txt);

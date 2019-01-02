@@ -1,13 +1,8 @@
 #include <math.h>
 #include "eval.h"
+#include "fmt.h"
 
 tlval_T* tlval_eval_sexpr(tlval_T* t);
-
-bool equals(char* ref, char* txt)
-{
-    int len = (unsigned)strlen(txt);
-    return strncmp(ref, txt, len) == 0;
-}
 
 tlval_T* tlval_num(float n)
 {
@@ -82,14 +77,14 @@ tlval_T* tlval_read(mpc_ast_t* t)
         return tlval_sym(t->contents);
 
     tlval_T* x = NULL;
-    if(equals(t->tag, ">") || strstr(t->tag, "sexp"))
+    if(strequ(t->tag, ">") || strstr(t->tag, "sexp"))
         x = tlval_sexpr();
 
     for(int i = 0; i < t->children_num; i++)
     {
-        if(equals(t->children[i]->contents, "(") ||
-           equals(t->children[i]->contents, ")") ||
-           equals(t->children[i]->tag, "regex")) continue;
+        if(strequ(t->children[i]->contents, "(") ||
+           strequ(t->children[i]->contents, ")") ||
+           strequ(t->children[i]->tag, "regex")) continue;
 
         x = tlval_add(x, tlval_read(t->children[i]));
     }
@@ -149,23 +144,23 @@ tlval_T* builtin_op(tlval_T* t, char* op)
 
     tlval_T* x = tlval_pop(t, 0);
 
-    if(equals(op, "-") && t->counter == 0)
+    if(strequ(op, "-") && t->counter == 0)
         x->number = -x->number;
 
     while(t->counter > 0)
     {
         tlval_T* y = tlval_pop(t, 0);
 
-        if(equals(op, "+") || equals(op, "add"))
+        if(strequ(op, "+") || strequ(op, "add"))
             x->number += y->number;
 
-        if(equals(op, "-") || equals(op, "sub"))
+        if(strequ(op, "-") || strequ(op, "sub"))
             x->number -= y->number;
 
-        if(equals(op, "*") || equals(op, "mul"))
+        if(strequ(op, "*") || strequ(op, "mul"))
             x->number *= y->number;
 
-        if(equals(op, "/") || equals(op, "div"))
+        if(strequ(op, "/") || strequ(op, "div"))
         {
             if(y->number == 0)
             {
@@ -179,20 +174,20 @@ tlval_T* builtin_op(tlval_T* t, char* op)
             x->number /= y->number;
         }
 
-        if(equals(op, "%") || equals(op, "mod"))
+        if(strequ(op, "%") || strequ(op, "mod"))
             x->number = fmodf(x->number, y->number);
 
-        if(equals(op, "^") || equals(op, "pow"))
+        if(strequ(op, "^") || strequ(op, "pow"))
             x->number = pow(x->number, y->number);
 
-        if(equals(op, "min"))
+        if(strequ(op, "min"))
         {
             x->number = (x->number > y->number)
                 ? y->number
                 : x->number;
         }
 
-        if(equals(op, "max"))
+        if(strequ(op, "max"))
         {
             x->number = (x->number > y->number)
                 ? x->number
