@@ -43,6 +43,16 @@ tlval_T* tlval_sexpr(void)
     return v;
 }
 
+tlval_T* tlval_qexpr(void)
+{
+    tlval_T* v = malloc(sizeof(struct tlval_S));
+    v->type = TLVAL_QEXPR;
+    v->counter = 0;
+    v->cell = NULL;
+
+    return v;
+}
+
 void tlval_del(tlval_T* v)
 {
     switch(v->type)
@@ -58,6 +68,7 @@ void tlval_del(tlval_T* v)
             break;
 
         case TLVAL_SEXPR:
+        case TLVAL_QEXPR:
             for(int i = 0; i < v->counter; i++)
                 tlval_del(v->cell[i]);
 
@@ -80,10 +91,14 @@ tlval_T* tlval_read(mpc_ast_t* t)
     if(strequ(t->tag, ">") || strstr(t->tag, "sexp"))
         x = tlval_sexpr();
 
+    if(strstr(t->tag, "qexp"))
+        x = tlval_qexpr();
+
     for(int i = 0; i < t->children_num; i++)
     {
         if(strequ(t->children[i]->contents, "(") ||
            strequ(t->children[i]->contents, ")") ||
+           strequ(t->children[i]->contents, "'(") ||
            strequ(t->children[i]->tag, "regex")) continue;
 
         x = tlval_add(x, tlval_read(t->children[i]));

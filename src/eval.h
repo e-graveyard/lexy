@@ -11,6 +11,7 @@ typedef enum tltype
     TLVAL_NUM,
     TLVAL_ERR,
     TLVAL_SYM,
+    TLVAL_QEXPR,
     TLVAL_SEXPR
 }
 tltype_E;
@@ -33,6 +34,7 @@ tlval_T* tlval_eval(tlval_T* t);
 tlval_T* tlval_eval_sexpr(tlval_T* t);
 tlval_T* tlval_num(float n);
 tlval_T* tlval_pop(tlval_T* t, int i);
+tlval_T* tlval_qexpr(void);
 tlval_T* tlval_read(mpc_ast_t* t);
 tlval_T* tlval_read_num(mpc_ast_t* t);
 tlval_T* tlval_sexpr(void);
