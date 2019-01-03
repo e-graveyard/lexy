@@ -7,7 +7,7 @@
 
 void interrupt(int sign);
 void tl_print(tlval_T* t);
-void tl_sexp_print(tlval_T* t, char openc, char closec);
+void tl_sexp_print(tlval_T* t, char* openc, char* closec);
 char* prompt();
 
 static parser_T p;
@@ -17,7 +17,7 @@ int main(void)
     signal(SIGINT, interrupt);
 
     printf("%s: version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
-    puts("press CTRL+c to exit\n");
+    psout("press CTRL+c to exit");
 
     p = init_parser();
 
@@ -29,6 +29,8 @@ int main(void)
         if(mpc_parse("<stdin>", input, p.TLisp, &r))
         {
             tlval_T* t = tlval_eval(tlval_read(r.output));
+
+            psout("=> ");
             tl_print(t);
             tlval_del(t);
 
@@ -48,10 +50,11 @@ int main(void)
 
 void interrupt(int sign)
 {
-    mpc_cleanup(5,
+    mpc_cleanup(6,
             p.Number,
             p.Symbol,
             p.SExpr,
+            p.QExpr,
             p.PExpr,
             p.TLisp);
 
@@ -60,15 +63,16 @@ void interrupt(int sign)
 
 char* prompt()
 {
+    puts("\n");
     char* input = readline(PROMPT_DISPLAY);
     add_history(input);
 
     return input;
 }
 
-void tl_sexp_print(tlval_T* t, char openc, char closec)
+void tl_sexp_print(tlval_T* t, char* openc, char* closec)
 {
-    putchar(openc);
+    psout(openc);
     for(int i = 0; i < t->counter; i++)
     {
         tl_print(t->cell[i]);
@@ -76,7 +80,7 @@ void tl_sexp_print(tlval_T* t, char openc, char closec)
         if(i != (t->counter - 1))
             putchar(' ');
     }
-    putchar(closec);
+    psout(closec);
 }
 
 void tl_num_print(float n)
@@ -93,7 +97,6 @@ void tl_num_print(float n)
 
 void tl_print(tlval_T* t)
 {
-    fputs("=> ", stdout);
     switch(t->type)
     {
         case TLVAL_NUM:
@@ -108,9 +111,12 @@ void tl_print(tlval_T* t)
             printf("%s", t->symbol);
             break;
 
+        case TLVAL_QEXPR:
+           tl_sexp_print(t, "'(", ")");
+            break;
+
         case TLVAL_SEXPR:
-            tl_sexp_print(t, '(', ')');
+            tl_sexp_print(t, "(", ")");
             break;
     }
-    puts("\n");
 }
