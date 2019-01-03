@@ -5,6 +5,8 @@
 
 
 /**
+ * strequ - String equality
+ *
  * Compares the equality of two string values.
  */
 int strequ(char* ref, char* txt)
@@ -15,6 +17,8 @@ int strequ(char* ref, char* txt)
 
 
 /**
+ * isfint - Is float integer
+ *
  * Checks if a given float number is a round, integer number.
  */
 int isfint(float f)
