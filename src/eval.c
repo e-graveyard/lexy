@@ -178,7 +178,7 @@ tlval_T* builtin_op(tlval_T* t, char* op)
             x->number = fmodf(x->number, y->number);
 
         if(strequ(op, "^") || strequ(op, "pow"))
-            x->number = pow(x->number, y->number);
+            x->number = powf(x->number, y->number);
 
         if(strequ(op, "min"))
         {
