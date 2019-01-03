@@ -4,3 +4,4 @@
 // Prototypes
 int strequ(char* ref, char* txt);
 int isfint(float f);
+void psout(char* txt);
