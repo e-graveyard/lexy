@@ -1,9 +1,33 @@
+/*
+                  _
+                 | |
+   _____   ____ _| |  ___
+  / _ \ \ / / _` | | / __|
+ |  __/\ V / (_| | || (__
+  \___| \_/ \__,_|_(_)___|
+
+ eval.c: Expression evaluation
+
+ */
+
 #include <math.h>
 #include "eval.h"
 #include "fmt.h"
 
+// Prototypes
 tlval_T* tlval_eval_sexpr(tlval_T* t);
 
+
+/*
+ * ---------- CONSTRUCTORS ----------
+ */
+
+
+/**
+ * tlval_num - TL number representation
+ *
+ * Constructs a pointer to a new TL number representation.
+ */
 tlval_T* tlval_num(float n)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
@@ -13,6 +37,12 @@ tlval_T* tlval_num(float n)
     return v;
 }
 
+
+/**
+ * tlval_err - TL error representation
+ *
+ * Constructs a pointer to a new TL error representation.
+ */
 tlval_T* tlval_err(char* e)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
@@ -23,6 +53,12 @@ tlval_T* tlval_err(char* e)
     return v;
 }
 
+
+/**
+ * tlval_sym - TL symbol representation
+ *
+ * Constructs a pointer to a new TL symbol representation.
+ */
 tlval_T* tlval_sym(char* s)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
@@ -33,6 +69,12 @@ tlval_T* tlval_sym(char* s)
     return v;
 }
 
+
+/**
+ * tlval_sexpr - TL S-Expression representation
+ *
+ * Constructs a pointer to a new TL symbolic expression representation.
+ */
 tlval_T* tlval_sexpr(void)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
@@ -43,6 +85,12 @@ tlval_T* tlval_sexpr(void)
     return v;
 }
 
+
+/**
+ * tlval_qexpr - TL Q-Expression representation
+ *
+ * Constructs a pointer to a new TL quoted expression representation.
+ */
 tlval_T* tlval_qexpr(void)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
@@ -53,6 +101,32 @@ tlval_T* tlval_qexpr(void)
     return v;
 }
 
+
+/*
+ * ---------- VALUE OPERATIONS ----------
+ */
+
+
+/**
+ * tlval_add - TL value addition
+ *
+ * Adds a TL value to a S-Expression construct.
+ */
+tlval_T* tlval_add(tlval_T* v, tlval_T* x)
+{
+    v->counter++;
+    v->cell = realloc(v->cell, sizeof(struct tlval_S) * v->counter);
+    v->cell[v->counter - 1] = x;
+
+    return v;
+}
+
+
+/**
+ * tlval_del - TL value deletion
+ *
+ * Recursively deconstructs a TL value.
+ */
 void tlval_del(tlval_T* v)
 {
     switch(v->type)
@@ -79,6 +153,10 @@ void tlval_del(tlval_T* v)
     free(v);
 }
 
+
+/**
+ * tlval_read - TL value reading
+ */
 tlval_T* tlval_read(mpc_ast_t* t)
 {
     if(strstr(t->tag, "numb"))
@@ -107,6 +185,10 @@ tlval_T* tlval_read(mpc_ast_t* t)
     return x;
 }
 
+
+/**
+ * tlval_read_num - TL numeric value reading
+ */
 tlval_T* tlval_read_num(mpc_ast_t* t)
 {
     errno = 0;
@@ -117,15 +199,10 @@ tlval_T* tlval_read_num(mpc_ast_t* t)
         : tlval_err(TLERR_BAD_NUM);
 }
 
-tlval_T* tlval_add(tlval_T* v, tlval_T* x)
-{
-    v->counter++;
-    v->cell = realloc(v->cell, sizeof(struct tlval_S) * v->counter);
-    v->cell[v->counter - 1] = x;
 
-    return v;
-}
-
+/**
+ * tlval_pop - TL value pop operation
+ */
 tlval_T* tlval_pop(tlval_T* t, int i)
 {
     tlval_T* v = t->cell[i];
@@ -138,6 +215,10 @@ tlval_T* tlval_pop(tlval_T* t, int i)
     return v;
 }
 
+
+/**
+ * tlval_take - TL value take operation
+ */
 tlval_T* tlval_take(tlval_T* t, int i)
 {
     tlval_T* v = tlval_pop(t, i);
@@ -146,6 +227,63 @@ tlval_T* tlval_take(tlval_T* t, int i)
     return v;
 }
 
+
+/**
+ * tlval_eval - TL value evaluation
+ */
+tlval_T* tlval_eval(tlval_T* t)
+{
+    if(t->type == TLVAL_SEXPR)
+        return tlval_eval_sexpr(t);
+
+    return t;
+}
+
+
+/**
+ * tlval_eval_sexpr - TL S-Expression evaluation
+ */
+tlval_T* tlval_eval_sexpr(tlval_T* t)
+{
+    for(int i = 0; i < t->counter; i++)
+        t->cell[i] = tlval_eval(t->cell[i]);
+
+    for(int i = 0; i < t->counter; i++)
+    {
+        if(t->cell[i]->type == TLVAL_ERR)
+            return tlval_take(t, i);
+    }
+
+    if(t->counter == 0)
+        return t;
+
+    if(t->counter == 1)
+        return tlval_take(t, 0);
+
+    tlval_T* h = tlval_pop(t, 0);
+    if(h->type != TLVAL_SYM)
+    {
+        tlval_del(t);
+        tlval_del(h);
+
+        return tlval_err(TLERR_MISSING_SYM);
+    }
+
+    tlval_T* res = builtin_op(t, h->symbol);
+    tlval_del(h);
+
+    return res;
+}
+
+
+/*
+ * ---------- BUILT IN OPERATIONS ----------
+ */
+
+
+/**
+ * builtin_op - Built in operation
+ */
 tlval_T* builtin_op(tlval_T* t, char* op)
 {
     for(int i = 0; i < t->counter; i++)
@@ -214,44 +352,4 @@ tlval_T* builtin_op(tlval_T* t, char* op)
 
     tlval_del(t);
     return x;
-}
-
-tlval_T* tlval_eval(tlval_T* t)
-{
-    if(t->type == TLVAL_SEXPR)
-        return tlval_eval_sexpr(t);
-
-    return t;
-}
-
-tlval_T* tlval_eval_sexpr(tlval_T* t)
-{
-    for(int i = 0; i < t->counter; i++)
-        t->cell[i] = tlval_eval(t->cell[i]);
-
-    for(int i = 0; i < t->counter; i++)
-    {
-        if(t->cell[i]->type == TLVAL_ERR)
-            return tlval_take(t, i);
-    }
-
-    if(t->counter == 0)
-        return t;
-
-    if(t->counter == 1)
-        return tlval_take(t, 0);
-
-    tlval_T* h = tlval_pop(t, 0);
-    if(h->type != TLVAL_SYM)
-    {
-        tlval_del(t);
-        tlval_del(h);
-
-        return tlval_err(TLERR_MISSING_SYM);
-    }
-
-    tlval_T* res = builtin_op(t, h->symbol);
-    tlval_del(h);
-
-    return res;
 }
