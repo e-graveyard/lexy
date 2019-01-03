@@ -83,7 +83,7 @@ void tl_num_print(float n)
 {
     if(isfint(n))
     {
-        printf("%d", (int)round(n));
+        printf("%ld", (long)round(n));
     }
     else
     {
