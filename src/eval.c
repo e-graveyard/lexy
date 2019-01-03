@@ -16,6 +16,7 @@
 
 // Prototypes
 tlval_T* tlval_eval_sexpr(tlval_T* t);
+tlval_T* builtin(tlval_T* expr, char* func);
 
 
 /*
@@ -103,7 +104,58 @@ tlval_T* tlval_qexpr(void)
 
 
 /*
- * ---------- VALUE OPERATIONS ----------
+ * ---------- VALUE REPRESENTATION ----------
+ */
+
+
+/**
+ * tlval_read - TL value reading
+ */
+tlval_T* tlval_read(mpc_ast_t* t)
+{
+    if(strstr(t->tag, "numb"))
+        return tlval_read_num(t);
+
+    if(strstr(t->tag, "symb"))
+        return tlval_sym(t->contents);
+
+    tlval_T* x = NULL;
+    if(strequ(t->tag, ">") || strstr(t->tag, "sexp"))
+        x = tlval_sexpr();
+
+    if(strstr(t->tag, "qexp"))
+        x = tlval_qexpr();
+
+    for(int i = 0; i < t->children_num; i++)
+    {
+        if(strequ(t->children[i]->contents, "(") ||
+           strequ(t->children[i]->contents, ")") ||
+           strequ(t->children[i]->contents, "'(") ||
+           strequ(t->children[i]->tag, "regex")) continue;
+
+        x = tlval_add(x, tlval_read(t->children[i]));
+    }
+
+    return x;
+}
+
+
+/**
+ * tlval_read_num - TL numeric value reading
+ */
+tlval_T* tlval_read_num(mpc_ast_t* t)
+{
+    errno = 0;
+    float f = strtof(t->contents, NULL);
+
+    return (errno != ERANGE)
+        ? tlval_num(f)
+        : tlval_err(TLERR_BAD_NUM);
+}
+
+
+/*
+ * ---------- EXPRESSION OPERATIONS ----------
  */
 
 
@@ -155,53 +207,10 @@ void tlval_del(tlval_T* v)
 
 
 /**
- * tlval_read - TL value reading
- */
-tlval_T* tlval_read(mpc_ast_t* t)
-{
-    if(strstr(t->tag, "numb"))
-        return tlval_read_num(t);
-
-    if(strstr(t->tag, "symb"))
-        return tlval_sym(t->contents);
-
-    tlval_T* x = NULL;
-    if(strequ(t->tag, ">") || strstr(t->tag, "sexp"))
-        x = tlval_sexpr();
-
-    if(strstr(t->tag, "qexp"))
-        x = tlval_qexpr();
-
-    for(int i = 0; i < t->children_num; i++)
-    {
-        if(strequ(t->children[i]->contents, "(") ||
-           strequ(t->children[i]->contents, ")") ||
-           strequ(t->children[i]->contents, "'(") ||
-           strequ(t->children[i]->tag, "regex")) continue;
-
-        x = tlval_add(x, tlval_read(t->children[i]));
-    }
-
-    return x;
-}
-
-
-/**
- * tlval_read_num - TL numeric value reading
- */
-tlval_T* tlval_read_num(mpc_ast_t* t)
-{
-    errno = 0;
-    float f = strtof(t->contents, NULL);
-
-    return (errno != ERANGE)
-        ? tlval_num(f)
-        : tlval_err(TLERR_BAD_NUM);
-}
-
-
-/**
- * tlval_pop - TL value pop operation
+ * tlval_pop - TL pop value operation
+ *
+ * Takes a S-Expression, extracts the element at index "i" from it and returns it.
+ * The "pop" operation does not delete the original input list.
  */
 tlval_T* tlval_pop(tlval_T* t, int i)
 {
@@ -218,6 +227,9 @@ tlval_T* tlval_pop(tlval_T* t, int i)
 
 /**
  * tlval_take - TL value take operation
+ *
+ * Takes a S-Expression, extracts the element at index "i" from it and return it.
+ * The "take" operation deletes the original input list;
  */
 tlval_T* tlval_take(tlval_T* t, int i)
 {
@@ -226,6 +238,26 @@ tlval_T* tlval_take(tlval_T* t, int i)
 
     return v;
 }
+
+
+/**
+ * tlval_join - TL value join
+ *
+ * Takes two expressions and joins together all of its arguments.
+ */
+tlval_T* tlval_join(tlval_T* x, tlval_T* y)
+{
+    while(y->counter)
+        x = tlval_add(x, tlval_pop(y, 0));
+
+    tlval_del(y);
+    return x;
+}
+
+
+/*
+ * ---------- EVALUATION ----------
+ */
 
 
 /**
@@ -269,7 +301,7 @@ tlval_T* tlval_eval_sexpr(tlval_T* t)
         return tlval_err(TLERR_MISSING_SYM);
     }
 
-    tlval_T* res = builtin_op(t, h->symbol);
+    tlval_T* res = builtin(t, h->symbol);
     tlval_del(h);
 
     return res;
@@ -277,7 +309,7 @@ tlval_T* tlval_eval_sexpr(tlval_T* t)
 
 
 /*
- * ---------- BUILT IN OPERATIONS ----------
+ * ---------- BUILT IN FUNCTIONS ----------
  */
 
 
@@ -352,4 +384,122 @@ tlval_T* builtin_op(tlval_T* t, char* op)
 
     tlval_del(t);
     return x;
+}
+
+
+/**
+ * builtin_head - Built in "head" function
+ *
+ * Takes a Q-Expression and returns the first element of it.
+ */
+tlval_T* builtin_head(tlval_T* qexpr)
+{
+    TLASSERT(qexpr, (qexpr->counter == 1), TLERR_TOO_MANY_ARGS("head"));
+    TLASSERT(qexpr, (qexpr->cell[0]->type == TLVAL_QEXPR), TLERR_BAD_TYPE("head"));
+    TLASSERT(qexpr, (qexpr->cell[0]->counter != 0), TLERR_EMPTY_QEXPR("head"));
+
+    tlval_T* val = tlval_take(qexpr, 0);
+    while(val->counter > 1)
+        tlval_del(tlval_pop(val, 1));
+
+    return val;
+}
+
+
+/**
+ * builtin_tail - Built in "tail" function
+ *
+ * Takes a Q-Expression and return it minus the first element.
+ */
+tlval_T* builtin_tail(tlval_T* qexpr)
+{
+    TLASSERT(qexpr, (qexpr->counter == 1), TLERR_TOO_MANY_ARGS("tail"));
+    TLASSERT(qexpr, (qexpr->cell[0]->type == TLVAL_QEXPR), TLERR_BAD_TYPE("tail"));
+    TLASSERT(qexpr, (qexpr->cell[0]->counter != 0), TLERR_EMPTY_QEXPR("tail"));
+
+    tlval_T* val = tlval_take(qexpr, 0);
+    tlval_del(tlval_pop(val, 0));
+
+    return val;
+}
+
+
+/**
+ * builtin_list - Built in "list" function
+ *
+ * Takes a S-Expression and converts it to a Q-Expression.
+ */
+tlval_T* builtin_list(tlval_T* sexpr)
+{
+    sexpr->type = TLVAL_QEXPR;
+    return sexpr;
+}
+
+
+/**
+ * builtin_join - Built in "join" function
+ *
+ * Takes a Q-Expression and joins all of its arguments.
+ */
+tlval_T* builtin_join(tlval_T* qexprv)
+{
+    for(int i = 0; i < qexprv->counter; i++)
+        TLASSERT(qexprv, (qexprv->cell[i]->type == TLVAL_QEXPR), TLERR_BAD_TYPE("join"));
+
+    tlval_T* nexpr = tlval_pop(qexprv, 0);
+    while(qexprv->counter)
+        nexpr = tlval_join(nexpr, tlval_pop(qexprv, 0));
+
+    tlval_del(qexprv);
+    return nexpr;
+}
+
+
+/**
+ * builtin_eval - Built in "eval" function
+ *
+ * Takes a Q-Expression and evaluates it as a S-Expression.
+ */
+tlval_T* builtin_eval(tlval_T* qexpr)
+{
+    TLASSERT(qexpr, (qexpr->counter == 1), TLERR_TOO_MANY_ARGS("eval"));
+    TLASSERT(qexpr, (qexpr->cell[0]->type == TLVAL_QEXPR), TLERR_BAD_TYPE("eval"));
+
+    tlval_T* nexpr = tlval_take(qexpr, 0);
+    nexpr->type = TLVAL_SEXPR;
+
+    return tlval_eval(nexpr);
+}
+
+
+tlval_T* builtin(tlval_T* expr, char* func)
+{
+    if(strequ(func, "head"))
+        return builtin_head(expr);
+
+    if(strequ(func, "tail"))
+        return builtin_tail(expr);
+
+    if(strequ(func, "list"))
+        return builtin_list(expr);
+
+    if(strequ(func, "join"))
+        return builtin_join(expr);
+
+    if(strequ(func, "eval"))
+        return builtin_eval(expr);
+
+    // ----
+
+    if(strequ(func, "add") || strequ(func, "+") ||
+       strequ(func, "sub") || strequ(func, "-") ||
+       strequ(func, "mul") || strequ(func, "*") ||
+       strequ(func, "div") || strequ(func, "/") ||
+       strequ(func, "mod") || strequ(func, "%") ||
+       strequ(func, "pow") || strequ(func, "^") ||
+       strequ(func, "min") || strequ(func, "max"))
+        return builtin_op(expr, func);
+
+    tlval_del(expr);
+    return tlval_err(TLERR_BAD_FUNC_NAME);
 }
