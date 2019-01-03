@@ -26,3 +26,8 @@ void add_history(char* unused) {}
 #include <editline/readline.h>
 #include <editline/history.h>
 #endif
+
+
+#define PROGRAM_NAME "tmul"
+#define PROGRAM_VERSION "v0.1.0"
+#define PROMPT_DISPLAY PROGRAM_NAME " > "

@@ -16,8 +16,8 @@ int main(void)
 {
     signal(SIGINT, interrupt);
 
-    puts("TMUL: Version ");
-    puts("Press CTRL+c to Exit\n");
+    printf("%s: version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+    puts("press CTRL+c to exit\n");
 
     p = init_parser();
 
@@ -60,7 +60,7 @@ void interrupt(int sign)
 
 char* prompt()
 {
-    char* input = readline("tmul > ");
+    char* input = readline(PROMPT_DISPLAY);
     add_history(input);
 
     return input;
@@ -112,5 +112,5 @@ void tl_print(tlval_T* t)
             tl_sexp_print(t, '(', ')');
             break;
     }
-    fputs("\n\n", stdout);
+    puts("\n");
 }
