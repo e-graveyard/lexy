@@ -4,43 +4,28 @@ parser_T init_parser()
 {
     parser_T p;
 
-    p.Number = mpc_new("numb");
-    p.Symbol = mpc_new("symb");
-    p.SExpr  = mpc_new("sexp");
-    p.QExpr  = mpc_new("qexp");
-    p.PExpr  = mpc_new("pexp");
-    p.TLisp  = mpc_new("lisp");
+    p.Number = mpc_new("number");
+    p.Symbol = mpc_new("symbol");
+    p.SExpr  = mpc_new("sexpr");
+    p.QExpr  = mpc_new("qexpr");
+    p.Atom  = mpc_new("atom");
+    p.Lisp  = mpc_new("lisp");
 
     mpca_lang(MPCA_LANG_DEFAULT,
 
-            " numb: /-?[0-9]+\\.?[0-9]*/ ; "
-            "                              "
-            " symb: ('+' | \"add\") |      "
-            "       ('-' | \"sub\") |      "
-            "       ('*' | \"mul\") |      "
-            "       ('/' | \"div\") |      "
-            "       ('%' | \"mod\") |      "
-            "       ('^' | \"pow\") |      "
-            "       \"min\" | \"max\" |    "
-            "       \"list\" | \"head\" |  "
-            "       \"tail\" | \"join\" |  "
-            "       \"eval\" ;             "
-            "                              "
-            " sexp: '(' <pexp>* ')' ;      "
-            "                              "
-            " qexp: \"'(\" <pexp>* ')' ;   "
-            "                              "
-            " pexp: <numb> | <symb> |      "
-            "       <sexp> | <qexp> ;      "
-            "                              "
-            " lisp: /^/ <pexp>* /$/ ;      ",
+            " number: /-?[0-9]+\\.?[0-9]*/ ;                    "
+            " symbol: /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ;        "
+            " sexpr:  '(' <atom>* ')' ;                         "
+            " qexpr:  \"'(\" <atom>* ')' ;                      "
+            " atom:  <number> | <symbol> | <sexpr> | <qexpr> ;  "
+            " lisp:  /^/ <atom>* /$/ ;                          ",
 
             p.Number,
             p.Symbol,
             p.SExpr,
             p.QExpr,
-            p.PExpr,
-            p.TLisp);
+            p.Atom,
+            p.Lisp);
 
     return p;
 }
