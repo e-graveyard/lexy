@@ -26,7 +26,7 @@ int main(void)
         char* input = prompt();
 
         mpc_result_t r;
-        if(mpc_parse("<stdin>", input, p.TLisp, &r))
+        if(mpc_parse("<stdin>", input, p.Lisp, &r))
         {
             tlval_T* t = tlval_eval(tlval_read(r.output));
 
@@ -55,8 +55,8 @@ void interrupt(int sign)
             p.Symbol,
             p.SExpr,
             p.QExpr,
-            p.PExpr,
-            p.TLisp);
+            p.Atom,
+            p.Lisp);
 
     exit(0);
 }

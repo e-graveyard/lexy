@@ -113,17 +113,17 @@ tlval_T* tlval_qexpr(void)
  */
 tlval_T* tlval_read(mpc_ast_t* t)
 {
-    if(strstr(t->tag, "numb"))
+    if(strstr(t->tag, "number"))
         return tlval_read_num(t);
 
-    if(strstr(t->tag, "symb"))
+    if(strstr(t->tag, "symbol"))
         return tlval_sym(t->contents);
 
     tlval_T* x = NULL;
-    if(strequ(t->tag, ">") || strstr(t->tag, "sexp"))
+    if(strequ(t->tag, ">") || strstr(t->tag, "sexpr"))
         x = tlval_sexpr();
 
-    if(strstr(t->tag, "qexp"))
+    if(strstr(t->tag, "qexpr"))
         x = tlval_qexpr();
 
     for(int i = 0; i < t->children_num; i++)
