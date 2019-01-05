@@ -11,4 +11,4 @@ typedef struct parser_S
 }
 parser_T;
 
-parser_T init_parser();
+parser_T parser_init();

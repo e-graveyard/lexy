@@ -1,6 +1,6 @@
 #include "parser.h"
 
-parser_T init_parser()
+parser_T parser_init()
 {
     parser_T p;
 
