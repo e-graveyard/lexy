@@ -73,6 +73,7 @@ tlval_T* btinfn_min    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_mod    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_mul    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_pow    (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_sqrt   (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sub    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_tail   (tlenv_T* env, tlval_T* qexpr);
 tlval_T* builtin_numop (tlenv_T* env, tlval_T* args, char* op);
@@ -292,6 +293,7 @@ void tlenv_init(tlenv_T* env)
     tlenv_incb(env, "pow", btinfn_pow);
     tlenv_incb(env, "max", btinfn_max);
     tlenv_incb(env, "min", btinfn_min);
+    tlenv_incb(env, "sqrt", btinfn_sqrt);
 
     tlenv_incb(env, "let", btinfn_let);
     tlenv_incb(env, "head", btinfn_head);
@@ -782,6 +784,22 @@ tlval_T* btinfn_max(tlenv_T* env, tlval_T* args)
 tlval_T* btinfn_min(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "min");
+}
+
+
+/**
+ * btinfn_sqrt - "sqrt" built-in function
+ */
+tlval_T* btinfn_sqrt(tlenv_T* env, tlval_T* args)
+{
+    TLASSERT_NUM("sqrt", args, 1);
+    TLASSERT_TYPE("sqrt", args, 0, TLVAL_NUM);
+
+    tlval_T* val = tlval_pop(args, 0);
+    val->number = sqrt(val->number);
+
+    tlval_del(args);
+    return val;
 }
 
 
