@@ -651,8 +651,7 @@ tlval_T* tlval_evsexp(tlenv_T* env, tlval_T* val)
 tlval_T* builtin_numop(tlenv_T* env, tlval_T* args, char* op)
 {
     for(int i = 0; i < args->counter; i++)
-    {
-    }
+        TLASSERT_TYPE(op, args, i, TLVAL_NUM);
 
     tlval_T* xval = tlval_pop(args, 0);
 
