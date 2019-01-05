@@ -369,7 +369,7 @@ tlval_T* tlenv_get(tlenv_T* env, tlval_T* val)
 {
     for(int i = 0; i < env->counter; i++)
     {
-        if(strequ(env->symbols[i], val->symbol))
+        if(strequ(val->symbol, env->symbols[i]))
             return tlval_copy(env->values[i]);
     }
 
