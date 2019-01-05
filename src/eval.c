@@ -30,21 +30,21 @@
 
 #define TLASSERT_TYPE(fname, args, index, expect) \
     TLASSERT(args, (args->cell[index]->type == expect), \
-            "function '%s' has taken an incorrect type at argument %i.\n" \
-            "Got '%s', expected '%s'.", \
-            fname, index, tltype_nrepr(args->cell[index]->type), tltype_nrepr(expect))
+            "function '%s' has taken an incorrect type at argument %i. " \
+            "Got '%s', expected '%s'", \
+            fname, (index + 1), tltype_nrepr(args->cell[index]->type), tltype_nrepr(expect))
 
 
 #define TLASSERT_NUM(fname, args, num) \
     TLASSERT(args, (args->counter == num), \
-            "function '%s' has taken an incorrect number of arguments.\n" \
-            "Got %i, expected %i.", \
+            "function '%s' has taken an incorrect number of arguments. " \
+            "Got %i, expected %i", \
             fname, args->counter, num);
 
 
 #define TLASSERT_NOT_EMPTY(fname, args, index) \
     TLASSERT(args, (args->cell[index]->counter != 0), \
-            "function '%s' has taken nil value for argument %i.", \
+            "function '%s' has taken nil value for argument %i", \
             fname, index);
 
 
@@ -625,7 +625,7 @@ tlval_T* tlval_evsexp(tlenv_T* env, tlval_T* val)
     if(element->type != TLVAL_FUN)
     {
         tlval_T* err = tlval_err(
-                    "S-Expression start with incorrect type.\n"
+                    "S-Expression start with incorrect type. "
                     "Got '%s', expected '%s'.",
                     tltype_nrepr(element->type), tltype_nrepr(TLVAL_FUN));
 
@@ -904,13 +904,13 @@ tlval_T* btinfn_let(tlenv_T* env, tlval_T* qexpr)
     for(int i = 0; i < symbols->counter; i++)
     {
         TLASSERT(qexpr, (symbols->cell[i]->type == TLVAL_SYM),
-                "function 'let' cannot define non-symbol.\n"
+                "function 'let' cannot define non-symbol. "
                 "Got '%s', expected '%s'.",
                 tltype_nrepr(symbols->cell[i]->type), tltype_nrepr(TLVAL_SYM));
     }
 
     TLASSERT(qexpr, (symbols->counter == (qexpr->counter - 1)),
-            "function 'let' has taken too many arguments."
+            "function 'let' has taken too many arguments. "
             "Got %i, expected %i.",
             symbols->counter, qexpr->counter);
 
