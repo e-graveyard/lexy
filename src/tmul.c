@@ -68,7 +68,7 @@ void interrupt(int sign)
 
 char* prompt()
 {
-    puts("\n");
+    psout("\n\n");
     char* input = readline(PROMPT_DISPLAY);
     add_history(input);
 
@@ -83,7 +83,7 @@ void tl_sexp_print(tlval_T* t, char* openc, char* closec)
         tl_print(t->cell[i]);
 
         if(i != (t->counter - 1))
-            putchar(' ');
+            psout(" ");
     }
     psout(closec);
 }
@@ -105,7 +105,18 @@ void tl_print(tlval_T* t)
     switch(t->type)
     {
         case TLVAL_FUN:
-            psout("<function>");
+            if(!t->builtin)
+            {
+                psout("<function>");
+            }
+            else
+            {
+                psout("(lambda ");
+                tl_print(t->formals);
+                psout(" ");
+                tl_print(t->body);
+                psout(")");
+            }
             break;
 
         case TLVAL_NUM:
