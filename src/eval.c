@@ -77,6 +77,7 @@ tlval_T* btinfn_sqrt   (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sub    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_tail   (tlenv_T* env, tlval_T* qexpr);
 tlval_T* builtin_numop (tlenv_T* env, tlval_T* args, char* op);
+tlval_T* tlenv_copy    (tlenv_T* env);
 void     tlenv_incb    (tlenv_T* env, char* name, tlbtin func);
 void     tlenv_del     (tlenv_T* e);
 tlval_T* tlenv_get     (tlenv_T* env, tlval_T* val);
@@ -92,6 +93,7 @@ tlval_T* tlval_eval    (tlenv_T* env, tlval_T* value);
 tlval_T* tlval_evsexp  (tlenv_T* env, tlval_T* val);
 tlval_T* tlval_fun     (tlbtin func);
 tlval_T* tlval_join    (tlval_T* x, tlval_T* y);
+tlval_T* tlval_lambda  (tlval_T* formals, tlval_T* body);
 tlval_T* tlval_num     (float n);
 tlval_T* tlval_pop     (tlval_T* t, int i);
 tlval_T* tlval_qexpr   (void);
@@ -160,6 +162,24 @@ tlval_T* tlval_fun(tlbtin func)
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_FUN;
     v->builtin = func;
+
+    return v;
+}
+
+
+/**
+ * tlval_lambda - TL lambda representation
+ *
+ * Constructs a pointer to a new TL lambda representation.
+ */
+tlval_T* tlval_lambda(tlval_T* formals, tlval_T* body)
+{
+    tlval_T* v = malloc(sizeof(struct tlval_S));
+    v->type = TLVAL_FUN;
+    v->builtin = NULL;
+    v->environ = tlenv_new();
+    v->formals = formals;
+    v->body = body;
 
     return v;
 }
@@ -453,8 +473,16 @@ void tlval_del(tlval_T* v)
 {
     switch(v->type)
     {
-        case TLVAL_FUN: break;
         case TLVAL_NUM: break;
+
+        case TLVAL_FUN:
+            if(!v->builtin)
+            {
+                tlenv_del(v->environ);
+                tlval_del(v->formals);
+                tlval_del(v->body);
+            }
+            break;
 
         case TLVAL_ERR:
             free(v->error);
@@ -490,7 +518,17 @@ tlval_T* tlval_copy(tlval_T* val)
     switch(val->type)
     {
         case TLVAL_FUN:
-            nval->builtin = val->builtin;
+            if(val->builtin)
+            {
+                nval->builtin = val->builtin;
+            }
+            else
+            {
+                nval->builtin = NULL;
+                nval->environ = tlenv_copy(val->environ);
+                nval->formals = tlval_copy(val->formals);
+                nval->body = tlval_copy(val->body);
+            }
             break;
 
         case TLVAL_NUM:
