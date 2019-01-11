@@ -8,8 +8,8 @@ parser_T parser_init()
     p.Symbol = mpc_new("symbol");
     p.SExpr  = mpc_new("sexpr");
     p.QExpr  = mpc_new("qexpr");
-    p.Atom  = mpc_new("atom");
-    p.Lisp  = mpc_new("lisp");
+    p.Atom   = mpc_new("atom");
+    p.Lisp   = mpc_new("lisp");
 
     mpca_lang(MPCA_LANG_DEFAULT,
 
