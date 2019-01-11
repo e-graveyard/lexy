@@ -279,17 +279,11 @@ tlenv_T* tlenv_new(void)
 
 void tlenv_init(tlenv_T* env)
 {
-    tlenv_incb(env, "+",   btinfn_add);
     tlenv_incb(env, "add", btinfn_add);
-    tlenv_incb(env, "-",   btinfn_sub);
     tlenv_incb(env, "sub", btinfn_sub);
-    tlenv_incb(env, "*",   btinfn_mul);
     tlenv_incb(env, "mul", btinfn_mul);
-    tlenv_incb(env, "/",   btinfn_div);
     tlenv_incb(env, "div", btinfn_div);
-    tlenv_incb(env, "%",   btinfn_mod);
     tlenv_incb(env, "mod", btinfn_mod);
-    tlenv_incb(env, "^",   btinfn_pow);
     tlenv_incb(env, "pow", btinfn_pow);
     tlenv_incb(env, "max", btinfn_max);
     tlenv_incb(env, "min", btinfn_min);
