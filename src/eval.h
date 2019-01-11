@@ -17,13 +17,17 @@ typedef tlval_T* (*tlbtin)(tlenv_T*, tlval_T*);
 struct tlval_S
 {
     int type;
-    int counter;
 
     char* error;
     char* symbol;
     float number;
 
+    tlval_T* body;
+    tlval_T* environ;
+    tlval_T* formals;
     tlbtin builtin;
+
+    int counter;
     tlval_T** cell;
 };
 
