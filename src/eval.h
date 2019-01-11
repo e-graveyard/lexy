@@ -23,8 +23,8 @@ struct tlval_S
     float number;
 
     tlval_T* body;
-    tlval_T* environ;
     tlval_T* formals;
+    tlenv_T* environ;
     tlbtin builtin;
 
     int counter;
