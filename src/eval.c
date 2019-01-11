@@ -66,6 +66,7 @@ tlval_T* btinfn_div    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_eval   (tlenv_T* env, tlval_T* qexpr);
 tlval_T* btinfn_head   (tlenv_T* env, tlval_T* qexpr);
 tlval_T* btinfn_join   (tlenv_T* env, tlval_T* qexprv);
+tlval_T* btinfn_lambda (tlenv_T* env, tlval_T* qexpr);
 tlval_T* btinfn_let    (tlenv_T* env, tlval_T* qexpr);
 tlval_T* btinfn_list   (tlenv_T* env, tlval_T* sexpr);
 tlval_T* btinfn_max    (tlenv_T* env, tlval_T* args);
@@ -315,6 +316,8 @@ void tlenv_init(tlenv_T* env)
     tlenv_incb(env, "list", btinfn_list);
     tlenv_incb(env, "join", btinfn_join);
     tlenv_incb(env, "eval", btinfn_eval);
+
+    tlenv_incb(env, "lambda", btinfn_lambda);
 }
 
 
@@ -951,4 +954,28 @@ tlval_T* btinfn_let(tlenv_T* env, tlval_T* qexpr)
 
     tlval_del(qexpr);
     return tlval_sexpr();
+}
+
+
+tlval_T* btinfn_lambda(tlenv_T* env, tlval_T* qexpr)
+{
+    TLASSERT_NUM("lambda", qexpr, 2);
+    TLASSERT_TYPE("lambda", qexpr, 0, TLVAL_QEXPR);
+    TLASSERT_TYPE("lambda", qexpr, 1, TLVAL_QEXPR);
+
+    for(int i = 0; i < qexpr->cell[0]->counter; i++)
+    {
+        int type = qexpr->cell[0]->cell[i]->type;
+
+        TLASSERT(qexpr, (type == TLVAL_SYM),
+                "Cannot define non-symbol. "
+                "Got '%s', expected '%s'.",
+                tltype_nrepr(type), tltype_nrepr(TLVAL_SYM));
+    }
+
+    tlval_T* formals = tlval_pop(qexpr, 0);
+    tlval_T* body = tlval_pop(qexpr, 0);
+
+    tlval_del(qexpr);
+    return tlval_lambda(formals, body);
 }
