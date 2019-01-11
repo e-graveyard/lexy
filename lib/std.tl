@@ -1,0 +1,6 @@
+(let '(+) add)
+(let '(-) sub)
+(let '(*) mul)
+(let '(/) div)
+(let '(%) mod)
+(let '(^) pow)
