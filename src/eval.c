@@ -159,7 +159,7 @@ tlval_T* tlval_fun(tlbtin func)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_FUN;
-    v->func = func;
+    v->builtin = func;
 
     return v;
 }
@@ -496,7 +496,7 @@ tlval_T* tlval_copy(tlval_T* val)
     switch(val->type)
     {
         case TLVAL_FUN:
-            nval->func = val->func;
+            nval->builtin = val->builtin;
             break;
 
         case TLVAL_NUM:
@@ -635,7 +635,7 @@ tlval_T* tlval_evsexp(tlenv_T* env, tlval_T* val)
         return err;
     }
 
-    tlval_T* res = element->func(env, val);
+    tlval_T* res = element->builtin(env, val);
     tlval_del(element);
 
     return res;

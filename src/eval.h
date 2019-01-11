@@ -23,7 +23,7 @@ struct tlval_S
     char* symbol;
     float number;
 
-    tlbtin func;
+    tlbtin builtin;
     tlval_T** cell;
 };
 
