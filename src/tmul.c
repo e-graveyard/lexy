@@ -35,15 +35,17 @@
 #include "eval.h"
 #include "parser.h"
 
-void interrupt(int sign);
-void tl_print(tlval_T* t);
-void tl_sexp_print(tlval_T* t, char* openc, char* closec);
-char* prompt();
+static void interrupt(int sign);
+static void tl_print(tlval_T* t);
+static void tl_sexp_print(tlval_T* t, char* openc, char* closec);
+static char* prompt();
 
 static parser_T p;
 static tlenv_T* env;
 
-int main(void)
+
+int
+main(void)
 {
     signal(SIGINT, interrupt);
 
@@ -82,7 +84,8 @@ int main(void)
     return 0;
 }
 
-void interrupt(int sign)
+static void
+interrupt(int sign)
 {
     free(env);
     mpc_cleanup(6,
@@ -96,7 +99,8 @@ void interrupt(int sign)
     exit(0);
 }
 
-char* prompt()
+static char*
+prompt()
 {
     psout("\n\n");
     char* input = readline(PROMPT_DISPLAY);
@@ -105,7 +109,8 @@ char* prompt()
     return input;
 }
 
-void tl_sexp_print(tlval_T* t, char* openc, char* closec)
+static void
+tl_sexp_print(tlval_T* t, char* openc, char* closec)
 {
     psout(openc);
     for(size_t i = 0; i < t->counter; i++)
@@ -118,7 +123,8 @@ void tl_sexp_print(tlval_T* t, char* openc, char* closec)
     psout(closec);
 }
 
-void tl_num_print(float n)
+static void
+tl_num_print(float n)
 {
     if(isfint(n))
     {
@@ -130,7 +136,8 @@ void tl_num_print(float n)
     }
 }
 
-void tl_print(tlval_T* t)
+static void
+tl_print(tlval_T* t)
 {
     switch(t->type)
     {
