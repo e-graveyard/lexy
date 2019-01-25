@@ -40,7 +40,8 @@
  *
  * Compares the equality of two string values.
  */
-unsigned short int strequ(const char* ref, const char* txt)
+unsigned short int
+strequ(const char* ref, const char* txt)
 {
     return (strncmp(txt, ref, strlen(ref)) == 0);
 }
@@ -51,7 +52,8 @@ unsigned short int strequ(const char* ref, const char* txt)
  *
  * Checks if a given float number is a round, integer number.
  */
-unsigned short int isfint(const float f)
+unsigned short int
+isfint(const float f)
 {
     return (fabsf(roundf(f) - f) <= INTEGER_FLOAT_EPSILON);
 }
@@ -62,7 +64,8 @@ unsigned short int isfint(const float f)
  *
  * Prints using "fputs", passing the stdout as the default file.
  */
-void psout(const char* txt)
+void
+psout(const char* txt)
 {
     fputs(txt, stdout);
 }
