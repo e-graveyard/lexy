@@ -39,6 +39,7 @@ struct tlenv_S
 
     char** symbols;
     tlval_T** values;
+    tlenv_T* parent;
 };
 
 

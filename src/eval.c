@@ -80,8 +80,10 @@
 
 // built-in functions
 tlval_T* btinfn_add    (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, char* fn);
 tlval_T* btinfn_div    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_eval   (tlenv_T* env, tlval_T* qexpr);
+tlval_T* btinfn_global (tlenv_T* env, tlval_T* qexpr);
 tlval_T* btinfn_head   (tlenv_T* env, tlval_T* qexpr);
 tlval_T* btinfn_join   (tlenv_T* env, tlval_T* qexprv);
 tlval_T* btinfn_lambda (tlenv_T* env, tlval_T* qexpr);
@@ -96,10 +98,10 @@ tlval_T* btinfn_sqrt   (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sub    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_tail   (tlenv_T* env, tlval_T* qexpr);
 tlval_T* builtin_numop (tlenv_T* env, tlval_T* args, char* op);
-tlval_T* tlenv_copy    (tlenv_T* env);
-void     tlenv_incb    (tlenv_T* env, char* name, tlbtin func);
+tlenv_T* tlenv_copy    (tlenv_T* env);
 void     tlenv_del     (tlenv_T* e);
 tlval_T* tlenv_get     (tlenv_T* env, tlval_T* val);
+void     tlenv_incb    (tlenv_T* env, char* name, tlbtin func);
 void     tlenv_init    (tlenv_T* env);
 tlenv_T* tlenv_new     (void);
 void     tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value);
@@ -303,9 +305,11 @@ tlval_T* tlval_qexpr(void)
 tlenv_T* tlenv_new(void)
 {
     tlenv_T* e = malloc(sizeof(struct tlenv_S));
+
     e->counter = 0;
     e->symbols = NULL;
-    e->values = NULL;
+    e->values  = NULL;
+    e->parent  = NULL;
 
     return e;
 }
@@ -329,6 +333,8 @@ void tlenv_init(tlenv_T* env)
     tlenv_incb(env, "sqrt", btinfn_sqrt);
 
     tlenv_incb(env, "let", btinfn_let);
+    tlenv_incb(env, "global", btinfn_global);
+
     tlenv_incb(env, "head", btinfn_head);
     tlenv_incb(env, "tail", btinfn_tail);
     tlenv_incb(env, "list", btinfn_list);
@@ -354,24 +360,7 @@ void tlenv_incb(tlenv_T* env, char* fname, tlbtin fref)
 
 
 /**
- * tlenv_del - Environment creation
- */
-void tlenv_del(tlenv_T* e)
-{
-    for(int i = 0; i < e->counter; i++)
-    {
-        free(e->symbols[i]);
-        tlval_del(e->values[i]);
-    }
-
-    free(e->symbols);
-    free(e->values);
-    free(e);
-}
-
-
-/**
- * tlenv_put - Put variable to environment
+ * tlenv_put - Put variable to an inner environment
  */
 void tlenv_put(tlenv_T* env, tlval_T* var, tlval_T* value)
 {
@@ -398,6 +387,35 @@ void tlenv_put(tlenv_T* env, tlval_T* var, tlval_T* value)
 
 
 /**
+ * tlenv_put - Put variable to the global environment
+ */
+void tlenv_putg(tlenv_T* env, tlval_T* var, tlval_T* value)
+{
+    while(env->parent)
+        env = env->parent;
+
+    tlenv_put(env, var, value);
+}
+
+
+/**
+ * tlenv_del - Environment creation
+ */
+void tlenv_del(tlenv_T* e)
+{
+    for(int i = 0; i < e->counter; i++)
+    {
+        free(e->symbols[i]);
+        tlval_del(e->values[i]);
+    }
+
+    free(e->symbols);
+    free(e->values);
+    free(e);
+}
+
+
+/**
  * tlenv_get - Get from environment
  *
  * Takes an environment and returns a given expression if it exists.
@@ -410,7 +428,31 @@ tlval_T* tlenv_get(tlenv_T* env, tlval_T* val)
             return tlval_copy(env->values[i]);
     }
 
-    return tlval_err(TLERR_UNBOUND_SYM, val->symbol);
+    if(env->parent)
+        return tlenv_get(env->parent, val);
+    else
+        return tlval_err(TLERR_UNBOUND_SYM, val->symbol);
+}
+
+
+tlenv_T* tlenv_copy(tlenv_T* env)
+{
+    tlenv_T* nenv = malloc(sizeof(struct tlenv_S));
+
+    nenv->parent  = env->parent;
+    nenv->counter = env->counter;
+    nenv->symbols = malloc(sizeof(char*) * nenv->counter);
+    nenv->values  = malloc(sizeof(tlval_T*) * nenv->counter);
+
+    for(int i = 0; i < nenv->counter; i++)
+    {
+        nenv->symbols[i] = malloc(strlen(env->symbols[i]) + 1);
+        strcpy(nenv->symbols[i], env->symbols[i]);
+
+        nenv->values[i] = tlval_copy(env->values[i]);
+    }
+
+    return nenv;
 }
 
 
@@ -629,6 +671,49 @@ tlval_T* tlval_join(tlval_T* x, tlval_T* y)
 }
 
 
+tlval_T* tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
+{
+    if(func->builtin)
+        return func->builtin(env, args);
+
+    int given = args->counter;
+    int total = func->formals->counter;
+
+    while(args->counter)
+    {
+        if(func->formals->counter == 0)
+        {
+            tlval_del(args);
+            return tlval_err(
+                    "function has taken too many arguments."
+                    "Got %i, expected %i", given, total);
+        }
+
+        tlval_T* symbol = tlval_pop(func->formals, 0);
+        tlval_T* value  = tlval_pop(args, 0);
+
+        tlenv_put(func->environ, symbol, value);
+
+        tlval_del(symbol);
+        tlval_del(value);
+    }
+
+    tlval_del(args);
+
+    if(func->formals->counter == 0)
+    {
+        func->environ->parent = env;
+
+        return btinfn_eval(func->environ,
+                tlval_add(tlval_sexpr(), tlval_copy(func->body)));
+    }
+    else
+    {
+        return tlval_copy(func);
+    }
+}
+
+
 /*
  * ---------- EXPRESSION EVALUATION ----------
  */
@@ -688,7 +773,7 @@ tlval_T* tlval_evsexp(tlenv_T* env, tlval_T* val)
         return err;
     }
 
-    tlval_T* res = element->builtin(env, val);
+    tlval_T* res = tlval_call(env, element, val);
     tlval_del(element);
 
     return res;
@@ -943,32 +1028,45 @@ tlval_T* btinfn_eval(tlenv_T* env, tlval_T* qexpr)
 }
 
 
-/**
- * btinfn_eval - "eval" built-in function
- *
- * Takes a Q-Expression and evaluates it as a S-Expression.
- */
 tlval_T* btinfn_let(tlenv_T* env, tlval_T* qexpr)
 {
-    TLASSERT_TYPE("let", qexpr, 0, TLVAL_QEXPR);
+    return btinfn_define(env, qexpr, "let");
+}
+
+
+tlval_T* btinfn_global(tlenv_T* env, tlval_T* qexpr)
+{
+    return btinfn_define(env, qexpr, "global");
+}
+
+
+tlval_T* btinfn_define(tlenv_T* env, tlval_T* qexpr, char* fn)
+{
+    TLASSERT_TYPE(fn, qexpr, 0, TLVAL_QEXPR);
 
     tlval_T* symbols = qexpr->cell[0];
 
     for(int i = 0; i < symbols->counter; i++)
     {
         TLASSERT(qexpr, (symbols->cell[i]->type == TLVAL_SYM),
-                "function 'let' cannot define non-symbol. "
-                "Got '%s', expected '%s'.",
+                "function '%s' cannot define non-symbol. "
+                "Got '%s', expected '%s'.", fn,
                 tltype_nrepr(symbols->cell[i]->type), tltype_nrepr(TLVAL_SYM));
     }
 
     TLASSERT(qexpr, (symbols->counter == (qexpr->counter - 1)),
-            "function 'let' has taken too many arguments. "
-            "Got %i, expected %i.",
+            "function '%s' has taken too many arguments. "
+            "Got %i, expected %i.", fn,
             symbols->counter, qexpr->counter);
 
     for(int i = 0; i < symbols->counter; i++)
-        tlenv_put(env, symbols->cell[i], qexpr->cell[i + 1]);
+    {
+        if(strequ(fn, "let"))
+            tlenv_putg(env, symbols->cell[i], qexpr->cell[i + 1]);
+
+        if(strequ(fn, "global"))
+            tlenv_put(env, symbols->cell[i], qexpr->cell[i + 1]);
+    }
 
     tlval_del(qexpr);
     return tlval_sexpr();
