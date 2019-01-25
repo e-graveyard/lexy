@@ -80,7 +80,7 @@
 
 // built-in functions
 tlval_T* btinfn_add    (tlenv_T* env, tlval_T* args);
-tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, char* fn);
+tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
 tlval_T* btinfn_div    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_eval   (tlenv_T* env, tlval_T* qexpr);
 tlval_T* btinfn_global (tlenv_T* env, tlval_T* qexpr);
@@ -97,19 +97,19 @@ tlval_T* btinfn_pow    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sqrt   (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sub    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_tail   (tlenv_T* env, tlval_T* qexpr);
-tlval_T* builtin_numop (tlenv_T* env, tlval_T* args, char* op);
+tlval_T* builtin_numop (tlenv_T* env, tlval_T* args, const char* op);
 tlenv_T* tlenv_copy    (tlenv_T* env);
 void     tlenv_del     (tlenv_T* e);
 tlval_T* tlenv_get     (tlenv_T* env, tlval_T* val);
-void     tlenv_incb    (tlenv_T* env, char* name, tlbtin func);
+void     tlenv_incb    (tlenv_T* env, const char* name, tlbtin func);
 void     tlenv_init    (tlenv_T* env);
 tlenv_T* tlenv_new     (void);
 void     tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value);
-char*    tltype_nrepr  (int type);
+const char*    tltype_nrepr  (int type);
 tlval_T* tlval_add     (tlval_T* v, tlval_T* x);
 tlval_T* tlval_copy    (tlval_T* val);
 void     tlval_del     (tlval_T* v);
-tlval_T* tlval_err     (char* fmt, ...);
+tlval_T* tlval_err     (const char* fmt, ...);
 tlval_T* tlval_eval    (tlenv_T* env, tlval_T* value);
 tlval_T* tlval_evsexp  (tlenv_T* env, tlval_T* val);
 tlval_T* tlval_fun     (tlbtin func);
@@ -121,7 +121,7 @@ tlval_T* tlval_qexpr   (void);
 tlval_T* tlval_read    (mpc_ast_t* t);
 tlval_T* tlval_rnum    (mpc_ast_t* t);
 tlval_T* tlval_sexpr   (void);
-tlval_T* tlval_sym     (char* s);
+tlval_T* tlval_sym     (const char* s);
 tlval_T* tlval_take    (tlval_T* t, size_t i);
 
 
@@ -133,7 +133,7 @@ tlval_T* tlval_take    (tlval_T* t, size_t i);
 /**
  * tltype_nrepr - TL type name representation
  */
-char* tltype_nrepr(int type)
+const char* tltype_nrepr(int type)
 {
     switch(type)
     {
@@ -226,7 +226,7 @@ tlval_T* tlval_num(float n)
  *
  * Constructs a pointer to a new TL error representation.
  */
-tlval_T* tlval_err(char* fmt, ...)
+tlval_T* tlval_err(const char* fmt, ...)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_ERR;
@@ -249,7 +249,7 @@ tlval_T* tlval_err(char* fmt, ...)
  *
  * Constructs a pointer to a new TL symbol representation.
  */
-tlval_T* tlval_sym(char* s)
+tlval_T* tlval_sym(const char* s)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_SYM;
@@ -348,7 +348,7 @@ void tlenv_init(tlenv_T* env)
 /**
  * tlenv_incbin - TL environment include built-in
  */
-void tlenv_incb(tlenv_T* env, char* fname, tlbtin fref)
+void tlenv_incb(tlenv_T* env, const char* fname, tlbtin fref)
 {
     tlval_T* symb = tlval_sym(fname);
     tlval_T* func = tlval_fun(fref);
@@ -788,7 +788,7 @@ tlval_T* tlval_evsexp(tlenv_T* env, tlval_T* val)
 /**
  * builtin_numop - Built-in numeric operations
  */
-tlval_T* builtin_numop(tlenv_T* env, tlval_T* args, char* op)
+tlval_T* builtin_numop(tlenv_T* env, tlval_T* args, const char* op)
 {
     for(size_t i = 0; i < args->counter; i++)
         TLASSERT_TYPE(op, args, i, TLVAL_NUM);
@@ -1040,7 +1040,7 @@ tlval_T* btinfn_global(tlenv_T* env, tlval_T* qexpr)
 }
 
 
-tlval_T* btinfn_define(tlenv_T* env, tlval_T* qexpr, char* fn)
+tlval_T* btinfn_define(tlenv_T* env, tlval_T* qexpr, const char* fn)
 {
     TLASSERT_TYPE(fn, qexpr, 0, TLVAL_QEXPR);
 
