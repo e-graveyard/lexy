@@ -116,13 +116,13 @@ tlval_T* tlval_fun     (tlbtin func);
 tlval_T* tlval_join    (tlval_T* x, tlval_T* y);
 tlval_T* tlval_lambda  (tlval_T* formals, tlval_T* body);
 tlval_T* tlval_num     (float n);
-tlval_T* tlval_pop     (tlval_T* t, int i);
+tlval_T* tlval_pop     (tlval_T* t, size_t i);
 tlval_T* tlval_qexpr   (void);
 tlval_T* tlval_read    (mpc_ast_t* t);
 tlval_T* tlval_rnum    (mpc_ast_t* t);
 tlval_T* tlval_sexpr   (void);
 tlval_T* tlval_sym     (char* s);
-tlval_T* tlval_take    (tlval_T* t, int i);
+tlval_T* tlval_take    (tlval_T* t, size_t i);
 
 
 /*
@@ -364,7 +364,7 @@ void tlenv_incb(tlenv_T* env, char* fname, tlbtin fref)
  */
 void tlenv_put(tlenv_T* env, tlval_T* var, tlval_T* value)
 {
-    for(int i = 0; i < env->counter; i++)
+    for(size_t i = 0; i < env->counter; i++)
     {
         if(strequ(env->symbols[i], var->symbol))
         {
@@ -403,7 +403,7 @@ void tlenv_putg(tlenv_T* env, tlval_T* var, tlval_T* value)
  */
 void tlenv_del(tlenv_T* e)
 {
-    for(int i = 0; i < e->counter; i++)
+    for(size_t i = 0; i < e->counter; i++)
     {
         free(e->symbols[i]);
         tlval_del(e->values[i]);
@@ -422,7 +422,7 @@ void tlenv_del(tlenv_T* e)
  */
 tlval_T* tlenv_get(tlenv_T* env, tlval_T* val)
 {
-    for(int i = 0; i < env->counter; i++)
+    for(size_t i = 0; i < env->counter; i++)
     {
         if(strequ(val->symbol, env->symbols[i]))
             return tlval_copy(env->values[i]);
@@ -444,7 +444,7 @@ tlenv_T* tlenv_copy(tlenv_T* env)
     nenv->symbols = malloc(sizeof(char*) * nenv->counter);
     nenv->values  = malloc(sizeof(tlval_T*) * nenv->counter);
 
-    for(int i = 0; i < nenv->counter; i++)
+    for(size_t i = 0; i < nenv->counter; i++)
     {
         nenv->symbols[i] = malloc(strlen(env->symbols[i]) + 1);
         strcpy(nenv->symbols[i], env->symbols[i]);
@@ -557,7 +557,7 @@ void tlval_del(tlval_T* v)
 
         case TLVAL_SEXPR:
         case TLVAL_QEXPR:
-            for(int i = 0; i < v->counter; i++)
+            for(size_t i = 0; i < v->counter; i++)
                 tlval_del(v->cell[i]);
 
             free(v->cell);
@@ -613,7 +613,7 @@ tlval_T* tlval_copy(tlval_T* val)
             nval->counter = val->counter;
             nval->cell = malloc(sizeof(struct tlval_S) * nval->counter);
 
-            for(int i = 0; i < nval->counter; i++)
+            for(size_t i = 0; i < nval->counter; i++)
                 nval->cell[i] = tlval_copy(val->cell[i]);
             break;
     }
@@ -628,7 +628,7 @@ tlval_T* tlval_copy(tlval_T* val)
  * Takes a S-Expression, extracts the element at index "i" from it and returns it.
  * The "pop" operation does not delete the original input list.
  */
-tlval_T* tlval_pop(tlval_T* t, int i)
+tlval_T* tlval_pop(tlval_T* t, size_t i)
 {
     tlval_T* v = t->cell[i];
 
@@ -647,7 +647,7 @@ tlval_T* tlval_pop(tlval_T* t, int i)
  * Takes a S-Expression, extracts the element at index "i" from it and return it.
  * The "take" operation deletes the original input list;
  */
-tlval_T* tlval_take(tlval_T* t, int i)
+tlval_T* tlval_take(tlval_T* t, size_t i)
 {
     tlval_T* v = tlval_pop(t, i);
     tlval_del(t);
@@ -676,8 +676,8 @@ tlval_T* tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
     if(func->builtin)
         return func->builtin(env, args);
 
-    int given = args->counter;
-    int total = func->formals->counter;
+    size_t given = args->counter;
+    size_t total = func->formals->counter;
 
     while(args->counter)
     {
@@ -744,10 +744,10 @@ tlval_T* tlval_eval(tlenv_T* env, tlval_T* value)
  */
 tlval_T* tlval_evsexp(tlenv_T* env, tlval_T* val)
 {
-    for(int i = 0; i < val->counter; i++)
+    for(size_t i = 0; i < val->counter; i++)
         val->cell[i] = tlval_eval(env, val->cell[i]);
 
-    for(int i = 0; i < val->counter; i++)
+    for(size_t i = 0; i < val->counter; i++)
     {
         if(val->cell[i]->type == TLVAL_ERR)
             return tlval_take(val, i);
@@ -790,7 +790,7 @@ tlval_T* tlval_evsexp(tlenv_T* env, tlval_T* val)
  */
 tlval_T* builtin_numop(tlenv_T* env, tlval_T* args, char* op)
 {
-    for(int i = 0; i < args->counter; i++)
+    for(size_t i = 0; i < args->counter; i++)
         TLASSERT_TYPE(op, args, i, TLVAL_NUM);
 
     tlval_T* xval = tlval_pop(args, 0);
@@ -997,7 +997,7 @@ tlval_T* btinfn_list(tlenv_T* env, tlval_T* sexpr)
  */
 tlval_T* btinfn_join(tlenv_T* env, tlval_T* qexprv)
 {
-    for(int i = 0; i < qexprv->counter; i++)
+    for(size_t i = 0; i < qexprv->counter; i++)
     {
         TLASSERT_TYPE("join", qexprv, i, TLVAL_QEXPR);
     }
@@ -1046,7 +1046,7 @@ tlval_T* btinfn_define(tlenv_T* env, tlval_T* qexpr, char* fn)
 
     tlval_T* symbols = qexpr->cell[0];
 
-    for(int i = 0; i < symbols->counter; i++)
+    for(size_t i = 0; i < symbols->counter; i++)
     {
         TLASSERT(qexpr, (symbols->cell[i]->type == TLVAL_SYM),
                 "function '%s' cannot define non-symbol. "
@@ -1059,7 +1059,7 @@ tlval_T* btinfn_define(tlenv_T* env, tlval_T* qexpr, char* fn)
             "Got %i, expected %i.", fn,
             symbols->counter, qexpr->counter);
 
-    for(int i = 0; i < symbols->counter; i++)
+    for(size_t i = 0; i < symbols->counter; i++)
     {
         if(strequ(fn, "let"))
             tlenv_putg(env, symbols->cell[i], qexpr->cell[i + 1]);
@@ -1079,7 +1079,7 @@ tlval_T* btinfn_lambda(tlenv_T* env, tlval_T* qexpr)
     TLASSERT_TYPE("lambda", qexpr, 0, TLVAL_QEXPR);
     TLASSERT_TYPE("lambda", qexpr, 1, TLVAL_QEXPR);
 
-    for(int i = 0; i < qexpr->cell[0]->counter; i++)
+    for(size_t i = 0; i < qexpr->cell[0]->counter; i++)
     {
         int type = qexpr->cell[0]->cell[i]->type;
 

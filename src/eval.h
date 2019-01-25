@@ -27,7 +27,7 @@ struct tlval_S
     tlenv_T* environ;
     tlbtin builtin;
 
-    int counter;
+    size_t counter;
     tlval_T** cell;
 };
 
@@ -35,7 +35,7 @@ struct tlval_S
 // Representation of an environment
 struct tlenv_S
 {
-    int counter;
+    size_t counter;
 
     char** symbols;
     tlval_T** values;

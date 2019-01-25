@@ -108,7 +108,7 @@ char* prompt()
 void tl_sexp_print(tlval_T* t, char* openc, char* closec)
 {
     psout(openc);
-    for(int i = 0; i < t->counter; i++)
+    for(size_t i = 0; i < t->counter; i++)
     {
         tl_print(t->cell[i]);
 
@@ -135,7 +135,7 @@ void tl_print(tlval_T* t)
     switch(t->type)
     {
         case TLVAL_FUN:
-            if(!t->builtin)
+            if(t->builtin)
             {
                 psout("<function>");
             }
