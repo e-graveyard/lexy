@@ -2,6 +2,6 @@
 #define INTEGER_FLOAT_EPSILON 0.000001f
 
 // Prototypes
-int strequ(char* ref, char* txt);
-int isfint(float f);
-void psout(char* txt);
+unsigned short int strequ(const char* ref, const char* txt);
+unsigned short int isfint(float f);
+void psout(const char* txt);
