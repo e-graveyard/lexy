@@ -33,18 +33,33 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "hash.h"
+#include "prime.h"
 
 
-#define HT_PRIME_ONE 1741
-#define HT_PRIME_TWO 3539
+void               ht_delete      (ht_index_T* t, const char* k);
+void               ht_destroy     (ht_index_T* t);
+static size_t      ht_get_hidx    (const char* s, const size_t b_len, unsigned int attempt);
+static size_t      ht_hash        (const char* s, const long prime, const size_t b_len);
+void               ht_insert      (ht_index_T* t, const char* k, const char* v);
+static int         ht_load_ratio  (const ht_index_T* ht);
+static ht_item_T*  hti_new        (const char* k, const char* v);
+static ht_index_T* ht_new_sized   (const uint32_t base_s);
+static void        ht_resize      (ht_index_T* ht, const uint32_t base_s);
+static void        ht_resize_down (ht_index_T* ht);
+static void        ht_resize_up   (ht_index_T* ht);
+char*              ht_search      (ht_index_T* t, const char* k);
+static void        hti_del        (ht_item_T* i);
+static ht_item_T*  hti_new        (const char* k, const char* v);
 
-static ht_item_T* hti_new     (const char* k, const char* v);
-static void       hti_del     (ht_item_T* i);
-static size_t     ht_hash     (const char* s, const long prime, const size_t b_len);
-static size_t     ht_get_hidx (const char* s, const size_t b_len, unsigned int attempt);
 
-ht_index_T* ht_new();
+enum
+{
+    HT_INITIAL_BASE_SIZE = 53,
+    HT_PRIME_NUMBER_A    = 1741,
+    HT_PRIME_NUMBER_B    = 3539
+};
 
 
 struct ht_item_S
@@ -56,8 +71,10 @@ struct ht_item_S
 
 struct ht_index_S
 {
-    uint32_t size;
     size_t counter;
+
+    uint32_t size;
+    uint32_t base_s;
 
     ht_item_T** items;
 };
@@ -73,6 +90,13 @@ dupstr(const char* s)
     char* p = malloc(len);
 
     return p ? memcpy(p, s, len) : NULL;
+}
+
+
+static int
+ht_load_ratio(const ht_index_T* ht)
+{
+    return ((ht->counter * 100) / ht->size);
 }
 
 
@@ -95,8 +119,8 @@ ht_hash(const char* s, const long prime, const size_t b_len)
 static size_t
 ht_get_hidx(const char* s, const size_t b_len, unsigned int attempt)
 {
-    const size_t ha = ht_hash(s, HT_PRIME_ONE, b_len);
-    const size_t hb = ht_hash(s, HT_PRIME_TWO, b_len);
+    const size_t ha = ht_hash(s, HT_PRIME_NUMBER_A, b_len);
+    const size_t hb = ht_hash(s, HT_PRIME_NUMBER_B, b_len);
 
     return (ha + (attempt * (hb + 1))) % b_len;
 }
@@ -122,16 +146,73 @@ hti_del(ht_item_T* i)
 }
 
 
+static void
+ht_resize(ht_index_T* ht, const uint32_t base_s)
+{
+    if(base_s < HT_INITIAL_BASE_SIZE)
+        return;
+
+    ht_index_T* nht = ht_new_sized(base_s);
+
+    for(size_t i = 0; i < ht->size; i++)
+    {
+        ht_item_T* item = ht->items[i];
+        if(item != NULL && item != &HT_DELETED_ITEM)
+            ht_insert(nht, item->key, item->val);
+    }
+
+    ht->base_s  = nht->base_s;
+    ht->counter = nht->counter;
+
+    const uint32_t size_tmp = ht->size;
+    ht->size  = nht->size;
+    nht->size = size_tmp;
+
+    ht_item_T** items_tmp = ht->items;
+    ht->items  = nht->items;
+    nht->items = items_tmp;
+
+    ht_destroy(nht);
+}
+
+
+static void
+ht_resize_up(ht_index_T* ht)
+{
+    ht_resize(ht, (ht->base_s * 2));
+}
+
+
+static void
+ht_resize_down(ht_index_T* ht)
+{
+    ht_resize(ht, (ht->base_s / 2));
+}
+
+
+static ht_index_T*
+ht_new_sized(const uint32_t base_s)
+{
+    ht_index_T* ht = malloc(sizeof(struct ht_index_S));
+    if(ht == NULL)
+        return NULL;
+
+    ht->counter = 0;
+    ht->size    = next_prime(base_s);
+    ht->base_s  = base_s;
+
+    ht->items   = calloc((size_t)ht->size, sizeof(ht_item_T*));
+    if(ht->items == NULL)
+        return NULL;
+
+    return ht;
+}
+
+
 ht_index_T*
 ht_new()
 {
-    ht_index_T* ht = malloc(sizeof(struct ht_index_S));
-
-    ht->size    = 53;
-    ht->counter = 0;
-    ht->items   = calloc((size_t)ht->size, sizeof(ht_item_T*));
-
-    return ht;
+    return ht_new_sized(HT_INITIAL_BASE_SIZE);
 }
 
 
@@ -153,6 +234,9 @@ ht_destroy(ht_index_T* t)
 void
 ht_insert(ht_index_T* t, const char* k, const char* v)
 {
+    if(ht_load_ratio(t) > 70)
+        ht_resize_up(t);
+
     ht_item_T* i = hti_new(k, v);
 
     size_t idx = ht_get_hidx(i->key, t->size, 0);
@@ -203,6 +287,9 @@ ht_search(ht_index_T* t, const char* k)
 void
 ht_delete(ht_index_T* t, const char* k)
 {
+    if(ht_load_ratio(t) < 10)
+        ht_resize_down(t);
+
     size_t idx = ht_get_hidx(k, t->size, 0);
 
     ht_item_T* i = t->items[idx];
