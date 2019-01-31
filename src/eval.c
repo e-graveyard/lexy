@@ -29,7 +29,7 @@
  */
 
 #include "eval.h"
-#include "core.h"
+#include "builtin.h"
 #include "fmt.h"
 
 

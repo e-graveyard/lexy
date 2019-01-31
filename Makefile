@@ -3,7 +3,7 @@
 CC = cc
 GDB = gdb
 
-FILES = core.c eval.c fmt.c hash.c mpc.c prime.c tmul.c parser.c
+FILES = builtin.c eval.c fmt.c hash.c mpc.c prime.c tmul.c parser.c
 CFLAGS = -Wall -Wextra -pedantic -std=c99
 LFLAGS = -ledit -lm
 
