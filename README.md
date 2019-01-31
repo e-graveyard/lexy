@@ -12,9 +12,9 @@ Own Lisp](http://www.buildyourownlisp.com/) book.
 
 - [Significant improvements](#significant-improvements)
 - [Getting started](#getting-started)
-    - [Compiling from source](#ad)
-    - [Installing & uninstalling](#ad)
-    - [Running in Docker](#ad)
+    - [Compiling from source](#compiling-from-source)
+    - [Installing & uninstalling](#installing--uninstalling)
+    - [Running in Docker](#running-in-docker)
 - [Roadmap](#roadmap)
 
 
