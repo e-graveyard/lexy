@@ -11,22 +11,23 @@ ARTIFACT = tmul
 
 
 build:
-	cd src && $(CC) $(CFLAGS) $(FILES) $(LFLAGS) -o $(ARTIFACT)
+	cd src && $(CC) $(CFLAGS) $(FILES) $(LFLAGS) -o $(ARTIFACT) \
+		&& mv $(ARTIFACT) ../
 
 clean:
-	cd src && rm $(ARTIFACT)
+	rm $(ARTIFACT)
 
 dev: CFLAGS += -g
 dev: build
 
 debug: dev
-	cd src && $(GDB) $(ARTIFACT)
+	$(GDB) $(ARTIFACT)
 
 install:
-	cd src && mv $(ARTIFACT) /usr/bin
+	mv $(ARTIFACT) /usr/bin
 
 run:
-	cd src && ./$(ARTIFACT)
+	./$(ARTIFACT)
 
 uninstall:
 	rm /usr/bin/$(ARTIFACT)
