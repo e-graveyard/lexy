@@ -30,10 +30,11 @@
 
 #include <signal.h>
 
-#include "fmt.h"
 #include "tmul.h"
 #include "eval.h"
+#include "fmt.h"
 #include "parser.h"
+
 
 static void interrupt(int sign);
 static void tl_print(tlval_T* t);
