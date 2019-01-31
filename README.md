@@ -1,4 +1,10 @@
+[![Code Quality][lgtm-shield]][lgtm-url]
+
+[lgtm-shield]: https://img.shields.io/lgtm/grade/cpp/g/caianrais/tmul.svg?logo=lgtm&logoWidth=18
+[lgtm-url]: https://lgtm.com/projects/g/caianrais/tmul/context:cpp
+
 # TMUL: tiny, made up lisp
+
 
 This is the source code repository of `tmul`, a tiny implementation of a
 Lisp-like language. It contains the interpreter, the REPL, the standard library
