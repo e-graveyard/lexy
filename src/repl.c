@@ -30,7 +30,7 @@
 
 #include <signal.h>
 
-#include "tmul.h"
+#include "repl.h"
 #include "eval.h"
 #include "fmt.h"
 #include "parser.h"
