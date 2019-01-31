@@ -79,7 +79,8 @@ tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
 /**
  * builtin_numop - Built-in numeric operations
  */
-static tlval_T* builtin_numop(tlenv_T* env, tlval_T* args, const char* op)
+tlval_T*
+builtin_numop(tlenv_T* env, tlval_T* args, const char* op)
 {
     for(size_t i = 0; i < args->counter; i++)
         TLASSERT_TYPE(op, args, i, TLVAL_NUM);
@@ -147,7 +148,8 @@ static tlval_T* builtin_numop(tlenv_T* env, tlval_T* args, const char* op)
 /**
  * btinfn_add - "add" built-in function
  */
-tlval_T* btinfn_add(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_add(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "add");
 }
@@ -156,7 +158,8 @@ tlval_T* btinfn_add(tlenv_T* env, tlval_T* args)
 /**
  * btinfn_sub - "sub" built-in function
  */
-tlval_T* btinfn_sub(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_sub(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "sub");
 }
@@ -165,7 +168,8 @@ tlval_T* btinfn_sub(tlenv_T* env, tlval_T* args)
 /**
  * btinfn_mul - "mul" built-in function
  */
-tlval_T* btinfn_mul(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_mul(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "mul");
 }
@@ -174,7 +178,8 @@ tlval_T* btinfn_mul(tlenv_T* env, tlval_T* args)
 /**
  * btinfn_div - "div" built-in function
  */
-tlval_T* btinfn_div(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_div(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "div");
 }
@@ -183,7 +188,8 @@ tlval_T* btinfn_div(tlenv_T* env, tlval_T* args)
 /**
  * btinfn_mod - "mod" built-in function
  */
-tlval_T* btinfn_mod(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_mod(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "mod");
 }
@@ -192,7 +198,8 @@ tlval_T* btinfn_mod(tlenv_T* env, tlval_T* args)
 /**
  * btinfn_pow - "pow" built-in function
  */
-tlval_T* btinfn_pow(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_pow(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "pow");
 }
@@ -201,7 +208,8 @@ tlval_T* btinfn_pow(tlenv_T* env, tlval_T* args)
 /**
  * btinfn_max - "max" built-in function
  */
-tlval_T* btinfn_max(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_max(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "max");
 }
@@ -210,7 +218,8 @@ tlval_T* btinfn_max(tlenv_T* env, tlval_T* args)
 /**
  * btinfn_min - "min" built-in function
  */
-tlval_T* btinfn_min(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_min(tlenv_T* env, tlval_T* args)
 {
     return builtin_numop(env, args, "min");
 }
@@ -219,7 +228,8 @@ tlval_T* btinfn_min(tlenv_T* env, tlval_T* args)
 /**
  * btinfn_sqrt - "sqrt" built-in function
  */
-tlval_T* btinfn_sqrt(tlenv_T* env, tlval_T* args)
+tlval_T*
+btinfn_sqrt(tlenv_T* env, tlval_T* args)
 {
     TLASSERT_NUM("sqrt", args, 1);
     TLASSERT_TYPE("sqrt", args, 0, TLVAL_NUM);
@@ -237,7 +247,8 @@ tlval_T* btinfn_sqrt(tlenv_T* env, tlval_T* args)
  *
  * Takes a Q-Expression and returns the first element of it.
  */
-tlval_T* btinfn_head(tlenv_T* env, tlval_T* qexpr)
+tlval_T*
+btinfn_head(tlenv_T* env, tlval_T* qexpr)
 {
     TLASSERT_NUM("head", qexpr, 1);
     TLASSERT_TYPE("head", qexpr, 0, TLVAL_QEXPR);
@@ -256,7 +267,8 @@ tlval_T* btinfn_head(tlenv_T* env, tlval_T* qexpr)
  *
  * Takes a Q-Expression and return it minus the first element.
  */
-tlval_T* btinfn_tail(tlenv_T* env, tlval_T* qexpr)
+tlval_T*
+btinfn_tail(tlenv_T* env, tlval_T* qexpr)
 {
     TLASSERT_NUM("tail", qexpr, 1);
     TLASSERT_TYPE("tail", qexpr, 0, TLVAL_QEXPR);
@@ -274,7 +286,8 @@ tlval_T* btinfn_tail(tlenv_T* env, tlval_T* qexpr)
  *
  * Takes a S-Expression and converts it to a Q-Expression.
  */
-tlval_T* btinfn_list(tlenv_T* env, tlval_T* sexpr)
+tlval_T*
+btinfn_list(tlenv_T* env, tlval_T* sexpr)
 {
     sexpr->type = TLVAL_QEXPR;
     return sexpr;
@@ -286,7 +299,8 @@ tlval_T* btinfn_list(tlenv_T* env, tlval_T* sexpr)
  *
  * Takes a Q-Expression and joins all of its arguments.
  */
-tlval_T* btinfn_join(tlenv_T* env, tlval_T* qexprv)
+tlval_T*
+btinfn_join(tlenv_T* env, tlval_T* qexprv)
 {
     for(size_t i = 0; i < qexprv->counter; i++)
     {
@@ -307,7 +321,8 @@ tlval_T* btinfn_join(tlenv_T* env, tlval_T* qexprv)
  *
  * Takes a Q-Expression and evaluates it as a S-Expression.
  */
-tlval_T* btinfn_eval(tlenv_T* env, tlval_T* qexpr)
+tlval_T*
+btinfn_eval(tlenv_T* env, tlval_T* qexpr)
 {
     TLASSERT_NUM("eval", qexpr, 1);
     TLASSERT_TYPE("eval", qexpr, 0, TLVAL_QEXPR);
@@ -319,19 +334,22 @@ tlval_T* btinfn_eval(tlenv_T* env, tlval_T* qexpr)
 }
 
 
-tlval_T* btinfn_let(tlenv_T* env, tlval_T* qexpr)
+tlval_T*
+btinfn_let(tlenv_T* env, tlval_T* qexpr)
 {
     return btinfn_define(env, qexpr, "let");
 }
 
 
-tlval_T* btinfn_global(tlenv_T* env, tlval_T* qexpr)
+tlval_T*
+btinfn_global(tlenv_T* env, tlval_T* qexpr)
 {
     return btinfn_define(env, qexpr, "global");
 }
 
 
-tlval_T* btinfn_define(tlenv_T* env, tlval_T* qexpr, const char* fn)
+tlval_T*
+btinfn_define(tlenv_T* env, tlval_T* qexpr, const char* fn)
 {
     TLASSERT_TYPE(fn, qexpr, 0, TLVAL_QEXPR);
 
@@ -364,7 +382,8 @@ tlval_T* btinfn_define(tlenv_T* env, tlval_T* qexpr, const char* fn)
 }
 
 
-tlval_T* btinfn_lambda(tlenv_T* env, tlval_T* qexpr)
+tlval_T*
+btinfn_lambda(tlenv_T* env, tlval_T* qexpr)
 {
     TLASSERT_NUM("lambda", qexpr, 2);
     TLASSERT_TYPE("lambda", qexpr, 0, TLVAL_QEXPR);

@@ -94,7 +94,8 @@ tlval_T* btinfn_tail   (tlenv_T* env, tlval_T* qexpr);
 /**
  * tltype_nrepr - TL type name representation
  */
-char* tltype_nrepr(int type)
+char*
+tltype_nrepr(int type)
 {
     switch(type)
     {
@@ -139,7 +140,8 @@ char* tltype_nrepr(int type)
  *
  * Constructs a pointer to a new TL function representation.
  */
-tlval_T* tlval_fun(tlbtin func)
+tlval_T*
+tlval_fun(tlbtin func)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_FUN;
@@ -154,7 +156,8 @@ tlval_T* tlval_fun(tlbtin func)
  *
  * Constructs a pointer to a new TL lambda representation.
  */
-tlval_T* tlval_lambda(tlval_T* formals, tlval_T* body)
+tlval_T*
+tlval_lambda(tlval_T* formals, tlval_T* body)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_FUN;
@@ -172,7 +175,8 @@ tlval_T* tlval_lambda(tlval_T* formals, tlval_T* body)
  *
  * Constructs a pointer to a new TL number representation.
  */
-tlval_T* tlval_num(float n)
+tlval_T*
+tlval_num(float n)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_NUM;
@@ -187,7 +191,8 @@ tlval_T* tlval_num(float n)
  *
  * Constructs a pointer to a new TL error representation.
  */
-tlval_T* tlval_err(const char* fmt, ...)
+tlval_T*
+tlval_err(const char* fmt, ...)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_ERR;
@@ -210,7 +215,8 @@ tlval_T* tlval_err(const char* fmt, ...)
  *
  * Constructs a pointer to a new TL symbol representation.
  */
-tlval_T* tlval_sym(const char* s)
+tlval_T*
+tlval_sym(const char* s)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_SYM;
@@ -226,7 +232,8 @@ tlval_T* tlval_sym(const char* s)
  *
  * Constructs a pointer to a new TL symbolic expression representation.
  */
-tlval_T* tlval_sexpr(void)
+tlval_T*
+tlval_sexpr(void)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_SEXPR;
@@ -242,7 +249,8 @@ tlval_T* tlval_sexpr(void)
  *
  * Constructs a pointer to a new TL quoted expression representation.
  */
-tlval_T* tlval_qexpr(void)
+tlval_T*
+tlval_qexpr(void)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_QEXPR;
@@ -263,7 +271,8 @@ tlval_T* tlval_qexpr(void)
  *
  * Constructs a pointer to a new TL environment representation.
  */
-tlenv_T* tlenv_new(void)
+tlenv_T*
+tlenv_new(void)
 {
     tlenv_T* e = malloc(sizeof(struct tlenv_S));
 
@@ -281,7 +290,8 @@ tlenv_T* tlenv_new(void)
  */
 
 
-void tlenv_init(tlenv_T* env)
+void
+tlenv_init(tlenv_T* env)
 {
     tlenv_incb(env, "add", btinfn_add);
     tlenv_incb(env, "sub", btinfn_sub);
@@ -309,7 +319,8 @@ void tlenv_init(tlenv_T* env)
 /**
  * tlenv_incbin - TL environment include built-in
  */
-void tlenv_incb(tlenv_T* env, const char* fname, tlbtin fref)
+void
+tlenv_incb(tlenv_T* env, const char* fname, tlbtin fref)
 {
     tlval_T* symb = tlval_sym(fname);
     tlval_T* func = tlval_fun(fref);
@@ -323,7 +334,8 @@ void tlenv_incb(tlenv_T* env, const char* fname, tlbtin fref)
 /**
  * tlenv_put - Put variable to an inner environment
  */
-void tlenv_put(tlenv_T* env, tlval_T* var, tlval_T* value)
+void
+tlenv_put(tlenv_T* env, tlval_T* var, tlval_T* value)
 {
     for(size_t i = 0; i < env->counter; i++)
     {
@@ -350,7 +362,8 @@ void tlenv_put(tlenv_T* env, tlval_T* var, tlval_T* value)
 /**
  * tlenv_put - Put variable to the global environment
  */
-void tlenv_putg(tlenv_T* env, tlval_T* var, tlval_T* value)
+void
+tlenv_putg(tlenv_T* env, tlval_T* var, tlval_T* value)
 {
     while(env->parent)
         env = env->parent;
@@ -362,7 +375,8 @@ void tlenv_putg(tlenv_T* env, tlval_T* var, tlval_T* value)
 /**
  * tlenv_del - Environment creation
  */
-void tlenv_del(tlenv_T* e)
+void
+tlenv_del(tlenv_T* e)
 {
     for(size_t i = 0; i < e->counter; i++)
     {
@@ -381,7 +395,8 @@ void tlenv_del(tlenv_T* e)
  *
  * Takes an environment and returns a given expression if it exists.
  */
-tlval_T* tlenv_get(tlenv_T* env, tlval_T* val)
+tlval_T*
+tlenv_get(tlenv_T* env, tlval_T* val)
 {
     for(size_t i = 0; i < env->counter; i++)
     {
@@ -396,7 +411,8 @@ tlval_T* tlenv_get(tlenv_T* env, tlval_T* val)
 }
 
 
-tlenv_T* tlenv_copy(tlenv_T* env)
+tlenv_T*
+tlenv_copy(tlenv_T* env)
 {
     tlenv_T* nenv = malloc(sizeof(struct tlenv_S));
 
@@ -425,7 +441,8 @@ tlenv_T* tlenv_copy(tlenv_T* env)
 /**
  * tlval_read - TL value reading
  */
-tlval_T* tlval_read(mpc_ast_t* t)
+tlval_T*
+tlval_read(mpc_ast_t* t)
 {
     if(strstr(t->tag, "number"))
         return tlval_rnum(t);
@@ -457,7 +474,8 @@ tlval_T* tlval_read(mpc_ast_t* t)
 /**
  * tlval_rnum - TL numeric value reading
  */
-tlval_T* tlval_rnum(mpc_ast_t* t)
+tlval_T*
+tlval_rnum(mpc_ast_t* t)
 {
     errno = 0;
     float f = strtof(t->contents, NULL);
@@ -478,7 +496,8 @@ tlval_T* tlval_rnum(mpc_ast_t* t)
  *
  * Adds a TL value to a S-Expression construct.
  */
-tlval_T* tlval_add(tlval_T* v, tlval_T* x)
+tlval_T*
+tlval_add(tlval_T* v, tlval_T* x)
 {
     v->counter++;
     v->cell = realloc(v->cell, sizeof(struct tlval_S) * v->counter);
@@ -493,7 +512,8 @@ tlval_T* tlval_add(tlval_T* v, tlval_T* x)
  *
  * Recursively deconstructs a TL value.
  */
-void tlval_del(tlval_T* v)
+void
+tlval_del(tlval_T* v)
 {
     switch(v->type)
     {
@@ -534,7 +554,8 @@ void tlval_del(tlval_T* v)
  *
  * Takes an expression, copy it's content to a new memory location and returns it.
  */
-tlval_T* tlval_copy(tlval_T* val)
+tlval_T*
+tlval_copy(tlval_T* val)
 {
     tlval_T* nval = malloc(sizeof(struct tlval_S));
     nval->type = val->type;
@@ -589,7 +610,8 @@ tlval_T* tlval_copy(tlval_T* val)
  * Takes a S-Expression, extracts the element at index "i" from it and returns it.
  * The "pop" operation does not delete the original input list.
  */
-tlval_T* tlval_pop(tlval_T* t, size_t i)
+tlval_T*
+tlval_pop(tlval_T* t, size_t i)
 {
     tlval_T* v = t->cell[i];
 
@@ -608,7 +630,8 @@ tlval_T* tlval_pop(tlval_T* t, size_t i)
  * Takes a S-Expression, extracts the element at index "i" from it and return it.
  * The "take" operation deletes the original input list;
  */
-tlval_T* tlval_take(tlval_T* t, size_t i)
+tlval_T*
+tlval_take(tlval_T* t, size_t i)
 {
     tlval_T* v = tlval_pop(t, i);
     tlval_del(t);
@@ -622,7 +645,8 @@ tlval_T* tlval_take(tlval_T* t, size_t i)
  *
  * Takes two expressions and joins together all of its arguments.
  */
-tlval_T* tlval_join(tlval_T* x, tlval_T* y)
+tlval_T*
+tlval_join(tlval_T* x, tlval_T* y)
 {
     while(y->counter)
         x = tlval_add(x, tlval_pop(y, 0));
@@ -632,7 +656,8 @@ tlval_T* tlval_join(tlval_T* x, tlval_T* y)
 }
 
 
-tlval_T* tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
+tlval_T*
+tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
 {
     if(func->builtin)
         return func->builtin(env, args);
@@ -683,7 +708,8 @@ tlval_T* tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
 /**
  * tlval_eval - TL value evaluation
  */
-tlval_T* tlval_eval(tlenv_T* env, tlval_T* value)
+tlval_T*
+tlval_eval(tlenv_T* env, tlval_T* value)
 {
     if(value->type == TLVAL_SYM)
     {
@@ -703,7 +729,8 @@ tlval_T* tlval_eval(tlenv_T* env, tlval_T* value)
 /**
  * tlval_evsexp - TL S-Expression evaluation
  */
-tlval_T* tlval_evsexp(tlenv_T* env, tlval_T* val)
+tlval_T*
+tlval_evsexp(tlenv_T* env, tlval_T* val)
 {
     for(size_t i = 0; i < val->counter; i++)
         val->cell[i] = tlval_eval(env, val->cell[i]);
