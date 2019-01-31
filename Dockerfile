@@ -11,6 +11,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 RUN rm -rf /var/lib/apt/lists/*
 RUN make
-RUN mv src/tmul /usr/bin
+RUN make install
 
 ENTRYPOINT ["tmul"]
