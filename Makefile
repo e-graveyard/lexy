@@ -1,3 +1,4 @@
+.PHONY: tests
 .DEFAULT_GOAL := build
 
 CC = cc
@@ -9,25 +10,29 @@ LFLAGS = -ledit -lm
 
 ARTIFACT = tmul
 
-
 build:
 	cd src && $(CC) $(CFLAGS) $(FILES) $(LFLAGS) -o $(ARTIFACT) \
 		&& mv $(ARTIFACT) ../
 
-clean:
-	rm $(ARTIFACT)
-
-dev: CFLAGS += -g
-dev: build
-
-debug: dev
-	$(GDB) $(ARTIFACT)
-
 install:
 	mv $(ARTIFACT) /usr/bin
+
+uninstall:
+	rm /usr/bin/$(ARTIFACT)
 
 run:
 	./$(ARTIFACT)
 
-uninstall:
-	rm /usr/bin/$(ARTIFACT)
+clean:
+	rm $(ARTIFACT)
+
+debug: CFLAGS += -g
+debug: build
+	$(GDB) $(ARTIFACT)
+
+tests: CFLAGS += -Wno-unused
+tests:
+	cd tests && $(CC) $(CFLAGS) suite.c ptest.c \
+		../src/fmt.c \
+		$(LFLAGS) -o $@ \
+		&& ./$@; true
