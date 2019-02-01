@@ -493,28 +493,28 @@ static int mpc_input_range(mpc_input_t *i, char c, char d, char **o) {
   char x;
   if (mpc_input_terminated(i)) { return 0; }
   x = mpc_input_getc(i);
-  return x >= c && x <= d ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);  
+  return x >= c && x <= d ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);
 }
 
 static int mpc_input_oneof(mpc_input_t *i, const char *c, char **o) {
   char x;
   if (mpc_input_terminated(i)) { return 0; }
   x = mpc_input_getc(i);
-  return strchr(c, x) != 0 ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);  
+  return strchr(c, x) != 0 ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);
 }
 
 static int mpc_input_noneof(mpc_input_t *i, const char *c, char **o) {
   char x;
   if (mpc_input_terminated(i)) { return 0; }
   x = mpc_input_getc(i);
-  return strchr(c, x) == 0 ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);  
+  return strchr(c, x) == 0 ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);
 }
 
 static int mpc_input_satisfy(mpc_input_t *i, int(*cond)(char), char **o) {
   char x;
   if (mpc_input_terminated(i)) { return 0; }
   x = mpc_input_getc(i);
-  return cond(x) ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);  
+  return cond(x) ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);
 }
 
 static int mpc_input_string(mpc_input_t *i, const char *c, char **o) {
@@ -637,7 +637,7 @@ char *mpc_err_string(mpc_err_t *x) {
   }
 
   mpc_err_string_cat(buffer, &pos, &max,
-    "%s:%i:%i: error: expected ", x->filename, x->state.row+1, x->state.col+1);
+    "%s:%ld:%ld: error: expected ", x->filename, x->state.row+1, x->state.col+1);
 
   if (x->expected_num == 0) { mpc_err_string_cat(buffer, &pos, &max, "ERROR: NOTHING EXPECTED"); }
   if (x->expected_num == 1) { mpc_err_string_cat(buffer, &pos, &max, "%s", x->expected[0]); }

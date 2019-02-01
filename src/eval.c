@@ -672,7 +672,7 @@ tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
             tlval_del(args);
             return tlval_err(
                     "function has taken too many arguments."
-                    "Got %i, expected %i", given, total);
+                    "Got %lu, expected %lu", given, total);
         }
 
         tlval_T* symbol = tlval_pop(func->formals, 0);
