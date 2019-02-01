@@ -1,3 +1,6 @@
+#ifndef TMUL_PARSER
+#define TMUL_PARSER
+
 #include "mpc.h"
 
 
@@ -13,3 +16,5 @@ typedef struct parser_S
 parser_T;
 
 parser_T parser_init();
+
+#endif

@@ -1,5 +1,5 @@
-#ifndef tmul_type
-#define tmul_type
+#ifndef TMUL_TYPE
+#define TMUL_TYPE
 
 #include <stdlib.h>
 

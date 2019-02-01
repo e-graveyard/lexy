@@ -1,5 +1,5 @@
-#ifndef tmul_fmt
-#define tmul_fmt
+#ifndef TMUL_FMT
+#define TMUL_FMT
 
 
 // Maximum tolerance value for what constitutes a "whole number".
