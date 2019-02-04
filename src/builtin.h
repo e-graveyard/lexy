@@ -1,3 +1,6 @@
+#ifndef TMUL_BUILTIN
+#define TMUL_BUILTIN
+
 #include "type.h"
 
 
@@ -18,3 +21,5 @@ tlval_T* btinfn_pow    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sqrt   (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sub    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_tail   (tlenv_T* env, tlval_T* qexpr);
+
+#endif
