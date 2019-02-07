@@ -29,7 +29,7 @@ run:
 	./$(ARTIFACT)
 
 clean:
-	rm $(ARTIFACT)
+	rm -f $(ARTIFACT)
 
 debug: CFLAGS += -g
 debug: build
@@ -45,4 +45,4 @@ test-tmul: $(PTEST) $(MPC) $(filter-out src/repl.c, $(TMUL_FILES)) $(TMUL_TEST_F
 		&& ./$@; true \
 		&& rm $@
 
-tests: test-mpc test-tmul
+test: test-mpc test-tmul
