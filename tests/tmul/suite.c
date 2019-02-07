@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include "ptest.h"
-#include "../src/fmt.h"
+#include "../ptest.h"
+#include "../../src/fmt.h"
 
 
 static void
