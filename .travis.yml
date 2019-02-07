@@ -1,0 +1,10 @@
+compiler: gcc
+
+addons:
+  apt:
+    packages:
+      - libedit-dev
+
+script:
+  - make
+  - make test
