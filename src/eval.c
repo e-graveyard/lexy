@@ -676,6 +676,25 @@ tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
         }
 
         tlval_T* symbol = tlval_pop(func->formals, 0);
+
+        if(strequ(symbol->symbol, "&"))
+        {
+            if(func->formals->counter != 1)
+            {
+                tlval_del(args);
+
+                return tlval_err(TLERR_UNBOUND_VARIADIC);
+            }
+
+            tlval_T* nsym = tlval_pop(func->formals, 0);
+            tlenv_put(func->environ, nsym, btinfn_list(env, args));
+
+            tlval_del(symbol);
+            tlval_del(nsym);
+
+            break;
+        }
+
         tlval_T* value  = tlval_pop(args, 0);
 
         tlenv_put(func->environ, symbol, value);
@@ -685,6 +704,22 @@ tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
     }
 
     tlval_del(args);
+
+    if(func->formals->counter > 0 && strequ(func->formals->cell[0]->symbol, "&"))
+    {
+        if(func->formals->counter != 2)
+            return tlval_err(TLERR_UNBOUND_VARIADIC);
+
+        tlval_del(tlval_pop(func->formals, 0));
+
+        tlval_T* symbol = tlval_pop(func->formals, 0);
+        tlval_T* value  = tlval_qexpr();
+
+        tlenv_put(func->environ, symbol, value);
+
+        tlval_del(symbol);
+        tlval_del(value);
+    }
 
     if(func->formals->counter == 0)
     {
