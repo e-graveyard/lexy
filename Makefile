@@ -1,18 +1,23 @@
-.PHONY: tests
+.PHONY: test-mpc test-tmul
 .DEFAULT_GOAL := build
 
 CC = cc
 GDB = gdb
 
-FILES = builtin.c eval.c fmt.c hash.c mpc.c parser.c prime.c repl.c
 CFLAGS = -Wall -Wextra -pedantic -std=c99
 LFLAGS = -ledit -lm
-
 ARTIFACT = tmul
 
-build:
-	cd src && $(CC) $(CFLAGS) $(FILES) $(LFLAGS) -o $(ARTIFACT) \
-		&& mv $(ARTIFACT) ../
+MPC = src/mpc.c
+PTEST = tests/ptest.c
+
+TMUL_FILES      = $(filter-out $(MPC), $(wildcard src/*.c))
+MPC_TEST_FILES  = $(wildcard tests/mpc/*.c)
+TMUL_TEST_FILES = $(wildcard tests/tmul/*.c)
+
+
+build: $(MPC) $(TMUL_FILES)
+	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
 
 install:
 	mv $(ARTIFACT) /usr/bin
@@ -30,9 +35,14 @@ debug: CFLAGS += -g
 debug: build
 	$(GDB) $(ARTIFACT)
 
-tests: CFLAGS += -Wno-unused
-tests:
-	cd tests && $(CC) $(CFLAGS) suite.c ptest.c \
-		../src/fmt.c \
-		$(LFLAGS) -o $@ \
-		&& ./$@; true
+test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
+	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
+		&& ./$@; true \
+		&& rm $@
+
+test-tmul: $(PTEST) $(MPC) $(filter-out src/repl.c, $(TMUL_FILES)) $(TMUL_TEST_FILES)
+	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
+		&& ./$@; true \
+		&& rm $@
+
+tests: test-mpc test-tmul
