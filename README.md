@@ -1,11 +1,11 @@
 [![Build Status][travis-shield]][travis-url]
 [![Code Quality][lgtm-shield]][lgtm-url]
 
-[travis-shield]: https://travis-ci.org/caiertl/tmul.svg?branch=master
-[travis-url]: https://travis-ci.org/caiertl/tmul
+[travis-shield]: https://travis-ci.org/caian-org/tmul.svg?branch=master
+[travis-url]: https://travis-ci.org/caian-org/tmul
 
-[lgtm-shield]: https://img.shields.io/lgtm/grade/cpp/g/caianrais/tmul.svg?logo=lgtm&logoWidth=18
-[lgtm-url]: https://lgtm.com/projects/g/caianrais/tmul/context:cpp
+[lgtm-shield]: https://img.shields.io/lgtm/grade/cpp/g/caian-org/tmul.svg?logo=lgtm&logoWidth=18
+[lgtm-url]: https://lgtm.com/projects/g/caian-org/tmul/context:cpp
 
 # TMUL: tiny, made up lisp
 
