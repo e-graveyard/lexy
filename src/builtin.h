@@ -21,5 +21,12 @@ tlval_T* btinfn_pow    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sqrt   (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sub    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_tail   (tlenv_T* env, tlval_T* qexpr);
+tlval_T* btinfn_cmp_gt (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_ge (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_lt (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_le (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_eq (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_ne (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_if     (tlenv_T* env, tlval_T* args);
 
 #endif

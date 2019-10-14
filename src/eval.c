@@ -36,9 +36,6 @@
 /*
  * ---------- PROTOTYPES ----------
  */
-
-
-// built-in functions
 tlenv_T* tlenv_copy   (tlenv_T* env);
 void     tlenv_del    (tlenv_T* e);
 tlval_T* tlenv_get    (tlenv_T* env, tlval_T* val);
@@ -66,6 +63,7 @@ tlval_T* tlval_sexpr  (void);
 tlval_T* tlval_sym    (const char* s);
 tlval_T* tlval_take   (tlval_T* t, size_t i);
 
+// built-in functions
 tlval_T* btinfn_add    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_div    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_eval   (tlenv_T* env, tlval_T* qexpr);
@@ -83,7 +81,13 @@ tlval_T* btinfn_pow    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sqrt   (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_sub    (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_tail   (tlenv_T* env, tlval_T* qexpr);
-
+tlval_T* btinfn_cmp_gt (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_ge (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_lt (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_le (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_eq (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_cmp_ne (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_if     (tlenv_T* env, tlval_T* args);
 
 
 /*
@@ -293,26 +297,30 @@ tlenv_new(void)
 void
 tlenv_init(tlenv_T* env)
 {
-    tlenv_incb(env, "add", btinfn_add);
-    tlenv_incb(env, "sub", btinfn_sub);
-    tlenv_incb(env, "mul", btinfn_mul);
-    tlenv_incb(env, "div", btinfn_div);
-    tlenv_incb(env, "mod", btinfn_mod);
-    tlenv_incb(env, "pow", btinfn_pow);
-    tlenv_incb(env, "max", btinfn_max);
-    tlenv_incb(env, "min", btinfn_min);
-    tlenv_incb(env, "sqrt", btinfn_sqrt);
-
-    tlenv_incb(env, "let", btinfn_let);
+    tlenv_incb(env, "add",    btinfn_add);
+    tlenv_incb(env, "sub",    btinfn_sub);
+    tlenv_incb(env, "mul",    btinfn_mul);
+    tlenv_incb(env, "div",    btinfn_div);
+    tlenv_incb(env, "mod",    btinfn_mod);
+    tlenv_incb(env, "pow",    btinfn_pow);
+    tlenv_incb(env, "max",    btinfn_max);
+    tlenv_incb(env, "min",    btinfn_min);
+    tlenv_incb(env, "sqrt",   btinfn_sqrt);
+    tlenv_incb(env, "let",    btinfn_let);
     tlenv_incb(env, "global", btinfn_global);
-
-    tlenv_incb(env, "head", btinfn_head);
-    tlenv_incb(env, "tail", btinfn_tail);
-    tlenv_incb(env, "list", btinfn_list);
-    tlenv_incb(env, "join", btinfn_join);
-    tlenv_incb(env, "eval", btinfn_eval);
-
+    tlenv_incb(env, "head",   btinfn_head);
+    tlenv_incb(env, "tail",   btinfn_tail);
+    tlenv_incb(env, "list",   btinfn_list);
+    tlenv_incb(env, "join",   btinfn_join);
+    tlenv_incb(env, "eval",   btinfn_eval);
     tlenv_incb(env, "lambda", btinfn_lambda);
+    tlenv_incb(env, ">",      btinfn_cmp_gt);
+    tlenv_incb(env, ">=",     btinfn_cmp_ge);
+    tlenv_incb(env, "<",      btinfn_cmp_lt);
+    tlenv_incb(env, "<=",     btinfn_cmp_le);
+    tlenv_incb(env, "==",     btinfn_cmp_eq);
+    tlenv_incb(env, "!=",     btinfn_cmp_ne);
+    tlenv_incb(env, "if",     btinfn_if);
 }
 
 
@@ -803,3 +811,46 @@ tlval_evsexp(tlenv_T* env, tlval_T* val)
 }
 
 
+int tlval_eq(tlval_T* a, tlval_T* b)
+{
+    if (a->type != b->type)
+        return 0;
+
+    switch(a->type)
+    {
+        case TLVAL_NUM:
+            return (a->number == b->number);
+
+        case TLVAL_ERR:
+            return strequ(a->error, b->error);
+
+        case TLVAL_SYM:
+            return strequ(a->symbol, b->symbol);
+
+        case TLVAL_FUN:
+            if(a->builtin || b->builtin)
+            {
+                return a->builtin == b->builtin;
+            }
+            else
+            {
+                return tlval_eq(a->formals, b->formals) &&
+                       tlval_eq(a->body, b->body);
+            }
+
+        case TLVAL_QEXPR:
+        case TLVAL_SEXPR:
+            if(a->counter != b->counter)
+                return 0;
+
+            for(size_t i = 0; i < a->counter; i++)
+            {
+                if(!tlval_eq(a->cell[i], b->cell[i]))
+                    return 0;
+            }
+
+            return 1;
+    }
+
+    return 0;
+}

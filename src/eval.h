@@ -13,5 +13,6 @@ tlenv_T* tlenv_new  (void);
 void     tlval_del  (tlval_T* v);
 tlval_T* tlval_read (mpc_ast_t* t);
 tlval_T* tlval_eval (tlenv_T* env, tlval_T* value);
+int      tlval_eq   (tlval_T* a, tlval_T* b);
 
 #endif

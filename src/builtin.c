@@ -38,6 +38,8 @@ void     tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value);
 void     tlenv_putg    (tlenv_T* env, tlval_T* var, tlval_T* value);
 char*    tltype_nrepr  (int type);
 void     tlval_del     (tlval_T* v);
+int      tlval_eq      (tlval_T* a, tlval_T* b);
+tlval_T* tlval_num     (float n);
 tlval_T* tlval_err     (const char* fmt, ...);
 tlval_T* tlval_eval    (tlenv_T* env, tlval_T* value);
 tlval_T* tlval_join    (tlval_T* x, tlval_T* y);
@@ -74,6 +76,56 @@ tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
     TLASSERT(args, (args->cell[index]->counter != 0), \
             "function '%s' has taken nil value for argument %i", \
             fname, index);
+
+
+/**
+ * builtin_order - Built-in object equality
+ */
+tlval_T*
+builtin_eq(tlenv_T* env, tlval_T* args, char* op)
+{
+    TLASSERT_NUM(op, args, 2);
+
+    int r;
+
+    if(strequ(op, "=="))
+        r = tlval_eq(args->cell[0], args->cell[1]);
+
+    if(strequ(op, "!="))
+        r = !tlval_eq(args->cell[0], args->cell[1]);
+
+    tlval_del(args);
+    return tlval_num((float)r);
+}
+
+
+/**
+ * builtin_order - Built-in numeric comparisons
+ */
+tlval_T*
+builtin_order(tlenv_T* env, tlval_T* args, char* op)
+{
+    TLASSERT_NUM(op, args, 2);
+    TLASSERT_TYPE(op, args, 0, TLVAL_NUM);
+    TLASSERT_TYPE(op, args, 1, TLVAL_NUM);
+
+    float r;
+
+    if(strequ(op, ">"))
+        r = (args->cell[0]->number > args->cell[1]->number);
+
+    if(strequ(op, ">="))
+        r = (args->cell[0]->number >= args->cell[1]->number);
+
+    if(strequ(op, "<"))
+        r = (args->cell[0]->number < args->cell[1]->number);
+
+    if(strequ(op, "<="))
+        r = (args->cell[0]->number <= args->cell[1]->number);
+
+    tlval_del(args);
+    return tlval_num(r);
+}
 
 
 /**
@@ -142,6 +194,66 @@ builtin_numop(tlenv_T* env, tlval_T* args, const char* op)
 
     tlval_del(args);
     return xval;
+}
+
+
+/**
+ * btinfn_cmp_gt - ">" built-in function
+ */
+tlval_T*
+btinfn_cmp_gt(tlenv_T* env, tlval_T* args)
+{
+    return builtin_order(env, args, ">");
+}
+
+
+/**
+ * btinfn_cmp_ge - ">=" built-in function
+ */
+tlval_T*
+btinfn_cmp_ge(tlenv_T* env, tlval_T* args)
+{
+    return builtin_order(env, args, ">=");
+}
+
+
+/**
+ * btinfn_cmp_lt - "<" built-in function
+ */
+tlval_T*
+btinfn_cmp_lt(tlenv_T* env, tlval_T* args)
+{
+    return builtin_order(env, args, "<");
+}
+
+
+/**
+ * btinfn_cmp_le - "<=" built-in function
+ */
+tlval_T*
+btinfn_cmp_le(tlenv_T* env, tlval_T* args)
+{
+    return builtin_order(env, args, "<=");
+}
+
+
+/**
+ * btinfn_cmp_eq - "==" built-in function
+ */
+tlval_T*
+btinfn_cmp_eq(tlenv_T* env, tlval_T* args)
+{
+    return builtin_eq(env, args, "==");
+}
+
+
+/**
+ * btinfn_cmp_ne - "!=" built-in function
+ */
+tlval_T*
+btinfn_cmp_ne(tlenv_T* env, tlval_T* args)
+{
+    return builtin_eq(env, args, "!=");
 }
 
 
@@ -404,4 +516,30 @@ btinfn_lambda(tlenv_T* env, tlval_T* qexpr)
 
     tlval_del(qexpr);
     return tlval_lambda(formals, body);
+}
+
+
+tlval_T*
+btinfn_if(tlenv_T* env, tlval_T* args)
+{
+    TLASSERT_NUM("if", args, 3);
+    TLASSERT_TYPE("if", args, 0, TLVAL_NUM);
+    TLASSERT_TYPE("if", args, 1, TLVAL_QEXPR);
+    TLASSERT_TYPE("if", args, 2, TLVAL_QEXPR);
+
+    tlval_T* v;
+    args->cell[0]->type = TLVAL_SEXPR;
+    args->cell[1]->type = TLVAL_SEXPR;
+
+    if(args->cell[0]->number)
+    {
+        v = tlval_eval(env, tlval_pop(args, 1));
+    }
+    else
+    {
+        v = tlval_eval(env, tlval_pop(args, 2));
+    }
+
+    tlval_del(args);
+    return v;
 }
