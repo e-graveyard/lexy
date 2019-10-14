@@ -43,7 +43,7 @@
 unsigned short int
 strequ(const char* ref, const char* txt)
 {
-    return (strncmp(txt, ref, strlen(txt)) == 0);
+    return (strcmp(ref, txt) == 0);
 }
 
 
