@@ -487,11 +487,12 @@ tlval_read(mpc_ast_t* t)
 
     for(int i = 0; i < t->children_num; i++)
     {
-        if(strequ(t->children[i]->contents, "(") ||
-           strequ(t->children[i]->contents, ")") ||
-           strequ(t->children[i]->contents, "{") ||
-           strequ(t->children[i]->contents, "}") ||
-           strequ(t->children[i]->tag, "regex")) continue;
+        if(strequ(t->children[i]->contents, "("))  continue;
+        if(strequ(t->children[i]->contents, ")"))  continue;
+        if(strequ(t->children[i]->contents, "{"))  continue;
+        if(strequ(t->children[i]->contents, "}"))  continue;
+        if(strequ(t->children[i]->tag, "regex"))   continue;
+        if(strstr(t->children[i]->tag, "comment")) continue;
 
         x = tlval_add(x, tlval_read(t->children[i]));
     }

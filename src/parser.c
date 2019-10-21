@@ -36,26 +36,30 @@ parser_init()
 {
     parser_T p;
 
-    p.Number = mpc_new("number");
-    p.String = mpc_new("string");
-    p.Symbol = mpc_new("symbol");
-    p.SExpr  = mpc_new("sexpr");
-    p.QExpr  = mpc_new("qexpr");
-    p.Atom   = mpc_new("atom");
-    p.Lisp   = mpc_new("lisp");
+    p.Number  = mpc_new("number");
+    p.String  = mpc_new("string");
+    p.Comment = mpc_new("comment");
+    p.Symbol  = mpc_new("symbol");
+    p.SExpr   = mpc_new("sexpr");
+    p.QExpr   = mpc_new("qexpr");
+    p.Atom    = mpc_new("atom");
+    p.Lisp    = mpc_new("lisp");
 
     mpca_lang(MPCA_LANG_DEFAULT,
 
-            " number : /-?[0-9]+\\.?[0-9]*/ ;                               "
-            " string : /\"(\\\\.|[^\"])*\"/ ;                               "
-            " symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ;                   "
-            " sexpr  :  '(' <atom>* ')' ;                                    "
-            " qexpr  :  '{' <atom>* '}' ;                                    "
-            " atom   :  <number> | <string> | <symbol> | <sexpr> | <qexpr> ;  "
-            " lisp   :  /^/ <atom>* /$/ ;                                     ",
+            " number  : /-?[0-9]+\\.?[0-9]*/ ;             "
+            " string  : /\"(\\\\.|[^\"])*\"/ ;             "
+            " comment : /;[^\\r\\n]*/ ;                    "
+            " symbol  : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ; "
+            " sexpr   :  '(' <atom>* ')' ;                 "
+            " qexpr   :  '{' <atom>* '}' ;                 "
+            " atom    :  <number> | <string> | <symbol> |  "
+            "            <sexpr>  | <qexpr>  | <comment> ; "
+            " lisp    :  /^/ <atom>* /$/ ;                 ",
 
             p.Number,
             p.String,
+            p.Comment,
             p.Symbol,
             p.SExpr,
             p.QExpr,

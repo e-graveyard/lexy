@@ -8,6 +8,7 @@ typedef struct parser_S
 {
     mpc_parser_t* Number;
     mpc_parser_t* String;
+    mpc_parser_t* Comment;
     mpc_parser_t* Symbol;
     mpc_parser_t* SExpr;
     mpc_parser_t* QExpr;

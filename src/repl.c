@@ -92,6 +92,7 @@ interrupt(int sign)
     mpc_cleanup(6,
             p.Number,
             p.String,
+            p.Comment,
             p.Symbol,
             p.SExpr,
             p.QExpr,
