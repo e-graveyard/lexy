@@ -37,6 +37,7 @@ parser_init()
     parser_T p;
 
     p.Number = mpc_new("number");
+    p.String = mpc_new("string");
     p.Symbol = mpc_new("symbol");
     p.SExpr  = mpc_new("sexpr");
     p.QExpr  = mpc_new("qexpr");
@@ -45,14 +46,16 @@ parser_init()
 
     mpca_lang(MPCA_LANG_DEFAULT,
 
-            " number: /-?[0-9]+\\.?[0-9]*/ ;                    "
-            " symbol: /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ;        "
-            " sexpr:  '(' <atom>* ')' ;                         "
-            " qexpr:  \"'(\" <atom>* ')' ;                      "
-            " atom:  <number> | <symbol> | <sexpr> | <qexpr> ;  "
-            " lisp:  /^/ <atom>* /$/ ;                          ",
+            " number : /-?[0-9]+\\.?[0-9]*/ ;                               "
+            " string : /\"(\\\\.|[^\"])*\"/ ;                               "
+            " symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ;                   "
+            " sexpr  :  '(' <atom>* ')' ;                                    "
+            " qexpr  :  '{' <atom>* '}' ;                                    "
+            " atom   :  <number> | <string> | <symbol> | <sexpr> | <qexpr> ;  "
+            " lisp   :  /^/ <atom>* /$/ ;                                     ",
 
             p.Number,
+            p.String,
             p.Symbol,
             p.SExpr,
             p.QExpr,

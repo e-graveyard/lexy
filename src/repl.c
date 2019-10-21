@@ -91,6 +91,7 @@ interrupt(int sign)
     free(env);
     mpc_cleanup(6,
             p.Number,
+            p.String,
             p.Symbol,
             p.SExpr,
             p.QExpr,
@@ -138,6 +139,12 @@ tl_num_print(float n)
 }
 
 static void
+tl_str_print(char* s)
+{
+
+}
+
+static void
 tl_print(tlval_T* t)
 {
     switch(t->type)
@@ -161,6 +168,10 @@ tl_print(tlval_T* t)
             tl_num_print(t->number);
             break;
 
+        case TLVAL_STR:
+            printf("\"%s\"", t->string);
+            break;
+
         case TLVAL_ERR:
             printf("Error: %s.", t->error);
             break;
@@ -170,7 +181,7 @@ tl_print(tlval_T* t)
             break;
 
         case TLVAL_QEXPR:
-           tl_sexp_print(t, "'(", ")");
+           tl_sexp_print(t, "{", "}");
             break;
 
         case TLVAL_SEXPR:

@@ -29,6 +29,7 @@ struct tlval_S
 
     char* error;
     char* symbol;
+    char* string;
     float number;
 
     tlval_T* body;
@@ -57,6 +58,7 @@ typedef enum tltype
 {
     TLVAL_FUN,
     TLVAL_NUM,
+    TLVAL_STR,
     TLVAL_ERR,
     TLVAL_SYM,
     TLVAL_SEXPR,

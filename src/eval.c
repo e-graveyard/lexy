@@ -59,6 +59,7 @@ tlval_T* tlval_pop    (tlval_T* t, size_t i);
 tlval_T* tlval_qexpr  (void);
 tlval_T* tlval_read   (mpc_ast_t* t);
 tlval_T* tlval_rnum   (mpc_ast_t* t);
+tlval_T* tlval_rstr   (mpc_ast_t* t);
 tlval_T* tlval_sexpr  (void);
 tlval_T* tlval_sym    (const char* s);
 tlval_T* tlval_take   (tlval_T* t, size_t i);
@@ -109,6 +110,10 @@ tltype_nrepr(int type)
 
         case TLVAL_NUM:
             return "Number";
+            break;
+
+        case TLVAL_STR:
+            return "String";
             break;
 
         case TLVAL_ERR:
@@ -185,6 +190,18 @@ tlval_num(float n)
     tlval_T* v = malloc(sizeof(struct tlval_S));
     v->type = TLVAL_NUM;
     v->number = n;
+
+    return v;
+}
+
+
+tlval_T*
+tlval_str(char* s)
+{
+    tlval_T* v = malloc(sizeof(struct tlval_S));
+    v->type = TLVAL_STR;
+    v->string = malloc(strlen(s) + 1);
+    strcpy(v->string, s);
 
     return v;
 }
@@ -455,6 +472,9 @@ tlval_read(mpc_ast_t* t)
     if(strstr(t->tag, "number"))
         return tlval_rnum(t);
 
+    if(strstr(t->tag, "string"))
+        return tlval_rstr(t);
+
     if(strstr(t->tag, "symbol"))
         return tlval_sym(t->contents);
 
@@ -469,7 +489,8 @@ tlval_read(mpc_ast_t* t)
     {
         if(strequ(t->children[i]->contents, "(") ||
            strequ(t->children[i]->contents, ")") ||
-           strequ(t->children[i]->contents, "'(") ||
+           strequ(t->children[i]->contents, "{") ||
+           strequ(t->children[i]->contents, "}") ||
            strequ(t->children[i]->tag, "regex")) continue;
 
         x = tlval_add(x, tlval_read(t->children[i]));
@@ -491,6 +512,20 @@ tlval_rnum(mpc_ast_t* t)
     return (errno != ERANGE)
         ? tlval_num(f)
         : tlval_err(TLERR_BAD_NUM);
+}
+
+tlval_T*
+tlval_rstr(mpc_ast_t* t)
+{
+    t->contents[strlen(t->contents) - 1] = '\0';
+    char* unescaped = malloc(strlen(t->contents + 1) + 1);
+    strcpy(unescaped, t->contents + 1);
+
+    unescaped = mpcf_unescape(unescaped);
+    tlval_T* str = tlval_str(unescaped);
+
+    free(unescaped);
+    return str;
 }
 
 
@@ -534,6 +569,10 @@ tlval_del(tlval_T* v)
                 tlval_del(v->formals);
                 tlval_del(v->body);
             }
+            break;
+
+        case TLVAL_STR:
+            free(v->string);
             break;
 
         case TLVAL_ERR:
@@ -586,6 +625,11 @@ tlval_copy(tlval_T* val)
 
         case TLVAL_NUM:
             nval->number = val->number;
+            break;
+
+        case TLVAL_STR:
+            nval->string = malloc(strlen(val->string) +1);
+            strcpy(nval->string, val->string);
             break;
 
         case TLVAL_ERR:
@@ -820,6 +864,9 @@ int tlval_eq(tlval_T* a, tlval_T* b)
     {
         case TLVAL_NUM:
             return (a->number == b->number);
+
+        case TLVAL_STR:
+            return strequ(a->string, b->string);
 
         case TLVAL_ERR:
             return strequ(a->error, b->error);
