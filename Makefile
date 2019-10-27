@@ -4,7 +4,7 @@
 CC = cc
 GDB = gdb
 
-CFLAGS = -Wall -Wextra -pedantic -std=c99
+CFLAGS = -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99
 LFLAGS = -ledit -lm
 ARTIFACT = tmul
 
