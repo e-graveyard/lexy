@@ -41,7 +41,6 @@ static void tl_print(tlval_T* t);
 static void tl_sexp_print(tlval_T* t, char* openc, char* closec);
 static char* prompt();
 
-static parser_T p;
 static tlenv_T* env;
 
 
@@ -53,17 +52,16 @@ main(void)
     printf("%s: version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
     psout("press CTRL+c to exit");
 
-    p = parser_init();
-
     env = tlenv_new();
     tlenv_init(env);
+    parser_init();
 
     for(;;)
     {
         char* input = prompt();
 
         mpc_result_t r;
-        if(mpc_parse("<stdin>", input, p.Lisp, &r))
+        if(mpc_parse("<stdin>", input, Lisp, &r))
         {
             tlval_T* t = tlval_eval(env, tlval_read(r.output));
 
@@ -89,15 +87,9 @@ static void
 interrupt(int sign)
 {
     free(env);
-    mpc_cleanup(6,
-            p.Number,
-            p.String,
-            p.Comment,
-            p.Symbol,
-            p.SExpr,
-            p.QExpr,
-            p.Atom,
-            p.Lisp);
+    mpc_cleanup(8,
+            Number, String, Comment, Symbol,
+            SExpr, QExpr, Atom, Lisp);
 
     exit(0);
 }
