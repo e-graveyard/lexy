@@ -31,19 +31,17 @@
 #include "parser.h"
 
 
-parser_T
+void
 parser_init()
 {
-    parser_T p;
-
-    p.Number  = mpc_new("number");
-    p.String  = mpc_new("string");
-    p.Comment = mpc_new("comment");
-    p.Symbol  = mpc_new("symbol");
-    p.SExpr   = mpc_new("sexpr");
-    p.QExpr   = mpc_new("qexpr");
-    p.Atom    = mpc_new("atom");
-    p.Lisp    = mpc_new("lisp");
+    Number  = mpc_new("number");
+    String  = mpc_new("string");
+    Comment = mpc_new("comment");
+    Symbol  = mpc_new("symbol");
+    SExpr   = mpc_new("sexpr");
+    QExpr   = mpc_new("qexpr");
+    Atom    = mpc_new("atom");
+    Lisp    = mpc_new("lisp");
 
     mpca_lang(MPCA_LANG_DEFAULT,
 
@@ -57,14 +55,6 @@ parser_init()
             "            <sexpr>  | <qexpr>  | <comment> ; "
             " lisp    :  /^/ <atom>* /$/ ;                 ",
 
-            p.Number,
-            p.String,
-            p.Comment,
-            p.Symbol,
-            p.SExpr,
-            p.QExpr,
-            p.Atom,
-            p.Lisp);
-
-    return p;
+            Number, String, Comment, Symbol,
+            SExpr, QExpr, Atom, Lisp);
 }
