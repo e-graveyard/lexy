@@ -332,6 +332,8 @@ tlenv_init(tlenv_T* env)
     tlenv_incb(env, "join",   btinfn_join);
     tlenv_incb(env, "eval",   btinfn_eval);
     tlenv_incb(env, "lambda", btinfn_lambda);
+    tlenv_incb(env, "error",  btinfn_error);
+    tlenv_incb(env, "print",  btinfn_print);
     tlenv_incb(env, ">",      btinfn_cmp_gt);
     tlenv_incb(env, ">=",     btinfn_cmp_ge);
     tlenv_incb(env, "<",      btinfn_cmp_lt);
