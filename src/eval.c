@@ -63,6 +63,7 @@ tlval_T* tlval_rstr   (mpc_ast_t* t);
 tlval_T* tlval_sexpr  (void);
 tlval_T* tlval_sym    (const char* s);
 tlval_T* tlval_take   (tlval_T* t, size_t i);
+tlval_T* tlval_str    (char* s);
 
 // built-in functions
 tlval_T* btinfn_add    (tlenv_T* env, tlval_T* args);
@@ -901,4 +902,77 @@ int tlval_eq(tlval_T* a, tlval_T* b)
     }
 
     return 0;
+}
+
+void
+tlval_exp_print(tlval_T* t, char* openc, char* closec)
+{
+    psout(openc);
+    for(size_t i = 0; i < t->counter; i++)
+    {
+        tlval_print(t->cell[i]);
+
+        if(i != (t->counter - 1))
+            psout(" ");
+    }
+    psout(closec);
+}
+
+void
+tlval_num_print(float n)
+{
+    if(isfint(n))
+    {
+        printf("%ld", (long)round(n));
+    }
+    else
+    {
+        printf("%f", n);
+    }
+}
+
+void
+tlval_print(tlval_T* t)
+{
+    switch(t->type)
+    {
+        case TLVAL_FUN:
+            if(t->builtin)
+            {
+                psout("<function>");
+            }
+            else
+            {
+                psout("(lambda ");
+                tlval_print(t->formals);
+                psout(" ");
+                tlval_print(t->body);
+                psout(")");
+            }
+            break;
+
+        case TLVAL_NUM:
+            tlval_num_print(t->number);
+            break;
+
+        case TLVAL_STR:
+            printf("\"%s\"", t->string);
+            break;
+
+        case TLVAL_ERR:
+            printf("Error: %s.", t->error);
+            break;
+
+        case TLVAL_SYM:
+            printf("%s", t->symbol);
+            break;
+
+        case TLVAL_QEXPR:
+            tlval_exp_print(t, "{", "}");
+            break;
+
+        case TLVAL_SEXPR:
+            tlval_exp_print(t, "(", ")");
+            break;
+    }
 }

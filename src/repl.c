@@ -31,57 +31,16 @@
 #include <signal.h>
 
 #include "repl.h"
+#include "builtin.h"
 #include "eval.h"
 #include "fmt.h"
 #include "parser.h"
 
 
 static void interrupt(int sign);
-static void tl_print(tlval_T* t);
-static void tl_sexp_print(tlval_T* t, char* openc, char* closec);
 static char* prompt();
 
 static tlenv_T* env;
-
-
-int
-main(void)
-{
-    signal(SIGINT, interrupt);
-
-    printf("%s: version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
-    psout("press CTRL+c to exit");
-
-    env = tlenv_new();
-    tlenv_init(env);
-    parser_init();
-
-    for(;;)
-    {
-        char* input = prompt();
-
-        mpc_result_t r;
-        if(mpc_parse("<stdin>", input, Lisp, &r))
-        {
-            tlval_T* t = tlval_eval(env, tlval_read(r.output));
-
-            psout("=> ");
-            tl_print(t);
-            tlval_del(t);
-
-            mpc_ast_delete(r.output);
-        }
-        else
-        {
-            mpc_err_print(r.error);
-            mpc_err_delete(r.error);
-        }
-
-        free(input);
-    }
-
-    return 0;
-}
 
 static void
 interrupt(int sign)
@@ -104,75 +63,55 @@ prompt()
     return input;
 }
 
-static void
-tl_sexp_print(tlval_T* t, char* openc, char* closec)
+int
+main(int argc, char** argv)
 {
-    psout(openc);
-    for(size_t i = 0; i < t->counter; i++)
-    {
-        tl_print(t->cell[i]);
+    signal(SIGINT, interrupt);
 
-        if(i != (t->counter - 1))
-            psout(" ");
-    }
-    psout(closec);
-}
+    env = tlenv_new();
+    tlenv_init(env);
+    parser_init();
 
-static void
-tl_num_print(float n)
-{
-    if(isfint(n))
+    if(argc < 2)
     {
-        printf("%ld", (long)round(n));
-    }
-    else
-    {
-        printf("%f", n);
-    }
-}
+        printf("%s: version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+        psout("press CTRL+c to exit");
 
-static void
-tl_print(tlval_T* t)
-{
-    switch(t->type)
-    {
-        case TLVAL_FUN:
-            if(t->builtin)
+        while(1)
+        {
+            char* input = prompt();
+
+            mpc_result_t r;
+            if(mpc_parse("<stdin>", input, Lisp, &r))
             {
-                psout("<function>");
+                tlval_T* t = tlval_eval(env, tlval_read(r.output));
+
+                psout("=> ");
+                tlval_print(t);
+                tlval_del(t);
+
+                mpc_ast_delete(r.output);
             }
             else
             {
-                psout("(lambda ");
-                tl_print(t->formals);
-                psout(" ");
-                tl_print(t->body);
-                psout(")");
+                mpc_err_print(r.error);
+                mpc_err_delete(r.error);
             }
-            break;
 
-        case TLVAL_NUM:
-            tl_num_print(t->number);
-            break;
-
-        case TLVAL_STR:
-            printf("\"%s\"", t->string);
-            break;
-
-        case TLVAL_ERR:
-            printf("Error: %s.", t->error);
-            break;
-
-        case TLVAL_SYM:
-            printf("%s", t->symbol);
-            break;
-
-        case TLVAL_QEXPR:
-            tl_sexp_print(t, "{", "}");
-            break;
-
-        case TLVAL_SEXPR:
-            tl_sexp_print(t, "(", ")");
-            break;
+            free(input);
+        }
     }
+
+    for(int i = 1; i < argc; i++)
+    {
+        tlval_T* args = tlval_add(tlval_sexpr(), tlval_str(argv[i]));
+        tlval_T* res  = btinfn_load(env, args);
+
+        if(res->type == TLVAL_ERR)
+            tlval_print(res);
+
+        tlval_del(res);
+    }
+
+    return 0;
 }
