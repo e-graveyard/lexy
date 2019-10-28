@@ -547,6 +547,36 @@ btinfn_if(tlenv_T* env, tlval_T* args)
     return v;
 }
 
+
+tlval_T*
+btinfn_print(tlenv_T* env, tlval_T* args)
+{
+    for(size_t i = 0; i < args->counter; i++)
+    {
+        tlval_print(args->cell[i]);
+        putchar(' ');
+    }
+
+    putchar('\n');
+    tlval_del(args);
+
+    return tlval_sexpr();
+}
+
+
+tlval_T*
+btinfn_error(tlenv_T* env, tlval_T* args)
+{
+    TLASSERT_NUM("error", args, 1);
+    TLASSERT_TYPE("error", args, 0, TLVAL_STR);
+
+    tlval_T* err = tlval_err(args->cell[0]->string);
+
+    tlval_del(args);
+    return err;
+}
+
+
 tlval_T*
 btinfn_load(tlenv_T* env, tlval_T* args)
 {

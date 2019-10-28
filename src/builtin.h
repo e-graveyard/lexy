@@ -29,5 +29,7 @@ tlval_T* btinfn_cmp_eq (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_cmp_ne (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_if     (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_load   (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_error  (tlenv_T* env, tlval_T* args);
+tlval_T* btinfn_print  (tlenv_T* env, tlval_T* args);
 
 #endif
