@@ -30,8 +30,9 @@
 
 #include <math.h>
 
-#include "fmt.h"
 #include "builtin.h"
+#include "fmt.h"
+#include "parser.h"
 
 
 void     tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value);
@@ -39,6 +40,7 @@ void     tlenv_putg    (tlenv_T* env, tlval_T* var, tlval_T* value);
 char*    tltype_nrepr  (int type);
 void     tlval_del     (tlval_T* v);
 int      tlval_eq      (tlval_T* a, tlval_T* b);
+void     tlval_print   (tlval_T* t);
 tlval_T* tlval_num     (float n);
 tlval_T* tlval_err     (const char* fmt, ...);
 tlval_T* tlval_eval    (tlenv_T* env, tlval_T* value);
@@ -47,6 +49,7 @@ tlval_T* tlval_lambda  (tlval_T* formals, tlval_T* body);
 tlval_T* tlval_pop     (tlval_T* t, size_t i);
 tlval_T* tlval_sexpr   (void);
 tlval_T* tlval_take    (tlval_T* t, size_t i);
+tlval_T* tlval_read    (mpc_ast_t* t);
 tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
 
 
@@ -542,4 +545,43 @@ btinfn_if(tlenv_T* env, tlval_T* args)
 
     tlval_del(args);
     return v;
+}
+
+tlval_T*
+btinfn_load(tlenv_T* env, tlval_T* args)
+{
+    TLASSERT_NUM("load", args, 1);
+    TLASSERT_TYPE("load", args, 0, TLVAL_STR);
+
+    mpc_result_t r;
+    if(mpc_parse_contents(args->cell[0]->string, Lisp, &r))
+    {
+        tlval_T* expr = tlval_read(r.output);
+        mpc_ast_delete(r.output);
+
+        while(expr->counter)
+        {
+            tlval_T* e = tlval_eval(env, tlval_pop(expr, 0));
+            if(e->type == TLVAL_ERR)
+                tlval_print(e);
+
+            tlval_del(e);
+        }
+
+        tlval_del(expr);
+        tlval_del(args);
+
+        return tlval_sexpr();
+    }
+    else
+    {
+        char* err_msg = mpc_err_string(r.error);
+        mpc_err_delete(r.error);
+
+        tlval_T* err = tlval_err("Could not load library %s", err_msg);
+        tlval_del(args);
+        free(err_msg);
+
+        return err;
+    }
 }
