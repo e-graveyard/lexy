@@ -958,7 +958,7 @@ tlval_print(tlval_T* t)
             break;
 
         case TLVAL_STR:
-            printf("\"%s\"", t->string);
+            printf("%s", t->string);
             break;
 
         case TLVAL_ERR:
