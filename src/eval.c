@@ -334,13 +334,13 @@ tlenv_init(tlenv_T* env)
     tlenv_incb(env, "lambda", btinfn_lambda);
     tlenv_incb(env, "error",  btinfn_error);
     tlenv_incb(env, "print",  btinfn_print);
-    tlenv_incb(env, ">",      btinfn_cmp_gt);
-    tlenv_incb(env, ">=",     btinfn_cmp_ge);
-    tlenv_incb(env, "<",      btinfn_cmp_lt);
-    tlenv_incb(env, "<=",     btinfn_cmp_le);
-    tlenv_incb(env, "==",     btinfn_cmp_eq);
-    tlenv_incb(env, "!=",     btinfn_cmp_ne);
     tlenv_incb(env, "if",     btinfn_if);
+    tlenv_incb(env, "eq",     btinfn_cmp_eq);
+    tlenv_incb(env, "ne",     btinfn_cmp_ne);
+    tlenv_incb(env, "gt",     btinfn_cmp_gt);
+    tlenv_incb(env, "ge",     btinfn_cmp_ge);
+    tlenv_incb(env, "lt",     btinfn_cmp_lt);
+    tlenv_incb(env, "le",     btinfn_cmp_le);
 }
 
 
