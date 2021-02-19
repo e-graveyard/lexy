@@ -531,8 +531,8 @@ btinfn_if(tlenv_T* env, tlval_T* args)
     TLASSERT_TYPE("if", args, 2, TLVAL_QEXPR);
 
     tlval_T* v;
-    args->cell[0]->type = TLVAL_SEXPR;
     args->cell[1]->type = TLVAL_SEXPR;
+    args->cell[2]->type = TLVAL_SEXPR;
 
     if(args->cell[0]->number)
     {
