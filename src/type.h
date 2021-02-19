@@ -9,7 +9,8 @@
 #define TLERR_BAD_NUM          "invalid number"
 #define TLERR_DIV_ZERO         "division by zero"
 #define TLERR_UNBOUND_SYM      "unbound symbol '%s'"
-#define TLERR_UNBOUND_VARIADIC "function format invalid. Symbol '&' not followed by single symbol"
+#define TLERR_UNBOUND_VARIADIC \
+    "function format invalid. Symbol '&' not followed by single symbol"
 
 // ...
 struct tlval_S;

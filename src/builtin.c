@@ -89,16 +89,16 @@ builtin_eq(tlenv_T* env, tlval_T* args, char* op)
 {
     TLASSERT_NUM(op, args, 2);
 
-    int r;
+    float r;
 
-    if(strequ(op, "=="))
+    if(strequ(op, "eq"))
         r = tlval_eq(args->cell[0], args->cell[1]);
 
-    if(strequ(op, "!="))
+    if(strequ(op, "ne"))
         r = !tlval_eq(args->cell[0], args->cell[1]);
 
     tlval_del(args);
-    return tlval_num((float)r);
+    return tlval_num(r);
 }
 
 
@@ -114,16 +114,16 @@ builtin_order(tlenv_T* env, tlval_T* args, char* op)
 
     float r;
 
-    if(strequ(op, ">"))
+    if(strequ(op, "gt"))
         r = (args->cell[0]->number > args->cell[1]->number);
 
-    if(strequ(op, ">="))
+    if(strequ(op, "ge"))
         r = (args->cell[0]->number >= args->cell[1]->number);
 
-    if(strequ(op, "<"))
+    if(strequ(op, "lt"))
         r = (args->cell[0]->number < args->cell[1]->number);
 
-    if(strequ(op, "<="))
+    if(strequ(op, "le"))
         r = (args->cell[0]->number <= args->cell[1]->number);
 
     tlval_del(args);
@@ -206,7 +206,7 @@ builtin_numop(tlenv_T* env, tlval_T* args, const char* op)
 tlval_T*
 btinfn_cmp_gt(tlenv_T* env, tlval_T* args)
 {
-    return builtin_order(env, args, ">");
+    return builtin_order(env, args, "gt");
 }
 
 
@@ -216,7 +216,7 @@ btinfn_cmp_gt(tlenv_T* env, tlval_T* args)
 tlval_T*
 btinfn_cmp_ge(tlenv_T* env, tlval_T* args)
 {
-    return builtin_order(env, args, ">=");
+    return builtin_order(env, args, "ge");
 }
 
 
@@ -226,7 +226,7 @@ btinfn_cmp_ge(tlenv_T* env, tlval_T* args)
 tlval_T*
 btinfn_cmp_lt(tlenv_T* env, tlval_T* args)
 {
-    return builtin_order(env, args, "<");
+    return builtin_order(env, args, "lt");
 }
 
 
@@ -236,7 +236,7 @@ btinfn_cmp_lt(tlenv_T* env, tlval_T* args)
 tlval_T*
 btinfn_cmp_le(tlenv_T* env, tlval_T* args)
 {
-    return builtin_order(env, args, "<=");
+    return builtin_order(env, args, "le");
 }
 
 
@@ -246,7 +246,7 @@ btinfn_cmp_le(tlenv_T* env, tlval_T* args)
 tlval_T*
 btinfn_cmp_eq(tlenv_T* env, tlval_T* args)
 {
-    return builtin_eq(env, args, "==");
+    return builtin_eq(env, args, "eq");
 }
 
 
@@ -256,7 +256,7 @@ btinfn_cmp_eq(tlenv_T* env, tlval_T* args)
 tlval_T*
 btinfn_cmp_ne(tlenv_T* env, tlval_T* args)
 {
-    return builtin_eq(env, args, "!=");
+    return builtin_eq(env, args, "ne");
 }
 
 
@@ -530,18 +530,12 @@ btinfn_if(tlenv_T* env, tlval_T* args)
     TLASSERT_TYPE("if", args, 1, TLVAL_QEXPR);
     TLASSERT_TYPE("if", args, 2, TLVAL_QEXPR);
 
-    tlval_T* v;
     args->cell[1]->type = TLVAL_SEXPR;
     args->cell[2]->type = TLVAL_SEXPR;
 
-    if(args->cell[0]->number)
-    {
-        v = tlval_eval(env, tlval_pop(args, 1));
-    }
-    else
-    {
-        v = tlval_eval(env, tlval_pop(args, 2));
-    }
+    tlval_T* v = args->cell[0]->number
+        ? tlval_eval(env, tlval_pop(args, 1))
+        : tlval_eval(env, tlval_pop(args, 2));
 
     tlval_del(args);
     return v;
@@ -603,15 +597,13 @@ btinfn_load(tlenv_T* env, tlval_T* args)
 
         return tlval_sexpr();
     }
-    else
-    {
-        char* err_msg = mpc_err_string(r.error);
-        mpc_err_delete(r.error);
 
-        tlval_T* err = tlval_err("Could not load library %s", err_msg);
-        tlval_del(args);
-        free(err_msg);
+    char* err_msg = mpc_err_string(r.error);
+    mpc_err_delete(r.error);
 
-        return err;
-    }
+    tlval_T* err = tlval_err("Could not load library %s", err_msg);
+    tlval_del(args);
+    free(err_msg);
+
+    return err;
 }

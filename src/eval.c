@@ -105,37 +105,14 @@ tltype_nrepr(int type)
 {
     switch(type)
     {
-        case TLVAL_FUN:
-            return "Function";
-            break;
-
-        case TLVAL_NUM:
-            return "Number";
-            break;
-
-        case TLVAL_STR:
-            return "String";
-            break;
-
-        case TLVAL_ERR:
-            return "Error";
-            break;
-
-        case TLVAL_SYM:
-            return "Symbol";
-            break;
-
-        case TLVAL_SEXPR:
-            return "S-Expression";
-            break;
-
-        case TLVAL_QEXPR:
-            return "Q-Expression";
-            break;
-
-        default:
-            return "Undefined";
-            break;
+        case TLVAL_FUN:   return "Function";
+        case TLVAL_NUM:   return "Number";
+        case TLVAL_STR:   return "String";
+        case TLVAL_ERR:   return "Error";
+        case TLVAL_SYM:   return "Symbol";
+        case TLVAL_SEXPR: return "S-Expression";
+        case TLVAL_QEXPR: return "Q-Expression";
+        default:          return "Undefined";
     }
 }
 
@@ -154,6 +131,7 @@ tlval_T*
 tlval_fun(tlbtin func)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
+
     v->type = TLVAL_FUN;
     v->builtin = func;
 
@@ -170,6 +148,7 @@ tlval_T*
 tlval_lambda(tlval_T* formals, tlval_T* body)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
+
     v->type = TLVAL_FUN;
     v->builtin = NULL;
     v->environ = tlenv_new();
@@ -189,6 +168,7 @@ tlval_T*
 tlval_num(float n)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
+
     v->type = TLVAL_NUM;
     v->number = n;
 
@@ -200,6 +180,7 @@ tlval_T*
 tlval_str(char* s)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
+
     v->type = TLVAL_STR;
     v->string = malloc(strlen(s) + 1);
     strcpy(v->string, s);
@@ -241,6 +222,7 @@ tlval_T*
 tlval_sym(const char* s)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
+
     v->type = TLVAL_SYM;
     v->symbol = malloc(strlen(s) + 1);
     strcpy(v->symbol, s);
@@ -258,6 +240,7 @@ tlval_T*
 tlval_sexpr(void)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
+
     v->type = TLVAL_SEXPR;
     v->counter = 0;
     v->cell = NULL;
@@ -275,6 +258,7 @@ tlval_T*
 tlval_qexpr(void)
 {
     tlval_T* v = malloc(sizeof(struct tlval_S));
+
     v->type = TLVAL_QEXPR;
     v->counter = 0;
     v->cell = NULL;
@@ -434,8 +418,8 @@ tlenv_get(tlenv_T* env, tlval_T* val)
 
     if(env->parent)
         return tlenv_get(env->parent, val);
-    else
-        return tlval_err(TLERR_UNBOUND_SYM, val->symbol);
+
+    return tlval_err(TLERR_UNBOUND_SYM, val->symbol);
 }
 
 
@@ -653,6 +637,7 @@ tlval_copy(tlval_T* val)
 
             for(size_t i = 0; i < nval->counter; i++)
                 nval->cell[i] = tlval_copy(val->cell[i]);
+
             break;
     }
 
@@ -738,7 +723,6 @@ tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
             if(func->formals->counter != 1)
             {
                 tlval_del(args);
-
                 return tlval_err(TLERR_UNBOUND_VARIADIC);
             }
 
@@ -780,14 +764,10 @@ tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
     if(func->formals->counter == 0)
     {
         func->environ->parent = env;
+        return btinfn_eval(func->environ, tlval_add(tlval_sexpr(), tlval_copy(func->body)));
+    }
 
-        return btinfn_eval(func->environ,
-                tlval_add(tlval_sexpr(), tlval_copy(func->body)));
-    }
-    else
-    {
-        return tlval_copy(func);
-    }
+    return tlval_copy(func);
 }
 
 
@@ -866,28 +846,17 @@ int tlval_eq(tlval_T* a, tlval_T* b)
 
     switch(a->type)
     {
-        case TLVAL_NUM:
-            return (a->number == b->number);
-
-        case TLVAL_STR:
-            return strequ(a->string, b->string);
-
-        case TLVAL_ERR:
-            return strequ(a->error, b->error);
-
-        case TLVAL_SYM:
-            return strequ(a->symbol, b->symbol);
+        case TLVAL_NUM: return (a->number == b->number);
+        case TLVAL_STR: return strequ(a->string, b->string);
+        case TLVAL_ERR: return strequ(a->error, b->error);
+        case TLVAL_SYM: return strequ(a->symbol, b->symbol);
 
         case TLVAL_FUN:
             if(a->builtin || b->builtin)
-            {
                 return a->builtin == b->builtin;
-            }
             else
-            {
                 return tlval_eq(a->formals, b->formals) &&
                        tlval_eq(a->body, b->body);
-            }
 
         case TLVAL_QEXPR:
         case TLVAL_SEXPR:
@@ -895,10 +864,8 @@ int tlval_eq(tlval_T* a, tlval_T* b)
                 return 0;
 
             for(size_t i = 0; i < a->counter; i++)
-            {
                 if(!tlval_eq(a->cell[i], b->cell[i]))
                     return 0;
-            }
 
             return 1;
     }
@@ -926,11 +893,10 @@ tlval_num_print(float n)
     if(isfint(n))
     {
         printf("%ld", (long)round(n));
+        return;
     }
-    else
-    {
-        printf("%f", n);
-    }
+
+    printf("%f", n);
 }
 
 void

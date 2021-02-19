@@ -46,9 +46,7 @@ static void
 interrupt(int sign)
 {
     free(env);
-    mpc_cleanup(8,
-            Number, String, Comment, Symbol,
-            SExpr, QExpr, Atom, Lisp);
+    mpc_cleanup(8, Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
 
     exit(0);
 }

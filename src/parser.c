@@ -44,17 +44,15 @@ parser_init()
     Lisp    = mpc_new("lisp");
 
     mpca_lang(MPCA_LANG_DEFAULT,
+        " number  : /-?[0-9]+\\.?[0-9]*/ ;             "
+        " string  : /\"(\\\\.|[^\"])*\"/ ;             "
+        " comment : /;[^\\r\\n]*/ ;                    "
+        " symbol  : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ; "
+        " sexpr   :  '(' <atom>* ')' ;                 "
+        " qexpr   :  '{' <atom>* '}' ;                 "
+        " atom    :  <number> | <string> | <symbol> |  "
+        "            <sexpr>  | <qexpr>  | <comment> ; "
+        " lisp    :  /^/ <atom>* /$/ ;                 ",
 
-            " number  : /-?[0-9]+\\.?[0-9]*/ ;             "
-            " string  : /\"(\\\\.|[^\"])*\"/ ;             "
-            " comment : /;[^\\r\\n]*/ ;                    "
-            " symbol  : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ; "
-            " sexpr   :  '(' <atom>* ')' ;                 "
-            " qexpr   :  '{' <atom>* '}' ;                 "
-            " atom    :  <number> | <string> | <symbol> |  "
-            "            <sexpr>  | <qexpr>  | <comment> ; "
-            " lisp    :  /^/ <atom>* /$/ ;                 ",
-
-            Number, String, Comment, Symbol,
-            SExpr, QExpr, Atom, Lisp);
+        Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
 }
