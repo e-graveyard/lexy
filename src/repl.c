@@ -72,7 +72,7 @@ main(int argc, char** argv)
 
     if(argc < 2)
     {
-        printf("%s: version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+        printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
         psout("press CTRL+c to exit");
 
         while(1)

@@ -30,4 +30,4 @@ void add_history(char* unused) {}
 
 #define PROGRAM_NAME      "tmul"
 #define PROGRAM_VERSION   "v0.1.0"
-#define PROMPT_DISPLAY    PROGRAM_NAME " > "
+#define PROMPT_DISPLAY    " ] "
