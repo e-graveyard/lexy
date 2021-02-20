@@ -2,13 +2,13 @@
 #include <stdlib.h>
 
 
-#define PROGRAM_NAME      "tmul"
-#define PROGRAM_VERSION   "v0.1.0"
-#define PROMPT_DISPLAY    " ] "
+#define PROGRAM_NAME    "tmul"
+#define PROGRAM_VERSION "v0.1.0"
+#define PROMPT_DISPLAY  " ] "
 
 void start_repl();
 
-// If we are compiling on Windows...
+/* If we are compiling on Windows... */
 #ifdef _WIN32
 #include <string.h>
 
@@ -28,7 +28,7 @@ char* readline(char* prompt)
 
 void add_history(char* unused) {}
 
-// Otherwise, include the 'editline' headers.
+/* Otherwise, include the 'editline' headers. */
 #else
 #include <editline/readline.h>
 #endif

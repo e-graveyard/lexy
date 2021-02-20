@@ -712,8 +712,8 @@ tlval_call(tlenv_T* env, tlval_T* func, tlval_T* args)
         {
             tlval_del(args);
             return tlval_err(
-                    "function has taken too many arguments."
-                    "Got %lu, expected %lu", given, total);
+                "function has taken too many arguments."
+                "Got %lu, expected %lu", given, total);
         }
 
         tlval_T* symbol = tlval_pop(func->formals, 0);
@@ -822,9 +822,9 @@ tlval_evsexp(tlenv_T* env, tlval_T* val)
     if(element->type != TLVAL_FUN)
     {
         tlval_T* err = tlval_err(
-                    "S-Expression start with incorrect type. "
-                    "Got '%s', expected '%s'.",
-                    tltype_nrepr(element->type), tltype_nrepr(TLVAL_FUN));
+            "S-Expression start with incorrect type. "
+            "Got '%s', expected '%s'.",
+            tltype_nrepr(element->type), tltype_nrepr(TLVAL_FUN));
 
         tlval_del(val);
         tlval_del(element);

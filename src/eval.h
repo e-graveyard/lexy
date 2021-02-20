@@ -7,7 +7,6 @@
 
 #define ERROR_MESSAGE_BYTE_LENGTH 512
 
-// ...
 int      tlval_eq    (tlval_T* a, tlval_T* b);
 void     tlval_print (tlval_T* t);
 void     tlenv_init  (tlenv_T* env);

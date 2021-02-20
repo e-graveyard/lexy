@@ -63,22 +63,22 @@ tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
 
 #define TLASSERT_TYPE(fname, args, index, expect) \
     TLASSERT(args, (args->cell[index]->type == expect), \
-            "function '%s' has taken an incorrect type at argument %i. " \
-            "Got '%s', expected '%s'", \
-            fname, (index + 1), tltype_nrepr(args->cell[index]->type), tltype_nrepr(expect))
+        "function '%s' has taken an incorrect type at argument %i. " \
+        "Got '%s', expected '%s'", \
+        fname, (index + 1), tltype_nrepr(args->cell[index]->type), tltype_nrepr(expect))
 
 
 #define TLASSERT_NUM(fname, args, num) \
     TLASSERT(args, (args->counter == num), \
-            "function '%s' has taken an incorrect number of arguments. " \
-            "Got %i, expected %i", \
-            fname, args->counter, num);
+        "function '%s' has taken an incorrect number of arguments. " \
+        "Got %i, expected %i", \
+        fname, args->counter, num);
 
 
 #define TLASSERT_NOT_EMPTY(fname, args, index) \
     TLASSERT(args, (args->cell[index]->counter != 0), \
-            "function '%s' has taken nil value for argument %i", \
-            fname, index);
+        "function '%s' has taken nil value for argument %i", \
+        fname, index);
 
 
 /**
@@ -473,15 +473,15 @@ btinfn_define(tlenv_T* env, tlval_T* qexpr, const char* fn)
     for(size_t i = 0; i < symbols->counter; i++)
     {
         TLASSERT(qexpr, (symbols->cell[i]->type == TLVAL_SYM),
-                "function '%s' cannot define non-symbol. "
-                "Got '%s', expected '%s'.", fn,
-                tltype_nrepr(symbols->cell[i]->type), tltype_nrepr(TLVAL_SYM));
+            "function '%s' cannot define non-symbol. "
+            "Got '%s', expected '%s'.", fn,
+            tltype_nrepr(symbols->cell[i]->type), tltype_nrepr(TLVAL_SYM));
     }
 
     TLASSERT(qexpr, (symbols->counter == (qexpr->counter - 1)),
-            "function '%s' has taken too many arguments. "
-            "Got %i, expected %i.", fn,
-            symbols->counter, qexpr->counter);
+        "function '%s' has taken too many arguments. "
+        "Got %i, expected %i.", fn,
+        symbols->counter, qexpr->counter);
 
     for(size_t i = 0; i < symbols->counter; i++)
     {
@@ -509,9 +509,9 @@ btinfn_lambda(tlenv_T* env, tlval_T* qexpr)
         int type = qexpr->cell[0]->cell[i]->type;
 
         TLASSERT(qexpr, (type == TLVAL_SYM),
-                "Cannot define non-symbol. "
-                "Got '%s', expected '%s'.",
-                tltype_nrepr(type), tltype_nrepr(TLVAL_SYM));
+            "Cannot define non-symbol. "
+            "Got '%s', expected '%s'.",
+            tltype_nrepr(type), tltype_nrepr(TLVAL_SYM));
     }
 
     tlval_T* formals = tlval_pop(qexpr, 0);
