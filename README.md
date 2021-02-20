@@ -30,7 +30,8 @@ Own Lisp](http://www.buildyourownlisp.com/) book.
 
 ## Significant improvements
 
-*TODO*
+- code modularization
+- new math-related builtin functions such as `pow`, `sqrt` and `mod`
 
 ## Getting started
 
