@@ -56,3 +56,9 @@ parser_init()
 
         Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
 }
+
+void
+parser_cleanup()
+{
+    mpc_cleanup(8, Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
+}

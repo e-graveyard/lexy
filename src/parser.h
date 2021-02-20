@@ -14,5 +14,6 @@ mpc_parser_t* Atom;
 mpc_parser_t* Lisp;
 
 void parser_init();
+void parser_cleanup();
 
 #endif

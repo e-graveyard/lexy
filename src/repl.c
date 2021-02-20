@@ -28,88 +28,43 @@
 
  */
 
-#include <signal.h>
-
-#include "repl.h"
-#include "builtin.h"
 #include "eval.h"
 #include "fmt.h"
 #include "parser.h"
+#include "repl.h"
+#include "type.h"
 
 
-static void interrupt(int sign);
-static char* prompt();
-
-static tlenv_T* env;
-
-static void
-interrupt(int sign)
+void
+start_repl(tlenv_T* env)
 {
-    free(env);
-    mpc_cleanup(8, Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
+    printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+    psout("press CTRL+c to exit");
 
-    exit(0);
-}
-
-static char*
-prompt()
-{
-    psout("\n\n");
-    char* input = readline(PROMPT_DISPLAY);
-    add_history(input);
-
-    return input;
-}
-
-int
-main(int argc, char** argv)
-{
-    signal(SIGINT, interrupt);
-
-    env = tlenv_new();
-    tlenv_init(env);
-    parser_init();
-
-    if(argc < 2)
+    while(1)
     {
-        printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
-        psout("press CTRL+c to exit");
+        psout("\n\n");
 
-        while(1)
+        char* input = readline(PROMPT_DISPLAY);
+        add_history(input);
+
+        mpc_result_t r;
+        if(mpc_parse("<stdin>", input, Lisp, &r))
         {
-            char* input = prompt();
+            tlval_T* t = tlval_eval(env, tlval_read(r.output));
 
-            mpc_result_t r;
-            if(mpc_parse("<stdin>", input, Lisp, &r))
-            {
-                tlval_T* t = tlval_eval(env, tlval_read(r.output));
+            psout("=> ");
+            tlval_print(t);
+            tlval_del(t);
 
-                psout("=> ");
-                tlval_print(t);
-                tlval_del(t);
-
-                mpc_ast_delete(r.output);
-            }
-            else
-            {
-                mpc_err_print(r.error);
-                mpc_err_delete(r.error);
-            }
-
-            free(input);
+            mpc_ast_delete(r.output);
         }
+        else
+        {
+            mpc_err_print(r.error);
+            mpc_err_delete(r.error);
+        }
+
+        free(input);
     }
-
-    for(int i = 1; i < argc; i++)
-    {
-        tlval_T* args = tlval_add(tlval_sexpr(), tlval_str(argv[i]));
-        tlval_T* res  = btinfn_load(env, args);
-
-        if(res->type == TLVAL_ERR)
-            tlval_print(res);
-
-        tlval_del(res);
-    }
-
-    return 0;
 }
