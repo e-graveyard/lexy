@@ -18,10 +18,8 @@ struct tlenv_S;
 typedef struct tlval_S tlval_T;
 typedef struct tlenv_S tlenv_T;
 
-
 // Function pointer definition
 typedef tlval_T* (*tlbtin)(tlenv_T*, tlval_T*);
-
 
 // Representation of a value (number, sexpr, qexpr...)
 struct tlval_S
@@ -42,7 +40,6 @@ struct tlval_S
     tlval_T** cell;
 };
 
-
 // Representation of an environment
 struct tlenv_S
 {
@@ -52,7 +49,6 @@ struct tlenv_S
     tlval_T** values;
     tlenv_T* parent;
 };
-
 
 // Enumeration of TL value types
 typedef enum tltype
