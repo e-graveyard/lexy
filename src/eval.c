@@ -299,6 +299,7 @@ tlenv_new(void)
 void
 tlenv_init(tlenv_T* env)
 {
+    /* math operations */
     tlenv_incb(env, "add",    btinfn_add);
     tlenv_incb(env, "sub",    btinfn_sub);
     tlenv_incb(env, "mul",    btinfn_mul);
@@ -308,16 +309,14 @@ tlenv_init(tlenv_T* env)
     tlenv_incb(env, "max",    btinfn_max);
     tlenv_incb(env, "min",    btinfn_min);
     tlenv_incb(env, "sqrt",   btinfn_sqrt);
-    tlenv_incb(env, "let",    btinfn_let);
-    tlenv_incb(env, "global", btinfn_global);
+
+    /* list operations */
     tlenv_incb(env, "head",   btinfn_head);
     tlenv_incb(env, "tail",   btinfn_tail);
     tlenv_incb(env, "list",   btinfn_list);
     tlenv_incb(env, "join",   btinfn_join);
-    tlenv_incb(env, "eval",   btinfn_eval);
-    tlenv_incb(env, "lambda", btinfn_lambda);
-    tlenv_incb(env, "error",  btinfn_error);
-    tlenv_incb(env, "print",  btinfn_print);
+
+    /* logical operators */
     tlenv_incb(env, "if",     btinfn_if);
     tlenv_incb(env, "eq",     btinfn_cmp_eq);
     tlenv_incb(env, "ne",     btinfn_cmp_ne);
@@ -325,6 +324,17 @@ tlenv_init(tlenv_T* env)
     tlenv_incb(env, "ge",     btinfn_cmp_ge);
     tlenv_incb(env, "lt",     btinfn_cmp_lt);
     tlenv_incb(env, "le",     btinfn_cmp_le);
+
+    /* variables declatation */
+    tlenv_incb(env, "let",    btinfn_let);
+    tlenv_incb(env, "global", btinfn_global);
+
+    /* functions, output etc */
+    tlenv_incb(env, "use",    btinfn_load);
+    tlenv_incb(env, "eval",   btinfn_eval);
+    tlenv_incb(env, "lambda", btinfn_lambda);
+    tlenv_incb(env, "error",  btinfn_error);
+    tlenv_incb(env, "print",  btinfn_print);
 }
 
 

@@ -574,11 +574,11 @@ btinfn_error(tlenv_T* env, tlval_T* args)
 tlval_T*
 btinfn_load(tlenv_T* env, tlval_T* args)
 {
-    TLASSERT_NUM("load", args, 1);
-    TLASSERT_TYPE("load", args, 0, TLVAL_STR);
+    TLASSERT_NUM("use", args, 1);
+    TLASSERT_TYPE("use", args, 0, TLVAL_STR);
 
     mpc_result_t r;
-    if(mpc_parse_contents(args->cell[0]->string, Lisp, &r))
+    if(mpc_parse_contents(strcat(args->cell[0]->string, ".lisp"), Lisp, &r))
     {
         tlval_T* expr = tlval_read(r.output);
         mpc_ast_delete(r.output);
