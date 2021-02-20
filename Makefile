@@ -40,7 +40,7 @@ test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
 		&& ./$@; true \
 		&& rm $@
 
-test-tmul: $(PTEST) $(MPC) $(filter-out src/repl.c, $(TMUL_FILES)) $(TMUL_TEST_FILES)
+test-tmul: $(PTEST) $(MPC) $(filter-out src/tmul.c, $(TMUL_FILES)) $(TMUL_TEST_FILES)
 	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
 		&& ./$@; true \
 		&& rm $@
