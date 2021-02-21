@@ -30,8 +30,9 @@ Own Lisp](http://www.buildyourownlisp.com/) book.
 
 ## Significant improvements
 
-- code modularization
-- new math-related builtin functions such as `pow`, `sqrt` and `mod`
+1. code modularization
+1. new math-related builtin functions such as `pow`, `sqrt` and `mod`
+1. constant and dynamic variables (`letc` and `let` respectively)
 
 ## Getting started
 
