@@ -12,6 +12,7 @@ void     tlval_print (tlval_T* t);
 void     tlenv_init  (tlenv_T* env);
 void     tlval_del   (tlval_T* v);
 tlenv_T* tlenv_new   (void);
+tlval_T* tlval_new   (void);
 tlval_T* tlval_sexpr (void);
 tlval_T* tlval_read  (mpc_ast_t* t);
 tlval_T* tlval_add   (tlval_T* v, tlval_T* x);

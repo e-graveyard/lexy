@@ -33,14 +33,16 @@
 #include "builtin.h"
 #include "fmt.h"
 #include "parser.h"
+#include "type.h"
 
 
-void     tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value);
-void     tlenv_putg    (tlenv_T* env, tlval_T* var, tlval_T* value);
+tlval_T* tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value, boolean freezed);
+tlval_T* tlenv_putg    (tlenv_T* env, tlval_T* var, tlval_T* value, boolean freezed);
 char*    tltype_nrepr  (int type);
 void     tlval_del     (tlval_T* v);
 int      tlval_eq      (tlval_T* a, tlval_T* b);
 void     tlval_print   (tlval_T* t);
+tlval_T* tlval_new     (void);
 tlval_T* tlval_num     (float n);
 tlval_T* tlval_err     (const char* fmt, ...);
 tlval_T* tlval_eval    (tlenv_T* env, tlval_T* value);
@@ -457,9 +459,23 @@ btinfn_let(tlenv_T* env, tlval_T* qexpr)
 
 
 tlval_T*
+btinfn_letc(tlenv_T* env, tlval_T* qexpr)
+{
+    return btinfn_define(env, qexpr, "letc");
+}
+
+
+tlval_T*
 btinfn_global(tlenv_T* env, tlval_T* qexpr)
 {
     return btinfn_define(env, qexpr, "global");
+}
+
+
+tlval_T*
+btinfn_globalc(tlenv_T* env, tlval_T* qexpr)
+{
+    return btinfn_define(env, qexpr, "globalc");
 }
 
 
@@ -485,11 +501,23 @@ btinfn_define(tlenv_T* env, tlval_T* qexpr, const char* fn)
 
     for(size_t i = 0; i < symbols->counter; i++)
     {
+        tlval_T* p;
+
         if(strequ(fn, "let"))
-            tlenv_putg(env, symbols->cell[i], qexpr->cell[i + 1]);
+            p = tlenv_put(env, symbols->cell[i], qexpr->cell[i + 1], TLVAL_DYNAMIC);
+
+        if(strequ(fn, "letc"))
+            p = tlenv_put(env, symbols->cell[i], qexpr->cell[i + 1], TLVAL_CONSTANT);
 
         if(strequ(fn, "global"))
-            tlenv_put(env, symbols->cell[i], qexpr->cell[i + 1]);
+            p = tlenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], TLVAL_DYNAMIC);
+
+        if(strequ(fn, "globalc"))
+            p = tlenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], TLVAL_CONSTANT);
+
+        if (p->type == TLVAL_ERR) {
+            return p;
+        }
     }
 
     tlval_del(qexpr);

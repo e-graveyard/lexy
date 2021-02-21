@@ -4,13 +4,18 @@
 #include <stdlib.h>
 
 
+/* ... */
+#define true 1
+#define false 0
+typedef unsigned short int boolean;
+
 /* TL function error */
-#define TLERR_NOT_A_FUNC       "first element is not a function"
-#define TLERR_BAD_NUM          "invalid number"
-#define TLERR_DIV_ZERO         "division by zero"
-#define TLERR_UNBOUND_SYM      "unbound symbol '%s'"
+#define TLERR_BAD_NUM     "invalid number"
+#define TLERR_DIV_ZERO    "division by zero"
+#define TLERR_UNBOUND_SYM "unbound symbol '%s'"
 #define TLERR_UNBOUND_VARIADIC \
     "function format invalid. Symbol '&' not followed by single symbol"
+
 
 struct tlval_S;
 struct tlenv_S;
@@ -19,6 +24,28 @@ typedef struct tlenv_S tlenv_T;
 
 /* Function pointer definition */
 typedef tlval_T* (*tlbtin)(tlenv_T*, tlval_T*);
+
+/* Enumeration of TL value types */
+typedef enum tltype
+{
+    TLVAL_FUN,
+    TLVAL_NUM,
+    TLVAL_STR,
+    TLVAL_ERR,
+    TLVAL_SYM,
+    TLVAL_SEXPR,
+    TLVAL_QEXPR
+}
+tltype_E;
+
+/* ... */
+typedef enum tlcond
+{
+    TLVAL_UNSET,
+    TLVAL_CONSTANT,
+    TLVAL_DYNAMIC
+}
+tlcond_E;
 
 /* Representation of a value (number, sexpr, qexpr...) */
 struct tlval_S
@@ -29,6 +56,7 @@ struct tlval_S
     char* symbol;
     char* string;
     float number;
+    tlcond_E condition;
 
     tlval_T* body;
     tlval_T* formals;
@@ -48,18 +76,5 @@ struct tlenv_S
     tlval_T** values;
     tlenv_T* parent;
 };
-
-/* Enumeration of TL value types */
-typedef enum tltype
-{
-    TLVAL_FUN,
-    TLVAL_NUM,
-    TLVAL_STR,
-    TLVAL_ERR,
-    TLVAL_SYM,
-    TLVAL_SEXPR,
-    TLVAL_QEXPR
-}
-tltype_E;
 
 #endif
