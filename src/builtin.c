@@ -57,7 +57,7 @@ tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
 
 #define TLASSERT(args, cond, fmt, ...) \
     if(!cond) { \
-        tlval_T* err = tlval_err(fmt, ##__VA_ARGS__); \
+        tlval_T* err = tlval_err(fmt, __VA_ARGS__); \
         tlval_del(args); \
         return err; \
     }
