@@ -1,25 +1,25 @@
 ; boolean types
-(let {true} 1)
-(let {false} 0)
+(letc {true} 1)
+(letc {false} 0)
 
 ; aliases
-(let {+} add)
-(let {-} sub)
-(let {*} mul)
-(let {/} div)
+(letc {+} add)
+(letc {-} sub)
+(letc {*} mul)
+(letc {/} div)
 
 ; function definition
-(let {fn}
+(letc {fn}
   (lambda {args body}
     {let (head args) (lambda (tail args) body)}))
 
 ; currying
-(let {unpack}
+(letc {unpack}
   (lambda {f args} {eval (join (list f) args)}))
 
-(let {curry} unpack)
+(letc {curry} unpack)
 
-(let {pack}
+(letc {pack}
   (lambda {f & xs} {f xs}))
 
-(let {uncurry} pack)
+(letc {uncurry} pack)
