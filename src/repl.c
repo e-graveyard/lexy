@@ -29,7 +29,6 @@
  */
 
 #include "eval.h"
-#include "fmt.h"
 #include "parser.h"
 #include "repl.h"
 #include "type.h"
@@ -39,11 +38,11 @@ void
 start_repl(tlenv_T* env)
 {
     printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
-    psout("press CTRL+c to exit");
+    printf("press CTRL+c to exit\n");
 
     while(1)
     {
-        psout("\n\n");
+        printf("\n");
 
         char* input = readline(PROMPT_DISPLAY);
         add_history(input);
@@ -53,10 +52,11 @@ start_repl(tlenv_T* env)
         {
             tlval_T* t = tlval_eval(env, tlval_read(r.output));
 
-            psout("=> ");
+            printf("=> ");
             tlval_print(t);
-            tlval_del(t);
+            printf("\n");
 
+            tlval_del(t);
             mpc_ast_delete(r.output);
         }
         else

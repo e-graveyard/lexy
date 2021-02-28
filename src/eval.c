@@ -845,7 +845,7 @@ tlval_evsexp(tlenv_T* env, tlval_T* val)
         return val;
 
     if(val->counter == 1)
-        return tlval_take(val, 0);
+        return tlval_eval(env, tlval_take(val, 0));
 
     tlval_T* element = tlval_pop(val, 0);
     if(element->type != TLVAL_FUN)
@@ -905,27 +905,24 @@ int tlval_eq(tlval_T* a, tlval_T* b)
 void
 tlval_exp_print(tlval_T* t, char* openc, char* closec)
 {
-    psout(openc);
+    printf("%s", openc);
     for(size_t i = 0; i < t->counter; i++)
     {
         tlval_print(t->cell[i]);
 
         if(i != (t->counter - 1))
-            psout(" ");
+            printf(" ");
     }
-    psout(closec);
+    printf("%s", closec);
 }
 
 void
 tlval_num_print(float n)
 {
     if(isfint(n))
-    {
         printf("%ld", (long)round(n));
-        return;
-    }
-
-    printf("%f", n);
+    else
+        printf("%f", n);
 }
 
 void
@@ -936,15 +933,15 @@ tlval_print(tlval_T* t)
         case TLVAL_FUN:
             if(t->builtin)
             {
-                psout("<builtin>");
+                printf("<builtin>");
                 return;
             }
 
-            psout("(lambda ");
+            printf("(lambda ");
             tlval_print(t->formals);
-            psout(" ");
+            printf(" ");
             tlval_print(t->body);
-            psout(")");
+            printf(")");
             break;
 
         case TLVAL_NUM:
