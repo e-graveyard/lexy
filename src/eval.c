@@ -40,7 +40,7 @@
 tlenv_T* tlenv_copy   (tlenv_T* env);
 void     tlenv_del    (tlenv_T* e);
 tlval_T* tlenv_get    (tlenv_T* env, tlval_T* val);
-void     tlenv_incb   (tlenv_T* env, const char* name, tlbtin func);
+void     tlenv_incb   (tlenv_T* env, char* fname, char* fdescr, tlbtin fref);
 void     tlenv_init   (tlenv_T* env);
 tlenv_T* tlenv_new    (void);
 tlval_T* tlenv_put    (tlenv_T* env, tlval_T* var, tlval_T* value, tlcond_E cond);
@@ -53,7 +53,7 @@ void     tlval_del    (tlval_T* v);
 tlval_T* tlval_err    (const char* fmt, ...);
 tlval_T* tlval_eval   (tlenv_T* env, tlval_T* value);
 tlval_T* tlval_evsexp (tlenv_T* env, tlval_T* val);
-tlval_T* tlval_fun    (tlbtin func);
+tlval_T* tlval_fun    (char* name, char* description, tlbtin func);
 tlval_T* tlval_join   (tlval_T* x, tlval_T* y);
 tlval_T* tlval_lambda (tlval_T* formals, tlval_T* body);
 tlval_T* tlval_num    (float n);
@@ -141,11 +141,18 @@ tlval_T* tlval_new(void)
  * Constructs a pointer to a new TL function representation.
  */
 tlval_T*
-tlval_fun(tlbtin func)
+tlval_fun(char* name, char* description, tlbtin func)
 {
     tlval_T* v = tlval_new();
     v->type    = TLVAL_FUN;
     v->builtin = func;
+
+    v->btin_meta = malloc(sizeof(struct tlbtin_meta_S));
+    v->btin_meta->name = malloc(strlen(name) + 1);
+    v->btin_meta->description = malloc(strlen(description) + 1);
+
+    strcpy(v->btin_meta->name, name);
+    strcpy(v->btin_meta->description, description);
 
     return v;
 }
@@ -306,43 +313,43 @@ void
 tlenv_init(tlenv_T* env)
 {
     /* math operations */
-    tlenv_incb(env, "add",  btinfn_add);
-    tlenv_incb(env, "sub",  btinfn_sub);
-    tlenv_incb(env, "mul",  btinfn_mul);
-    tlenv_incb(env, "div",  btinfn_div);
-    tlenv_incb(env, "mod",  btinfn_mod);
-    tlenv_incb(env, "pow",  btinfn_pow);
-    tlenv_incb(env, "max",  btinfn_max);
-    tlenv_incb(env, "min",  btinfn_min);
-    tlenv_incb(env, "sqrt", btinfn_sqrt);
+    tlenv_incb(env, "add",  BTIN_ADD_DESCR,  btinfn_add);
+    tlenv_incb(env, "sub",  BTIN_SUB_DESCR,  btinfn_sub);
+    tlenv_incb(env, "mul",  BTIN_MUL_DESCR,  btinfn_mul);
+    tlenv_incb(env, "div",  BTIN_DIV_DESCR,  btinfn_div);
+    tlenv_incb(env, "mod",  BTIN_MOD_DESCR,  btinfn_mod);
+    tlenv_incb(env, "pow",  BTIN_POW_DESCR,  btinfn_pow);
+    tlenv_incb(env, "max",  BTIN_MAX_DESCR,  btinfn_max);
+    tlenv_incb(env, "min",  BTIN_MIN_DESCR,  btinfn_min);
+    tlenv_incb(env, "sqrt", BTIN_SQRT_DESCR, btinfn_sqrt);
 
     /* list operations */
-    tlenv_incb(env, "head", btinfn_head);
-    tlenv_incb(env, "tail", btinfn_tail);
-    tlenv_incb(env, "list", btinfn_list);
-    tlenv_incb(env, "join", btinfn_join);
+    tlenv_incb(env, "head", BTIN_HEAD_DESCR, btinfn_head);
+    tlenv_incb(env, "tail", BTIN_TAIL_DESCR, btinfn_tail);
+    tlenv_incb(env, "list", BTIN_LIST_DESCR, btinfn_list);
+    tlenv_incb(env, "join", BTIN_JOIN_DESCR, btinfn_join);
 
     /* logical operators */
-    tlenv_incb(env, "if", btinfn_if);
-    tlenv_incb(env, "eq", btinfn_cmp_eq);
-    tlenv_incb(env, "ne", btinfn_cmp_ne);
-    tlenv_incb(env, "gt", btinfn_cmp_gt);
-    tlenv_incb(env, "ge", btinfn_cmp_ge);
-    tlenv_incb(env, "lt", btinfn_cmp_lt);
-    tlenv_incb(env, "le", btinfn_cmp_le);
+    tlenv_incb(env, "if", BTIN_IF_DESCR, btinfn_if);
+    tlenv_incb(env, "eq", BTIN_EQ_DESCR, btinfn_cmp_eq);
+    tlenv_incb(env, "ne", BTIN_NE_DESCR, btinfn_cmp_ne);
+    tlenv_incb(env, "gt", BTIN_GT_DESCR, btinfn_cmp_gt);
+    tlenv_incb(env, "ge", BTIN_GE_DESCR, btinfn_cmp_ge);
+    tlenv_incb(env, "lt", BTIN_LT_DESCR, btinfn_cmp_lt);
+    tlenv_incb(env, "le", BTIN_LE_DESCR, btinfn_cmp_le);
 
     /* variables declatation */
-    tlenv_incb(env, "let",     btinfn_let);
-    tlenv_incb(env, "letc",    btinfn_letc);
-    tlenv_incb(env, "global",  btinfn_global);
-    tlenv_incb(env, "globalc", btinfn_globalc);
+    tlenv_incb(env, "let",     BTIN_LET_DESCR,     btinfn_let);
+    tlenv_incb(env, "letc",    BTIN_LETC_DESCR,    btinfn_letc);
+    tlenv_incb(env, "global",  BTIN_GLOBAL_DESCR,  btinfn_global);
+    tlenv_incb(env, "globalc", BTIN_GLOBALC_DESCR, btinfn_globalc);
 
     /* functions, output etc */
-    tlenv_incb(env, "use",    btinfn_load);
-    tlenv_incb(env, "eval",   btinfn_eval);
-    tlenv_incb(env, "lambda", btinfn_lambda);
-    tlenv_incb(env, "error",  btinfn_error);
-    tlenv_incb(env, "print",  btinfn_print);
+    tlenv_incb(env, "use",    BTIN_USE_DESCR,    btinfn_load);
+    tlenv_incb(env, "eval",   BTIN_EVAL_DESCR,   btinfn_eval);
+    tlenv_incb(env, "lambda", BTIN_LAMBDA_DESCR, btinfn_lambda);
+    tlenv_incb(env, "error",  BTIN_ERROR_DESCR,  btinfn_error);
+    tlenv_incb(env, "print",  BTIN_PRINT_DESCR,  btinfn_print);
 }
 
 
@@ -350,10 +357,10 @@ tlenv_init(tlenv_T* env)
  * tlenv_incbin - TL environment include built-in
  */
 void
-tlenv_incb(tlenv_T* env, const char* fname, tlbtin fref)
+tlenv_incb(tlenv_T* env, char* fname, char* fdescr, tlbtin fref)
 {
     tlval_T* symb = tlval_sym(fname);
-    tlval_T* func = tlval_fun(fref);
+    tlval_T* func = tlval_fun(fname, fdescr, fref);
     tlenv_put(env, symb, func, TLVAL_CONSTANT);
 
     tlval_del(symb);
@@ -630,6 +637,7 @@ tlval_copy(tlval_T* val)
             if(val->builtin)
             {
                 nval->builtin = val->builtin;
+                nval->btin_meta = val->btin_meta;
             }
             else
             {
@@ -933,7 +941,7 @@ tlval_print(tlval_T* t)
         case TLVAL_FUN:
             if(t->builtin)
             {
-                printf("<builtin>");
+                printf("<builtin(%s): %s>", t->btin_meta->name, t->btin_meta->description);
                 return;
             }
 
