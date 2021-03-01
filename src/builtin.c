@@ -36,25 +36,6 @@
 #include "type.h"
 
 
-tlval_T* tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value, tlcond_E cond);
-tlval_T* tlenv_putg    (tlenv_T* env, tlval_T* var, tlval_T* value, tlcond_E cond);
-char*    tltype_nrepr  (int type);
-void     tlval_del     (tlval_T* v);
-int      tlval_eq      (tlval_T* a, tlval_T* b);
-void     tlval_print   (tlval_T* t);
-tlval_T* tlval_new     (void);
-tlval_T* tlval_num     (double n);
-tlval_T* tlval_err     (const char* fmt, ...);
-tlval_T* tlval_eval    (tlenv_T* env, tlval_T* value);
-tlval_T* tlval_join    (tlval_T* x, tlval_T* y);
-tlval_T* tlval_lambda  (tlval_T* formals, tlval_T* body);
-tlval_T* tlval_pop     (tlval_T* t, size_t i);
-tlval_T* tlval_sexpr   (void);
-tlval_T* tlval_take    (tlval_T* t, size_t i);
-tlval_T* tlval_read    (mpc_ast_t* t);
-tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
-
-
 #define TLASSERT(args, cond, fmt, ...) \
     if(!cond) { \
         tlval_T* err = tlval_err(fmt, __VA_ARGS__); \
@@ -81,6 +62,25 @@ tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
     TLASSERT(args, (args->cell[index]->counter != 0), \
         "function '%s' has taken nil value for argument %i", \
         fname, index);
+
+
+tlval_T* tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value, tlcond_E cond);
+tlval_T* tlenv_putg    (tlenv_T* env, tlval_T* var, tlval_T* value, tlcond_E cond);
+char*    tltype_nrepr  (int type);
+void     tlval_del     (tlval_T* v);
+int      tlval_eq      (tlval_T* a, tlval_T* b);
+void     tlval_print   (tlval_T* t);
+tlval_T* tlval_new     (void);
+tlval_T* tlval_num     (double n);
+tlval_T* tlval_err     (const char* fmt, ...);
+tlval_T* tlval_eval    (tlenv_T* env, tlval_T* value);
+tlval_T* tlval_join    (tlval_T* x, tlval_T* y);
+tlval_T* tlval_lambda  (tlval_T* formals, tlval_T* body);
+tlval_T* tlval_pop     (tlval_T* t, size_t i);
+tlval_T* tlval_sexpr   (void);
+tlval_T* tlval_take    (tlval_T* t, size_t i);
+tlval_T* tlval_read    (mpc_ast_t* t);
+tlval_T* btinfn_define (tlenv_T* env, tlval_T* qexpr, const char* fn);
 
 
 /**

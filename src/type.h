@@ -10,8 +10,10 @@ typedef struct tlval_S tlval_T;
 typedef struct tlenv_S tlenv_T;
 typedef struct tlbtin_meta_S tlbtin_meta_T;
 
+
 /* function pointer definition */
 typedef tlval_T* (*tlbtin)(tlenv_T*, tlval_T*);
+
 
 /* enumeration of tl value types */
 typedef enum tltype
@@ -26,6 +28,7 @@ typedef enum tltype
 }
 tltype_E;
 
+
 /* ... */
 typedef enum tlcond
 {
@@ -35,12 +38,14 @@ typedef enum tlcond
 }
 tlcond_E;
 
+
 /* ... */
 struct tlbtin_meta_S
 {
     char* name;
     char* description;
 };
+
 
 /* representation of a value (number, sexpr, qexpr...) */
 struct tlval_S
@@ -62,6 +67,7 @@ struct tlval_S
     size_t counter;
     tlval_T** cell;
 };
+
 
 /* representation of an environment */
 struct tlenv_S

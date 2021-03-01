@@ -34,9 +34,6 @@
 #include "type.h"
 
 
-/*
- * ---------- PROTOTYPES ----------
- */
 tlenv_T* tlenv_copy   (tlenv_T* env);
 void     tlenv_del    (tlenv_T* e);
 tlval_T* tlenv_get    (tlenv_T* env, tlval_T* val);
@@ -67,7 +64,6 @@ tlval_T* tlval_sym    (const char* s);
 tlval_T* tlval_take   (tlval_T* t, size_t i);
 tlval_T* tlval_str    (char* s);
 
-/* built-in functions */
 tlval_T* btinfn_add     (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_div     (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_eval    (tlenv_T* env, tlval_T* qexpr);

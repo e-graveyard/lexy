@@ -8,11 +8,12 @@
 
 void start_repl();
 
-/* If we are compiling on Windows... */
 #ifdef _WIN32
 #include <string.h>
 
 static char buffer[2048];
+
+void add_history(char* unused) {}
 
 char* readline(char* prompt)
 {
@@ -26,9 +27,7 @@ char* readline(char* prompt)
     return cpy;
 }
 
-void add_history(char* unused) {}
-
-/* Otherwise, include the 'editline' headers. */
 #else
 #include <editline/readline.h>
+
 #endif

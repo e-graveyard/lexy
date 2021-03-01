@@ -297,13 +297,10 @@ ht_delete(ht_index_T* t, const char* k)
     size_t iter = 1;
     while(i != NULL)
     {
-        if(i != &HT_DELETED_ITEM)
+        if(i != &HT_DELETED_ITEM && strcmp(i->key, k) == 0)
         {
-            if(strcmp(i->key, k) == 0)
-            {
-                hti_del(i);
-                t->items[idx] = &HT_DELETED_ITEM;
-            }
+            hti_del(i);
+            t->items[idx] = &HT_DELETED_ITEM;
         }
 
         idx = ht_get_hidx(k, t->size, iter);
