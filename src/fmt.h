@@ -3,11 +3,11 @@
 
 
 /* maximum tolerance value for what constitutes a "whole number" */
-#define INTEGER_FLOAT_EPSILON 0.000001f
+#define INTEGER_FLOAT_EPSILON 0.000001
 
 /* prototypes */
 unsigned short int strequ(const char* ref, const char* txt);
-unsigned short int isfint(float f);
+unsigned short int isvint(double f);
 void psout(const char* txt);
 
 #endif

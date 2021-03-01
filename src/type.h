@@ -50,7 +50,7 @@ struct tlval_S
     char* error;
     char* symbol;
     char* string;
-    float number;
+    double number;
     tlcond_E condition;
 
     tlval_T* body;

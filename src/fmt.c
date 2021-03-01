@@ -36,24 +36,24 @@
 
 
 /**
- * strequ - String equality
+ * strequ - string equality
  *
- * Compares the equality of two string values.
+ * compares the equality of two string values
  */
 unsigned short int
 strequ(const char* ref, const char* txt)
 {
-    return (strcmp(ref, txt) == 0);
+    return strcmp(ref, txt) == 0;
 }
 
 
 /**
- * isfint - Is float integer
+ * isvint - is value an integer
  *
- * Checks if a given float number is a round, integer number.
+ * checks if a given double value is a round, integer number
  */
 unsigned short int
-isfint(const float f)
+isvint(const double f)
 {
-    return (fabsf(roundf(f) - f) <= INTEGER_FLOAT_EPSILON);
+    return fabs(roundf(f) - f) <= INTEGER_FLOAT_EPSILON;
 }

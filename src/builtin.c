@@ -43,7 +43,7 @@ void     tlval_del     (tlval_T* v);
 int      tlval_eq      (tlval_T* a, tlval_T* b);
 void     tlval_print   (tlval_T* t);
 tlval_T* tlval_new     (void);
-tlval_T* tlval_num     (float n);
+tlval_T* tlval_num     (double n);
 tlval_T* tlval_err     (const char* fmt, ...);
 tlval_T* tlval_eval    (tlenv_T* env, tlval_T* value);
 tlval_T* tlval_join    (tlval_T* x, tlval_T* y);
@@ -91,7 +91,7 @@ builtin_eq(tlenv_T* env, tlval_T* args, char* op)
 {
     TLASSERT_NUM(op, args, 2);
 
-    float r;
+    double r;
 
     if(strequ(op, "eq"))
         r = tlval_eq(args->cell[0], args->cell[1]);
@@ -114,7 +114,7 @@ builtin_order(tlenv_T* env, tlval_T* args, char* op)
     TLASSERT_TYPE(op, args, 0, TLVAL_NUM);
     TLASSERT_TYPE(op, args, 1, TLVAL_NUM);
 
-    float r;
+    double r;
 
     if(strequ(op, "gt"))
         r = (args->cell[0]->number > args->cell[1]->number);

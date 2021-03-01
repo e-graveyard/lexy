@@ -56,7 +56,7 @@ tlval_T* tlval_evsexp (tlenv_T* env, tlval_T* val);
 tlval_T* tlval_fun    (char* name, char* description, tlbtin func);
 tlval_T* tlval_join   (tlval_T* x, tlval_T* y);
 tlval_T* tlval_lambda (tlval_T* formals, tlval_T* body);
-tlval_T* tlval_num    (float n);
+tlval_T* tlval_num    (double n);
 tlval_T* tlval_pop    (tlval_T* t, size_t i);
 tlval_T* tlval_qexpr  (void);
 tlval_T* tlval_read   (mpc_ast_t* t);
@@ -183,7 +183,7 @@ tlval_lambda(tlval_T* formals, tlval_T* body)
  * Constructs a pointer to a new TL number representation.
  */
 tlval_T*
-tlval_num(float n)
+tlval_num(double n)
 {
     tlval_T* v = tlval_new();
     v->type    = TLVAL_NUM;
@@ -530,7 +530,7 @@ tlval_T*
 tlval_rnum(mpc_ast_t* t)
 {
     errno = 0;
-    float f = strtof(t->contents, NULL);
+    double f = strtof(t->contents, NULL);
 
     return (errno != ERANGE)
         ? tlval_num(f)
@@ -925,9 +925,9 @@ tlval_exp_print(tlval_T* t, char* openc, char* closec)
 }
 
 void
-tlval_num_print(float n)
+tlval_num_print(double n)
 {
-    if(isfint(n))
+    if(isvint(n))
         printf("%ld", (long)round(n));
     else
         printf("%f", n);
