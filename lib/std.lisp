@@ -56,19 +56,19 @@
 
 ; NOT gate
 (fn {not x}
-  { if (or (== x true) (== x false))
-    { - true x }
+  { if (ge (sub 1 x) 1)
+    { true }
     { false } })
 
 ; OR gate
 (fn {or x y}
-  { if (>= (+ x y) 1)
+  { if (ge (add x y) 1)
     { true }
     { false } })
 
 ; AND gate
 (fn {and x y}
-  { if (>= (* x y) 1)
+  { if (ge (mul x y) 1)
     { true }
     { false } })
 
@@ -91,15 +91,15 @@
 
 ; get the length of a list
 (fn {len-of l}
-  { if (== l empty)
+  { if (eq l empty)
     { 0 }
-    { + 1 (len-of (tail l)) } })
+    { add 1 (len-of (tail l)) } })
 
 ; get the Nth value of a list
 (fn {nth-of l n}
-  { if (<= n 0)
+  { if (le n 0)
     { first-of l }
-    { nth-of (tail l) (- n 1) } })
+    { nth-of (tail l) (sub n 1) } })
 
 ; first value of a list
 (fn {first-of l}  { eval (head l) })
@@ -111,16 +111,16 @@
 (fn {third-of l}  { eval (head (tail (tail l))) })
 
 ; last value of a list
-(fn {last-of l}   { nth-of l (- (len-of l) 1) })
+(fn {last-of l}   { nth-of l (sub (len-of l) 1) })
 
 ; take the first N values of a list
 (fn {take-start-of l n}
-  { if (== n 0)
+  { if (eq n 0)
     { empty }
-    { join (head l) (take-start-of (tail l) (- n 1)) } })
+    { join (head l) (take-start-of (tail l) (sub n 1)) } })
 
 ; drop the first N values of a list
 (fn {drop-start-of l n}
-  { if (== n 0)
+  { if (eq n 0)
     { l }
-    { drop-start-of (tail l) (- n 1) } })
+    { drop-start-of (tail l) (sub n 1) } })
