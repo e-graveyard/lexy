@@ -2,7 +2,6 @@
 .DEFAULT_GOAL := build
 
 CC = cc
-GDB = gdb
 
 CFLAGS = -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99
 LFLAGS = -ledit -lm
@@ -32,8 +31,14 @@ clean:
 	rm -f $(ARTIFACT)
 
 debug: CFLAGS += -g
+debug: clean
 debug: build
-	$(GDB) $(ARTIFACT)
+
+debug-gnu: debug
+	gdb $(ARTIFACT)
+
+debug-mac: debug
+	lldb $(ARTIFACT)
 
 test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
 	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
