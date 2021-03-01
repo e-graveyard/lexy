@@ -1,2 +1,5 @@
 # ignore the binary
 /tmul
+
+# debug information
+tmul.dSYM
