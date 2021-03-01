@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 #include "../ptest.h"
 #include "../../src/fmt.h"
 
@@ -9,8 +7,8 @@ test_strequ(void)
 {
     char* value = "Acme Inc.";
 
-    PT_ASSERT(strequ(value, "Acme Inc.") == true);
-    PT_ASSERT(strequ(value, "Acme Corp.") == false);
+    PT_ASSERT(strequ(value, "Acme Inc."));
+    PT_ASSERT(!strequ(value, "Acme Corp."));
 }
 
 static void
@@ -21,10 +19,10 @@ test_isfint(void)
           y = 0.999999,
           z = 0.9999991;
 
-    PT_ASSERT(isfint(w) == true);
-    PT_ASSERT(isfint(x) == false);
-    PT_ASSERT(isfint(y) == false);
-    PT_ASSERT(isfint(z) == true);
+    PT_ASSERT(isvint(w));
+    PT_ASSERT(!isvint(x));
+    PT_ASSERT(!isvint(y));
+    PT_ASSERT(isvint(z));
 }
 
 void
@@ -33,7 +31,7 @@ suite_fmt(void)
     char* suite_name = "Suite 'fmt'";
 
     pt_add_test(test_strequ, "Test 'strequ'", suite_name);
-    pt_add_test(test_isfint, "Test 'isfint'", suite_name);
+    pt_add_test(test_isfint, "Test 'isvint'", suite_name);
 }
 
 
