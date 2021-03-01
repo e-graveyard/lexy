@@ -4,6 +4,7 @@
 #include "type.h"
 
 
+/* ----- */
 #define SEE_REF " | see: #"
 
 #define BTIN_ADD_DESCR     "mathematical addition operator"              SEE_REF "add"
@@ -36,6 +37,13 @@
 #define BTIN_ERROR_DESCR   "raises an exception"                         SEE_REF "error"
 #define BTIN_PRINT_DESCR   "sends a message to the STDOUT device"        SEE_REF "print"
 
+/* ----- */
+#define TLERR_BAD_NUM          "invalid number"
+#define TLERR_DIV_ZERO         "division by zero"
+#define TLERR_UNBOUND_SYM      "unbound symbol '%s'"
+#define TLERR_UNBOUND_VARIADIC "function format invalid. Symbol '&' not followed by single symbol"
+
+/* ----- */
 tlval_T* btinfn_add     (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_div     (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_eval    (tlenv_T* env, tlval_T* qexpr);

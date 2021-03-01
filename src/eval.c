@@ -67,7 +67,7 @@ tlval_T* tlval_sym    (const char* s);
 tlval_T* tlval_take   (tlval_T* t, size_t i);
 tlval_T* tlval_str    (char* s);
 
-// built-in functions
+/* built-in functions */
 tlval_T* btinfn_add     (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_div     (tlenv_T* env, tlval_T* args);
 tlval_T* btinfn_eval    (tlenv_T* env, tlval_T* qexpr);

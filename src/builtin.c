@@ -36,8 +36,8 @@
 #include "type.h"
 
 
-tlval_T* tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value, boolean freezed);
-tlval_T* tlenv_putg    (tlenv_T* env, tlval_T* var, tlval_T* value, boolean freezed);
+tlval_T* tlenv_put     (tlenv_T* env, tlval_T* var, tlval_T* value, tlcond_E cond);
+tlval_T* tlenv_putg    (tlenv_T* env, tlval_T* var, tlval_T* value, tlcond_E cond);
 char*    tltype_nrepr  (int type);
 void     tlval_del     (tlval_T* v);
 int      tlval_eq      (tlval_T* a, tlval_T* b);
@@ -140,7 +140,9 @@ tlval_T*
 builtin_numop(tlenv_T* env, tlval_T* args, const char* op)
 {
     for(size_t i = 0; i < args->counter; i++)
+    {
         TLASSERT_TYPE(op, args, i, TLVAL_NUM);
+    }
 
     tlval_T* xval = tlval_pop(args, 0);
 
@@ -561,9 +563,7 @@ btinfn_if(tlenv_T* env, tlval_T* args)
     args->cell[1]->type = TLVAL_SEXPR;
     args->cell[2]->type = TLVAL_SEXPR;
 
-    tlval_T* v = args->cell[0]->number
-        ? tlval_eval(env, tlval_pop(args, 1))
-        : tlval_eval(env, tlval_pop(args, 2));
+    tlval_T* v = tlval_eval(env, tlval_pop(args, args->cell[0]->number ? 1 : 2));
 
     tlval_del(args);
     return v;
@@ -578,10 +578,9 @@ btinfn_print(tlenv_T* env, tlval_T* args)
         tlval_print(args->cell[i]);
         putchar(' ');
     }
-
     putchar('\n');
-    tlval_del(args);
 
+    tlval_del(args);
     return tlval_sexpr();
 }
 
@@ -630,8 +629,8 @@ btinfn_load(tlenv_T* env, tlval_T* args)
     mpc_err_delete(r.error);
 
     tlval_T* err = tlval_err("Could not load library %s", err_msg);
-    tlval_del(args);
     free(err_msg);
 
+    tlval_del(args);
     return err;
 }

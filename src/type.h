@@ -4,29 +4,16 @@
 #include <stdlib.h>
 
 
-/* ... */
-#define true 1
-#define false 0
-typedef unsigned short int boolean;
-
-/* TL function error */
-#define TLERR_BAD_NUM     "invalid number"
-#define TLERR_DIV_ZERO    "division by zero"
-#define TLERR_UNBOUND_SYM "unbound symbol '%s'"
-#define TLERR_UNBOUND_VARIADIC \
-    "function format invalid. Symbol '&' not followed by single symbol"
-
-
 struct tlval_S;
 struct tlenv_S;
 typedef struct tlval_S tlval_T;
 typedef struct tlenv_S tlenv_T;
 typedef struct tlbtin_meta_S tlbtin_meta_T;
 
-/* Function pointer definition */
+/* function pointer definition */
 typedef tlval_T* (*tlbtin)(tlenv_T*, tlval_T*);
 
-/* Enumeration of TL value types */
+/* enumeration of tl value types */
 typedef enum tltype
 {
     TLVAL_FUN,
@@ -48,13 +35,14 @@ typedef enum tlcond
 }
 tlcond_E;
 
+/* ... */
 struct tlbtin_meta_S
 {
     char* name;
     char* description;
 };
 
-/* Representation of a value (number, sexpr, qexpr...) */
+/* representation of a value (number, sexpr, qexpr...) */
 struct tlval_S
 {
     int type;
@@ -75,7 +63,7 @@ struct tlval_S
     tlval_T** cell;
 };
 
-/* Representation of an environment */
+/* representation of an environment */
 struct tlenv_S
 {
     size_t counter;
