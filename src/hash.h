@@ -1,5 +1,5 @@
-#ifndef TMUL_BUILTIN
-#define TMUL_BUILTIN
+#ifndef LEXY_HASH
+#define LEXY_HASH
 
 
 struct ht_item_S;

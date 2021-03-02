@@ -7,7 +7,7 @@
 #include "type.h"
 
 
-tlenv_T* env;
+lenv_T* lexy_current_env;
 
 static void read_from_file(int argc, char** argv);
 static void interrupt(int sign);
@@ -18,12 +18,12 @@ main(int argc, char** argv)
 {
     signal(SIGINT, interrupt);
 
-    env = tlenv_new();
-    tlenv_init(env);
+    lexy_current_env = lenv_new();
+    lenv_init(lexy_current_env);
     parser_init();
 
     if(argc < 2)
-        start_repl(env);
+        start_repl(lexy_current_env);
     else
         read_from_file(argc, argv);
 
@@ -36,13 +36,13 @@ read_from_file(int argc, char** argv)
 {
     for(int i = 1; i < argc; i++)
     {
-        tlval_T* args = tlval_add(tlval_sexpr(), tlval_str(argv[i]));
-        tlval_T* res  = btinfn_load(env, args);
+        lval_T* args = lval_add(lval_sexpr(), lval_str(argv[i]));
+        lval_T* res  = btinfn_load(lexy_current_env, args);
 
-        if(res->type == TLVAL_ERR)
-            tlval_print(res);
+        if(res->type == LVAL_ERR)
+            lval_print(res);
 
-        tlval_del(res);
+        lval_del(res);
     }
 }
 
@@ -50,7 +50,7 @@ read_from_file(int argc, char** argv)
 static void
 interrupt(int sign)
 {
-    free(env);
+    free(lexy_current_env);
     parser_cleanup();
 
     exit(0);

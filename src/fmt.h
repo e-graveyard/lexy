@@ -1,5 +1,5 @@
-#ifndef TMUL_FMT
-#define TMUL_FMT
+#ifndef LEXY_FMT
+#define LEXY_FMT
 
 
 /* maximum tolerance value for what constitutes a "whole number" */

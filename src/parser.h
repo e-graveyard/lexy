@@ -1,5 +1,5 @@
-#ifndef TMUL_PARSER
-#define TMUL_PARSER
+#ifndef LEXY_PARSER
+#define LEXY_PARSER
 
 #include "mpc.h"
 

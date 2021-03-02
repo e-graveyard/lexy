@@ -35,7 +35,7 @@
 
 
 void
-start_repl(tlenv_T* env)
+start_repl(lenv_T* env)
 {
     printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
     printf("press CTRL+c to exit\n");
@@ -50,13 +50,13 @@ start_repl(tlenv_T* env)
         mpc_result_t r;
         if(mpc_parse("<stdin>", input, Lisp, &r))
         {
-            tlval_T* t = tlval_eval(env, tlval_read(r.output));
+            lval_T* t = lval_eval(env, lval_read(r.output));
 
             printf("=> ");
-            tlval_print(t);
+            lval_print(t);
             printf("\n");
 
-            tlval_del(t);
+            lval_del(t);
             mpc_ast_delete(r.output);
         }
         else

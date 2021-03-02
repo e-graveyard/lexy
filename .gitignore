@@ -1,5 +1,5 @@
 # ignore the binary
-/tmul
+/lexy
 
 # debug information
-tmul.dSYM
+lexy.dSYM

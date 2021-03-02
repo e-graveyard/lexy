@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y libedit-dev
 # -----
 FROM deps AS run
 
-WORKDIR tmul
-COPY --from=build tmul tmul
+WORKDIR lexy
+COPY --from=build lexy lexy
 COPY lib lib
-CMD ./tmul
+CMD ./lexy

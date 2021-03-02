@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 
-#define PROGRAM_NAME    "tmul"
+#define PROGRAM_NAME    "lexy"
 #define PROGRAM_VERSION "v0.1.0"
 #define PROMPT_DISPLAY  " ] "
 

@@ -1,16 +1,16 @@
 [![Build Status][travis-shield]][travis-url]
 [![Code Quality][lgtm-shield]][lgtm-url]
 
-[travis-shield]: https://travis-ci.org/caian-org/tmul.svg?branch=master
-[travis-url]: https://travis-ci.org/caian-org/tmul
+[travis-shield]: https://travis-ci.org/caian-org/lexy.svg?branch=master
+[travis-url]: https://travis-ci.org/caian-org/lexy
 
-[lgtm-shield]: https://img.shields.io/lgtm/grade/cpp/g/caian-org/tmul.svg?logo=lgtm&logoWidth=18
-[lgtm-url]: https://lgtm.com/projects/g/caian-org/tmul/context:cpp
+[lgtm-shield]: https://img.shields.io/lgtm/grade/cpp/g/caian-org/lexy.svg?logo=lgtm&logoWidth=18
+[lgtm-url]: https://lgtm.com/projects/g/caian-org/lexy/context:cpp
 
-# TMUL: tiny, made up lisp
+# LEXY: tiny, made up lisp
 
 
-This is the source code repository of `tmul`, a tiny implementation of a
+This is the source code repository of `lexy`, a tiny implementation of a
 Lisp-like language. It contains the interpreter, the REPL, the standard library
 as well the documentation.
 
@@ -39,7 +39,7 @@ Own Lisp](http://www.buildyourownlisp.com/) book.
 ### Build requirements
 
 `gcc` and `make` are required to compile. Additionally, the `editline` headers
-are used by Tmul. In Debian-based systems, the following command should install
+are used by lexy. In Debian-based systems, the following command should install
 all the necessary packages:
 
 ```sh
@@ -70,8 +70,8 @@ If you'd prefer to use Docker, you can build the image locally and run
 interactively.
 
 ```sh
-$ docker build -t tmul .
-$ docker run -it tmul
+$ docker build -t lexy .
+$ docker run -it lexy
 ```
 
 

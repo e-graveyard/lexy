@@ -1,46 +1,46 @@
-#ifndef TMUL_TYPE
-#define TMUL_TYPE
+#ifndef LEXY_TYPE
+#define LEXY_TYPE
 
 #include <stdlib.h>
 
 
-struct tlval_S;
-struct tlenv_S;
-typedef struct tlval_S tlval_T;
-typedef struct tlenv_S tlenv_T;
-typedef struct tlbtin_meta_S tlbtin_meta_T;
+struct lval_S;
+struct lenv_S;
+typedef struct lval_S lval_T;
+typedef struct lenv_S lenv_T;
+typedef struct lbtin_meta_S lbtin_meta_T;
 
 
 /* function pointer definition */
-typedef tlval_T* (*tlbtin)(tlenv_T*, tlval_T*);
+typedef lval_T* (*lbtin)(lenv_T*, lval_T*);
 
 
-/* enumeration of tl value types */
-typedef enum tltype
+/* enumeration of value types */
+typedef enum ltype
 {
-    TLVAL_FUN,
-    TLVAL_NUM,
-    TLVAL_STR,
-    TLVAL_ERR,
-    TLVAL_SYM,
-    TLVAL_SEXPR,
-    TLVAL_QEXPR
+    LVAL_FUN,
+    LVAL_NUM,
+    LVAL_STR,
+    LVAL_ERR,
+    LVAL_SYM,
+    LVAL_SEXPR,
+    LVAL_QEXPR
 }
-tltype_E;
+ltype_E;
 
 
 /* ... */
-typedef enum tlcond
+typedef enum lcond
 {
-    TLVAL_UNSET,
-    TLVAL_CONSTANT,
-    TLVAL_DYNAMIC
+    LVAL_UNSET,
+    LVAL_CONSTANT,
+    LVAL_DYNAMIC
 }
-tlcond_E;
+lcond_E;
 
 
 /* ... */
-struct tlbtin_meta_S
+struct lbtin_meta_S
 {
     char* name;
     char* description;
@@ -48,7 +48,7 @@ struct tlbtin_meta_S
 
 
 /* representation of a value (number, sexpr, qexpr...) */
-struct tlval_S
+struct lval_S
 {
     int type;
 
@@ -56,27 +56,27 @@ struct tlval_S
     char* symbol;
     char* string;
     double number;
-    tlcond_E condition;
+    lcond_E condition;
 
-    tlval_T* body;
-    tlval_T* formals;
-    tlenv_T* environ;
-    tlbtin builtin;
-    tlbtin_meta_T* btin_meta;
+    lval_T* body;
+    lval_T* formals;
+    lenv_T* environ;
+    lbtin builtin;
+    lbtin_meta_T* btin_meta;
 
     size_t counter;
-    tlval_T** cell;
+    lval_T** cell;
 };
 
 
 /* representation of an environment */
-struct tlenv_S
+struct lenv_S
 {
     size_t counter;
 
     char** symbols;
-    tlval_T** values;
-    tlenv_T* parent;
+    lval_T** values;
+    lenv_T* parent;
 };
 
 #endif

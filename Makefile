@@ -1,21 +1,21 @@
-.PHONY: test-mpc test-tmul
+.PHONY: test-mpc test-lexy
 .DEFAULT_GOAL := build
 
 CC = cc
 
 CFLAGS = -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99
 LFLAGS = -ledit -lm
-ARTIFACT = tmul
+ARTIFACT = lexy
 
 MPC = src/mpc.c
 PTEST = tests/ptest.c
 
-TMUL_FILES      = $(filter-out $(MPC), $(wildcard src/*.c))
+LEXY_FILES      = $(filter-out $(MPC), $(wildcard src/*.c))
 MPC_TEST_FILES  = $(wildcard tests/mpc/*.c)
-TMUL_TEST_FILES = $(wildcard tests/tmul/*.c)
+LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 
 
-build: $(MPC) $(TMUL_FILES)
+build: $(MPC) $(LEXY_FILES)
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
 
 install:
@@ -45,9 +45,9 @@ test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
 		&& ./$@; true \
 		&& rm $@
 
-test-tmul: $(PTEST) $(MPC) $(filter-out src/tmul.c, $(TMUL_FILES)) $(TMUL_TEST_FILES)
+test-lexy: $(PTEST) $(MPC) $(filter-out src/lexy.c, $(LEXY_FILES)) $(LEXY_TEST_FILES)
 	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
 		&& ./$@; true \
 		&& rm $@
 
-test: test-mpc test-tmul
+test: test-mpc test-lexy
