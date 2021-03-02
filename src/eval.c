@@ -388,8 +388,8 @@ lenv_put(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
     }
 
     env->counter++;
-    env->values = realloc(env->values, (sizeof(lval_T*) * env->counter));
-    env->symbols = realloc(env->symbols, (sizeof(char*) * env->counter));
+    env->values = realloc(env->values, sizeof(struct lval_S) * env->counter);
+    env->symbols = realloc(env->symbols, sizeof(char*) * env->counter);
 
     if (value->condition == LVAL_UNSET)
         value->condition = cond;
@@ -692,7 +692,7 @@ lval_pop(lval_T* t, size_t i)
     memmove(&t->cell[i], &t->cell[i + 1], (sizeof(lval_T*) * t->counter));
 
     t->counter--;
-    t->cell = realloc(t->cell, (sizeof(lval_T*) * t->counter));
+    t->cell = realloc(t->cell, (sizeof(struct lval_S) * t->counter));
 
     return v;
 }
