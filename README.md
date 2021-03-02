@@ -9,7 +9,6 @@
 
 # LEXY: tiny, made up lisp
 
-
 This is the source code repository of `lexy`, a tiny implementation of a
 Lisp-like language. It contains the interpreter, the REPL, the standard library
 as well the documentation.
@@ -33,6 +32,7 @@ Own Lisp](http://www.buildyourownlisp.com/) book.
 1. code modularization
 1. new math-related builtin functions such as `pow`, `sqrt` and `mod`
 1. constant and dynamic variables (`letc` and `let` respectively)
+
 
 ## Getting started
 
@@ -77,4 +77,11 @@ $ docker run -it lexy
 
 ## Roadmap
 
-*TODO*
+Expected improvements until the next release (`v0.1.0`):
+
+1. [ ] Command-line arguments (help, eval string etc)
+1. [ ] REPL improvements (colors, keywords)
+1. [ ] Environment symbol lookup using hash tables
+1. [ ] Hashmap built-in type
+1. [ ] Hashmap operations
+1. [ ] Tests
