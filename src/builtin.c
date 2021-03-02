@@ -184,14 +184,14 @@ builtin_numop(lenv_T* env, lval_T* args, const char* op)
 
         if(strequ(op, "min"))
         {
-            xval->number = (xval->number > yval->number)
+            xval->number = xval->number > yval->number
                 ? yval->number
                 : xval->number;
         }
 
         if(strequ(op, "max"))
         {
-            xval->number = (xval->number > yval->number)
+            xval->number = xval->number > yval->number
                 ? xval->number
                 : yval->number;
         }

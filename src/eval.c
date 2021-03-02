@@ -112,7 +112,7 @@ ltype_nrepr(int type)
         case LVAL_SYM:   return "Symbol";
         case LVAL_SEXPR: return "S-Expression";
         case LVAL_QEXPR: return "Q-Expression";
-        default:          return "Undefined";
+        default:         return "Undefined";
     }
 }
 
@@ -124,7 +124,7 @@ ltype_nrepr(int type)
 
 lval_T* lval_new(void)
 {
-    lval_T* v   = malloc(sizeof(struct lval_S));
+    lval_T* v    = malloc(sizeof(struct lval_S));
     v->condition = LVAL_UNSET;
 
     return v;
@@ -139,7 +139,7 @@ lval_T* lval_new(void)
 lval_T*
 lval_fun(char* name, char* description, lbtin func)
 {
-    lval_T* v = lval_new();
+    lval_T* v  = lval_new();
     v->type    = LVAL_FUN;
     v->builtin = func;
 
@@ -162,7 +162,7 @@ lval_fun(char* name, char* description, lbtin func)
 lval_T*
 lval_lambda(lval_T* formals, lval_T* body)
 {
-    lval_T* v = lval_new();
+    lval_T* v  = lval_new();
     v->type    = LVAL_FUN;
     v->builtin = NULL;
     v->formals = formals;
@@ -182,8 +182,8 @@ lval_T*
 lval_num(double n)
 {
     lval_T* v = lval_new();
-    v->type    = LVAL_NUM;
-    v->number  = n;
+    v->type   = LVAL_NUM;
+    v->number = n;
 
     return v;
 }
@@ -193,8 +193,8 @@ lval_T*
 lval_str(char* s)
 {
     lval_T* v = lval_new();
-    v->type    = LVAL_STR;
-    v->string  = malloc(strlen(s) + 1);
+    v->type   = LVAL_STR;
+    v->string = malloc(strlen(s) + 1);
 
     strcpy(v->string, s);
     return v;
@@ -210,7 +210,7 @@ lval_T*
 lval_err(const char* fmt, ...)
 {
     lval_T* v = lval_new();
-    v->type    = LVAL_ERR;
+    v->type   = LVAL_ERR;
 
     va_list va;
     va_start(va, fmt);
@@ -234,8 +234,8 @@ lval_T*
 lval_sym(const char* s)
 {
     lval_T* v = lval_new();
-    v->type    = LVAL_SYM;
-    v->symbol  = malloc(strlen(s) + 1);
+    v->type   = LVAL_SYM;
+    v->symbol = malloc(strlen(s) + 1);
 
     strcpy(v->symbol, s);
     return v;
@@ -250,7 +250,7 @@ lval_sym(const char* s)
 lval_T*
 lval_sexpr(void)
 {
-    lval_T* v = lval_new();
+    lval_T* v  = lval_new();
     v->type    = LVAL_SEXPR;
     v->counter = 0;
     v->cell    = NULL;
@@ -267,7 +267,7 @@ lval_sexpr(void)
 lval_T*
 lval_qexpr(void)
 {
-    lval_T* v = lval_new();
+    lval_T* v  = lval_new();
     v->type    = LVAL_QEXPR;
     v->counter = 0;
     v->cell    = NULL;
@@ -388,13 +388,13 @@ lenv_put(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
     }
 
     env->counter++;
-    env->values = realloc(env->values, sizeof(struct lval_S) * env->counter);
+    env->values  = realloc(env->values, sizeof(struct lval_S) * env->counter);
     env->symbols = realloc(env->symbols, sizeof(char*) * env->counter);
 
     if (value->condition == LVAL_UNSET)
         value->condition = cond;
 
-    env->values[env->counter - 1] = lval_copy(value);
+    env->values[env->counter - 1]  = lval_copy(value);
     env->symbols[env->counter - 1] = malloc(strlen(var->symbol) + 1);
 
     strcpy(env->symbols[env->counter - 1], var->symbol);
@@ -457,12 +457,11 @@ lenv_get(lenv_T* env, lval_T* val)
 lenv_T*
 lenv_copy(lenv_T* env)
 {
-    lenv_T* nenv = malloc(sizeof(struct lenv_S));
-
+    lenv_T* nenv  = malloc(sizeof(struct lenv_S));
     nenv->parent  = env->parent;
     nenv->counter = env->counter;
     nenv->symbols = malloc(sizeof(char*) * nenv->counter);
-    nenv->values  = malloc(sizeof(lval_T*) * nenv->counter);
+    nenv->values  = malloc(sizeof(struct lval_S) * nenv->counter);
 
     for(size_t i = 0; i < nenv->counter; i++)
     {
@@ -528,7 +527,7 @@ lval_rnum(mpc_ast_t* t)
     errno = 0;
     double f = strtof(t->contents, NULL);
 
-    return (errno != ERANGE)
+    return errno != ERANGE
         ? lval_num(f)
         : lval_err(TLERR_BAD_NUM);
 }
@@ -689,7 +688,7 @@ lval_pop(lval_T* t, size_t i)
 {
     lval_T* v = t->cell[i];
 
-    memmove(&t->cell[i], &t->cell[i + 1], (sizeof(lval_T*) * t->counter));
+    memmove(&t->cell[i], &t->cell[i + 1], (sizeof(struct lval_S) * t->counter));
 
     t->counter--;
     t->cell = realloc(t->cell, (sizeof(struct lval_S) * t->counter));
@@ -840,10 +839,8 @@ lval_evsexp(lenv_T* env, lval_T* val)
         val->cell[i] = lval_eval(env, val->cell[i]);
 
     for(size_t i = 0; i < val->counter; i++)
-    {
         if(val->cell[i]->type == LVAL_ERR)
             return lval_take(val, i);
-    }
 
     if(val->counter == 0)
         return val;
@@ -893,12 +890,10 @@ int lval_eq(lval_T* a, lval_T* b)
 
         case LVAL_QEXPR:
         case LVAL_SEXPR:
-            if(a->counter != b->counter)
-                return 0;
+            if(a->counter != b->counter) return 0;
 
             for(size_t i = 0; i < a->counter; i++)
-                if(!lval_eq(a->cell[i], b->cell[i]))
-                    return 0;
+                if(!lval_eq(a->cell[i], b->cell[i])) return 0;
 
             return 1;
     }
