@@ -39,7 +39,7 @@ read_from_file(int argc, char** argv)
         lval_T* args = lval_add(lval_sexpr(), lval_str(argv[i]));
         lval_T* res  = btinfn_load(lexy_current_env, args);
 
-        if(res->type == LVAL_ERR)
+        if(res->type == LTYPE_ERR)
             lval_print(res);
 
         lval_del(res);

@@ -111,8 +111,8 @@ lval_T*
 builtin_order(lenv_T* env, lval_T* args, char* op)
 {
     LASSERT_NUM(op, args, 2);
-    LASSERT_TYPE(op, args, 0, LVAL_NUM);
-    LASSERT_TYPE(op, args, 1, LVAL_NUM);
+    LASSERT_TYPE(op, args, 0, LTYPE_NUM);
+    LASSERT_TYPE(op, args, 1, LTYPE_NUM);
 
     double r;
 
@@ -141,7 +141,7 @@ builtin_numop(lenv_T* env, lval_T* args, const char* op)
 {
     for(size_t i = 0; i < args->counter; i++)
     {
-        LASSERT_TYPE(op, args, i, LVAL_NUM);
+        LASSERT_TYPE(op, args, i, LTYPE_NUM);
     }
 
     lval_T* xval = lval_pop(args, 0);
@@ -351,7 +351,7 @@ lval_T*
 btinfn_sqrt(lenv_T* env, lval_T* args)
 {
     LASSERT_NUM("sqrt", args, 1);
-    LASSERT_TYPE("sqrt", args, 0, LVAL_NUM);
+    LASSERT_TYPE("sqrt", args, 0, LTYPE_NUM);
 
     lval_T* val = lval_pop(args, 0);
     val->number = sqrt(val->number);
@@ -370,7 +370,7 @@ lval_T*
 btinfn_head(lenv_T* env, lval_T* qexpr)
 {
     LASSERT_NUM("head", qexpr, 1);
-    LASSERT_TYPE("head", qexpr, 0, LVAL_QEXPR);
+    LASSERT_TYPE("head", qexpr, 0, LTYPE_QEXPR);
     LASSERT_NOT_EMPTY("head", qexpr, 0);
 
     lval_T* val = lval_take(qexpr, 0);
@@ -390,7 +390,7 @@ lval_T*
 btinfn_tail(lenv_T* env, lval_T* qexpr)
 {
     LASSERT_NUM("tail", qexpr, 1);
-    LASSERT_TYPE("tail", qexpr, 0, LVAL_QEXPR);
+    LASSERT_TYPE("tail", qexpr, 0, LTYPE_QEXPR);
     LASSERT_NOT_EMPTY("tail", qexpr, 0);
 
     lval_T* val = lval_take(qexpr, 0);
@@ -408,7 +408,7 @@ btinfn_tail(lenv_T* env, lval_T* qexpr)
 lval_T*
 btinfn_list(lenv_T* env, lval_T* sexpr)
 {
-    sexpr->type = LVAL_QEXPR;
+    sexpr->type = LTYPE_QEXPR;
     return sexpr;
 }
 
@@ -423,7 +423,7 @@ btinfn_join(lenv_T* env, lval_T* qexprv)
 {
     for(size_t i = 0; i < qexprv->counter; i++)
     {
-        LASSERT_TYPE("join", qexprv, i, LVAL_QEXPR);
+        LASSERT_TYPE("join", qexprv, i, LTYPE_QEXPR);
     }
 
     lval_T* nexpr = lval_pop(qexprv, 0);
@@ -444,10 +444,10 @@ lval_T*
 btinfn_eval(lenv_T* env, lval_T* qexpr)
 {
     LASSERT_NUM("eval", qexpr, 1);
-    LASSERT_TYPE("eval", qexpr, 0, LVAL_QEXPR);
+    LASSERT_TYPE("eval", qexpr, 0, LTYPE_QEXPR);
 
     lval_T* nexpr = lval_take(qexpr, 0);
-    nexpr->type = LVAL_SEXPR;
+    nexpr->type = LTYPE_SEXPR;
 
     return lval_eval(env, nexpr);
 }
@@ -484,16 +484,16 @@ btinfn_globalc(lenv_T* env, lval_T* qexpr)
 lval_T*
 btinfn_define(lenv_T* env, lval_T* qexpr, const char* fn)
 {
-    LASSERT_TYPE(fn, qexpr, 0, LVAL_QEXPR);
+    LASSERT_TYPE(fn, qexpr, 0, LTYPE_QEXPR);
 
     lval_T* symbols = qexpr->cell[0];
 
     for(size_t i = 0; i < symbols->counter; i++)
     {
-        LASSERT(qexpr, (symbols->cell[i]->type == LVAL_SYM),
+        LASSERT(qexpr, (symbols->cell[i]->type == LTYPE_SYM),
             "function '%s' cannot define non-symbol. "
             "Got '%s', expected '%s'.", fn,
-            ltype_nrepr(symbols->cell[i]->type), ltype_nrepr(LVAL_SYM));
+            ltype_nrepr(symbols->cell[i]->type), ltype_nrepr(LTYPE_SYM));
     }
 
     LASSERT(qexpr, (symbols->counter == (qexpr->counter - 1)),
@@ -506,18 +506,18 @@ btinfn_define(lenv_T* env, lval_T* qexpr, const char* fn)
         lval_T* p;
 
         if(strequ(fn, "let"))
-            p = lenv_put(env, symbols->cell[i], qexpr->cell[i + 1], LVAL_DYNAMIC);
+            p = lenv_put(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_DYNAMIC);
 
         if(strequ(fn, "letc"))
-            p = lenv_put(env, symbols->cell[i], qexpr->cell[i + 1], LVAL_CONSTANT);
+            p = lenv_put(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_CONSTANT);
 
         if(strequ(fn, "global"))
-            p = lenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], LVAL_DYNAMIC);
+            p = lenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_DYNAMIC);
 
         if(strequ(fn, "globalc"))
-            p = lenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], LVAL_CONSTANT);
+            p = lenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_CONSTANT);
 
-        if (p->type == LVAL_ERR) {
+        if (p->type == LTYPE_ERR) {
             return p;
         }
     }
@@ -531,17 +531,17 @@ lval_T*
 btinfn_lambda(lenv_T* env, lval_T* qexpr)
 {
     LASSERT_NUM("lambda", qexpr, 2);
-    LASSERT_TYPE("lambda", qexpr, 0, LVAL_QEXPR);
-    LASSERT_TYPE("lambda", qexpr, 1, LVAL_QEXPR);
+    LASSERT_TYPE("lambda", qexpr, 0, LTYPE_QEXPR);
+    LASSERT_TYPE("lambda", qexpr, 1, LTYPE_QEXPR);
 
     for(size_t i = 0; i < qexpr->cell[0]->counter; i++)
     {
         int type = qexpr->cell[0]->cell[i]->type;
 
-        LASSERT(qexpr, (type == LVAL_SYM),
+        LASSERT(qexpr, (type == LTYPE_SYM),
             "Cannot define non-symbol. "
             "Got '%s', expected '%s'.",
-            ltype_nrepr(type), ltype_nrepr(LVAL_SYM));
+            ltype_nrepr(type), ltype_nrepr(LTYPE_SYM));
     }
 
     lval_T* formals = lval_pop(qexpr, 0);
@@ -556,12 +556,12 @@ lval_T*
 btinfn_if(lenv_T* env, lval_T* args)
 {
     LASSERT_NUM("if", args, 3);
-    LASSERT_TYPE("if", args, 0, LVAL_NUM);
-    LASSERT_TYPE("if", args, 1, LVAL_QEXPR);
-    LASSERT_TYPE("if", args, 2, LVAL_QEXPR);
+    LASSERT_TYPE("if", args, 0, LTYPE_NUM);
+    LASSERT_TYPE("if", args, 1, LTYPE_QEXPR);
+    LASSERT_TYPE("if", args, 2, LTYPE_QEXPR);
 
-    args->cell[1]->type = LVAL_SEXPR;
-    args->cell[2]->type = LVAL_SEXPR;
+    args->cell[1]->type = LTYPE_SEXPR;
+    args->cell[2]->type = LTYPE_SEXPR;
 
     lval_T* v = lval_eval(env, lval_pop(args, args->cell[0]->number ? 1 : 2));
 
@@ -589,7 +589,7 @@ lval_T*
 btinfn_error(lenv_T* env, lval_T* args)
 {
     LASSERT_NUM("error", args, 1);
-    LASSERT_TYPE("error", args, 0, LVAL_STR);
+    LASSERT_TYPE("error", args, 0, LTYPE_STR);
 
     lval_T* err = lval_err(args->cell[0]->string);
 
@@ -602,7 +602,7 @@ lval_T*
 btinfn_load(lenv_T* env, lval_T* args)
 {
     LASSERT_NUM("use", args, 1);
-    LASSERT_TYPE("use", args, 0, LVAL_STR);
+    LASSERT_TYPE("use", args, 0, LTYPE_STR);
 
     mpc_result_t r;
     if(mpc_parse_contents(strcat(args->cell[0]->string, ".lisp"), Lisp, &r))
@@ -613,7 +613,7 @@ btinfn_load(lenv_T* env, lval_T* args)
         while(expr->counter)
         {
             lval_T* e = lval_eval(env, lval_pop(expr, 0));
-            if(e->type == LVAL_ERR)
+            if(e->type == LTYPE_ERR)
                 lval_print(e);
 
             lval_del(e);
