@@ -31,8 +31,9 @@
 #include <math.h>
 
 #include "builtin.h"
-#include "fmt.h"
+
 #include "parser.h"
+#include "fmt.h"
 #include "type.h"
 
 

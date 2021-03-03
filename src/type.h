@@ -3,6 +3,12 @@
 
 #include <stdlib.h>
 
+/* ----- */
+#define TLERR_BAD_NUM          "invalid number"
+#define TLERR_DIV_ZERO         "division by zero"
+#define TLERR_UNBOUND_SYM      "unbound symbol '%s'"
+#define TLERR_UNBOUND_VARIADIC "function format invalid. Symbol '&' not followed by single symbol"
+
 
 struct lval_S;
 struct lenv_S;
@@ -39,6 +45,16 @@ typedef enum lcond
 lcond_E;
 
 
+typedef enum lexec
+{
+    LEXEC_UNDEF,
+    LEXEC_REPL,
+    LEXEC_FILE,
+    LEXEC_STDIN
+}
+lexec_E;
+
+
 /* ... */
 struct lbtin_meta_S
 {
@@ -50,19 +66,19 @@ struct lbtin_meta_S
 /* representation of a value (number, sexpr, qexpr...) */
 struct lval_S
 {
-    size_t counter;
+    size_t  counter;
     lenv_T* environ;
 
     ltype_E type;
     lcond_E condition;
 
-    lval_T* body;
-    lval_T* formals;
+    lval_T*  body;
+    lval_T*  formals;
     lval_T** cell;
 
-    char* error;
-    char* symbol;
-    char* string;
+    char*  error;
+    char*  symbol;
+    char*  string;
     double number;
 
     lbtin builtin;
@@ -73,10 +89,11 @@ struct lval_S
 /* representation of an environment */
 struct lenv_S
 {
-    size_t counter;
+    size_t  counter;
+    lexec_E exec_type;
     lenv_T* parent;
 
-    char** symbols;
+    char**   symbols;
     lval_T** values;
 };
 

@@ -37,11 +37,6 @@
 #define BTIN_ERROR_DESCR   "raises an exception"                         SEE_REF "error"
 #define BTIN_PRINT_DESCR   "sends a message to the STDOUT device"        SEE_REF "print"
 
-/* ----- */
-#define TLERR_BAD_NUM          "invalid number"
-#define TLERR_DIV_ZERO         "division by zero"
-#define TLERR_UNBOUND_SYM      "unbound symbol '%s'"
-#define TLERR_UNBOUND_VARIADIC "function format invalid. Symbol '&' not followed by single symbol"
 
 /* ----- */
 lval_T* btinfn_add     (lenv_T* env, lval_T* args);
