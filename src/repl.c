@@ -28,23 +28,32 @@
 
  */
 
-#include "eval.h"
-#include "parser.h"
 #include "repl.h"
+
+#include "parser.h"
 #include "type.h"
+#include "fmt.h"
+
+
+lval_T* lval_eval  (lenv_T* env, lval_T* value);
+lval_T* lval_read  (mpc_ast_t* t);
+void    lval_del   (lval_T* v);
+void    lval_print (lenv_T* e, lval_T* t);
 
 
 void
 start_repl(lenv_T* env)
 {
-    printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
-    printf("press CTRL+c to exit\n");
+    BOLD_TXT(1, "\n%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+    GREY_TXT(1, "%s\n", "press CTRL+c to exit");
+
+    env->exec_type = LEXEC_REPL;
 
     while(1)
     {
         printf("\n");
 
-        char* input = readline(PROMPT_DISPLAY);
+        char* input = readline(ANSI_STYLE_BOLD PROMPT_DISPLAY ANSI_RESET);
         add_history(input);
 
         mpc_result_t r;
@@ -52,8 +61,8 @@ start_repl(lenv_T* env)
         {
             lval_T* t = lval_eval(env, lval_read(r.output));
 
-            printf("=> ");
-            lval_print(t);
+            GREY_TXT(1, "%s", PROMPT_RESPONSE);
+            lval_print(env, t);
             printf("\n");
 
             lval_del(t);

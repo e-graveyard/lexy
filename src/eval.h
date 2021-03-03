@@ -8,7 +8,7 @@
 #define ERROR_MESSAGE_BYTE_LENGTH 512
 
 int     lval_eq    (lval_T* a, lval_T* b);
-void    lval_print (lval_T* t);
+void    lval_print (lenv_T* e, lval_T* t);
 void    lenv_init  (lenv_T* env);
 void    lval_del   (lval_T* v);
 lenv_T* lenv_new   (void);

@@ -33,8 +33,8 @@
 #include "builtin.h"
 
 #include "parser.h"
-#include "fmt.h"
 #include "type.h"
+#include "fmt.h"
 
 
 #define LASSERT(args, cond, fmt, ...) \
@@ -70,7 +70,7 @@ lval_T* lenv_putg     (lenv_T* env, lval_T* var, lval_T* value, lcond_E cond);
 char*   ltype_nrepr   (int type);
 void    lval_del      (lval_T* v);
 int     lval_eq       (lval_T* a, lval_T* b);
-void    lval_print    (lval_T* t);
+void    lval_print    (lenv_T* e, lval_T* t);
 lval_T* lval_new      (void);
 lval_T* lval_num      (double n);
 lval_T* lval_err      (const char* fmt, ...);
@@ -576,7 +576,7 @@ btinfn_print(lenv_T* env, lval_T* args)
 {
     for(size_t i = 0; i < args->counter; i++)
     {
-        lval_print(args->cell[i]);
+        lval_print(env, args->cell[i]);
         putchar(' ');
     }
     putchar('\n');
@@ -615,7 +615,7 @@ btinfn_load(lenv_T* env, lval_T* args)
         {
             lval_T* e = lval_eval(env, lval_pop(expr, 0));
             if(e->type == LTYPE_ERR)
-                lval_print(e);
+                lval_print(env, e);
 
             lval_del(e);
         }

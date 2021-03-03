@@ -34,13 +34,15 @@ main(int argc, char** argv)
 static void
 read_from_file(int argc, char** argv)
 {
+    lexy_current_env->exec_type = LEXEC_FILE;
+
     for(int i = 1; i < argc; i++)
     {
         lval_T* args = lval_add(lval_sexpr(), lval_str(argv[i]));
         lval_T* res  = btinfn_load(lexy_current_env, args);
 
         if(res->type == LTYPE_ERR)
-            lval_print(res);
+            lval_print(lexy_current_env, res);
 
         lval_del(res);
     }

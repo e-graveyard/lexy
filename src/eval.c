@@ -75,7 +75,7 @@ ltype_nrepr(int type)
         case LTYPE_SYM:   return "Symbol";
         case LTYPE_SEXPR: return "S-Expression";
         case LTYPE_QEXPR: return "Q-Expression";
-        default:         return "Undefined";
+        default:          return "Unknown";
     }
 }
 
@@ -437,10 +437,10 @@ lval_pop(lval_T* t, size_t i)
 {
     lval_T* v = t->cell[i];
 
-    memmove(&t->cell[i], &t->cell[i + 1], (sizeof(struct lval_S) * t->counter));
+    memmove(&t->cell[i], &t->cell[i + 1], sizeof(lval_T*) * t->counter);
 
     t->counter--;
-    t->cell = realloc(t->cell, (sizeof(struct lval_S) * t->counter));
+    t->cell = realloc(t->cell, sizeof(struct lval_S) * t->counter);
 
     return v;
 }
@@ -619,7 +619,7 @@ int lval_eq(lval_T* a, lval_T* b)
 
     switch(a->type)
     {
-        case LTYPE_NUM: return (a->number == b->number);
+        case LTYPE_NUM: return a->number == b->number;
         case LTYPE_STR: return strequ(a->string, b->string);
         case LTYPE_ERR: return strequ(a->error, b->error);
         case LTYPE_SYM: return strequ(a->symbol, b->symbol);
@@ -628,8 +628,8 @@ int lval_eq(lval_T* a, lval_T* b)
             if(a->builtin || b->builtin)
                 return a->builtin == b->builtin;
             else
-                return lval_eq(a->formals, b->formals) &&
-                       lval_eq(a->body, b->body);
+                return (lval_eq(a->formals, b->formals) &&
+                        lval_eq(a->body, b->body));
 
         case LTYPE_QEXPR:
         case LTYPE_SEXPR:
@@ -645,30 +645,22 @@ int lval_eq(lval_T* a, lval_T* b)
 }
 
 void
-lval_exp_print(lval_T* t, char* openc, char* closec)
+lval_exp_print(lenv_T* e, lval_T* t)
 {
-    printf("%s", openc);
     for(size_t i = 0; i < t->counter; i++)
     {
-        lval_print(t->cell[i]);
+        lval_print(e, t->cell[i]);
         if(i != (t->counter - 1))
             printf(" ");
     }
-    printf("%s", closec);
 }
 
-void
-lval_num_print(double n)
-{
-    if(isvint(n))
-        printf("%ld", (long)round(n));
-    else
-        printf("%f", n);
-}
 
 void
-lval_print(lval_T* t)
+lval_print(lenv_T* e, lval_T* t)
 {
+    unsigned short int exec_is_repl = e->exec_type == LEXEC_REPL;
+
     switch(t->type)
     {
         case LTYPE_FUN:
@@ -678,23 +670,32 @@ lval_print(lval_T* t)
                 return;
             }
 
-            printf("(lambda ");
-            lval_print(t->formals);
+            CYAN_TXT(exec_is_repl, "%s", "(");
+            printf("lambda ");
+
+            lval_print(e, t->formals);
             printf(" ");
-            lval_print(t->body);
-            printf(")");
+
+            lval_print(e, t->body);
+            CYAN_TXT(exec_is_repl, "%s", ")");
             break;
 
         case LTYPE_NUM:
-            lval_num_print(t->number);
+            if(isvint(t->number)) {
+                GREEN_TXT(exec_is_repl, "%ld", (long)round(t->number));
+                break;
+            }
+
+            GREEN_TXT(exec_is_repl, "%lf", t->number);
             break;
 
         case LTYPE_STR:
-            printf("%s", t->string);
+            BLUE_TXT(exec_is_repl, "\"%s\"", t->string);
             break;
 
         case LTYPE_ERR:
-            printf("error: %s", t->error);
+            RED_TXT(exec_is_repl, "%s", "ILLEGAL INSTRUCTION: ");
+            printf("%s", t->error);
             break;
 
         case LTYPE_SYM:
@@ -702,11 +703,15 @@ lval_print(lval_T* t)
             break;
 
         case LTYPE_QEXPR:
-            lval_exp_print(t, "{", "}");
+            YELLOW_TXT(exec_is_repl, "%s", "{");
+            lval_exp_print(e, t);
+            YELLOW_TXT(exec_is_repl, "%s", "}");
             break;
 
         case LTYPE_SEXPR:
-            lval_exp_print(t, "(", ")");
+            CYAN_TXT(exec_is_repl, "%s", "(");
+            lval_exp_print(e, t);
+            CYAN_TXT(exec_is_repl, "%s", ")");
             break;
     }
 }

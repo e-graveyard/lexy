@@ -25,10 +25,11 @@ lenv_new(void)
 {
     lenv_T* e = malloc(sizeof(struct lenv_S));
 
-    e->counter = 0;
-    e->symbols = NULL;
-    e->values  = NULL;
-    e->parent  = NULL;
+    e->exec_type = LEXEC_UNDEF;
+    e->counter   = 0;
+    e->symbols   = NULL;
+    e->values    = NULL;
+    e->parent    = NULL;
 
     return e;
 }
