@@ -6,5 +6,5 @@ addons:
       - libedit-dev
 
 script:
-  - make
-  - make test
+  - time make
+  - time make test
