@@ -79,9 +79,11 @@ $ docker run -it lexy
 
 Expected improvements until the next release (`v0.1.0`):
 
-1. [ ] Command-line arguments (help, eval string etc)
-1. [ ] REPL improvements (colors, keywords)
-1. [ ] Environment symbol lookup using hash tables
+1. [ ] Proper modules support
+1. [ ] Hash table powered symbol lookup
 1. [ ] Hashmap built-in type
 1. [ ] Hashmap operations
+1. [ ] Expand standard library
+1. [x] Command-line arguments (help, eval string etc)
+1. [ ] REPL improvements (colors, keywords)
 1. [ ] Tests
