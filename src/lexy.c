@@ -1,59 +1,269 @@
+#include <getopt.h>
 #include <signal.h>
 
-#include "builtin.h"
 #include "eval.h"
 #include "parser.h"
-#include "repl.h"
+#include "fmt.h"
 #include "type.h"
 
 
-lenv_T* lexy_current_env;
+#define OS_KERNEL       "Darwin"
+#define OS_ARCH         "x86_64"
+#define PROGRAM_NAME    "lexy"
+#define PROGRAM_VERSION "v0.1.0"
+#define PROMPT_DISPLAY  " ] "
+#define PROMPT_RESPONSE "~> "
 
-static void read_from_file(int argc, char** argv);
-static void interrupt(int sign);
 
+#ifdef _WIN32
+#include <string.h>
 
-int
-main(int argc, char** argv)
+static char buffer[2048];
+
+void add_history(char* unused) {}
+
+char* readline(char* prompt)
 {
-    signal(SIGINT, interrupt);
+    fputs(prompt, stdout);
+    fgets(buffer, 2048, stdin);
 
-    lexy_current_env = lenv_new();
-    lenv_init(lexy_current_env);
-    parser_init();
+    char* cpy = malloc(strlen(buffer) + 1);
+    strcpy(cpy, buffer);
+    cpy[strlen(cpy) -1] = '\0';
 
-    if(argc < 2)
-        start_repl(lexy_current_env);
-    else
-        read_from_file(argc, argv);
+    return cpy;
+}
 
+#else
+
+#include <editline/readline.h>
+#endif
+
+
+lenv_T* lexy_current_env = NULL;
+
+lval_T* btinfn_load (lenv_T* env, lval_T* args);
+lval_T* lval_pop    (lval_T* t, size_t i);
+
+
+static void
+lexy_clean_exit(int sign)
+{
+    parser_safe_cleanup();
+
+    if (lexy_current_env != NULL)
+        free(lexy_current_env);
+
+    exit(0);
+}
+
+
+static int
+lexy_help_message(int ret_code, char* bin_filename)
+{
+    printf("\nUsage %s [options] [script.lisp] [arguments]\n\n"
+           "-h : show this help\n"
+           "-v : print the lexy version\n"
+           "-d : enable the debug mode\n"
+           "-e code : evaluate and execute a string of lexy\n"
+           "\nThis project can be found at <https://github.com/caian-org/lexy>\n",
+           bin_filename);
+
+    return ret_code;
+}
+
+
+static int
+lexy_version()
+{
+    printf("%s\n", PROGRAM_VERSION);
     return 0;
 }
 
 
 static void
-read_from_file(int argc, char** argv)
+lexy_ast_parse(char* input, void (*inline_routine)(lval_T*, lval_T**), lval_T** err)
 {
-    lexy_current_env->exec_type = LEXEC_FILE;
-
-    for(int i = 1; i < argc; i++)
+    mpc_result_t r;
+    if (mpc_parse("<stdin>", input, Lisp, &r))
     {
-        lval_T* args = lval_add(lval_sexpr(), lval_str(argv[i]));
-        lval_T* res  = btinfn_load(lexy_current_env, args);
+        lval_T* parsed_input = lval_read(r.output);
+        mpc_ast_delete(r.output);
 
-        if(res->type == LTYPE_ERR)
-            lval_print(lexy_current_env, res);
+        inline_routine(parsed_input, err);
+        return;
+    }
 
-        lval_del(res);
+    *err = lval_err(mpc_err_string(r.error));
+    mpc_err_delete(r.error);
+}
+
+
+static void
+lexy_repl_inline_seg(lval_T* parsed_input, lval_T** err)
+{
+    lval_T* t = lval_eval(lexy_current_env, parsed_input);
+
+    GREY_TXT(1, "%s", PROMPT_RESPONSE);
+    lval_print(lexy_current_env, t);
+    printf("\n");
+
+    lval_del(t);
+}
+
+
+static void
+lexy_repl_start()
+{
+    BOLD_TXT(TRUE, "\n%s %s %s/%s - '(help)' for documentation\n",
+             PROGRAM_NAME, PROGRAM_VERSION, OS_KERNEL, OS_ARCH);
+
+    GREY_TXT(TRUE, "%s\n", "press CTRL+c to exit");
+
+    lexy_current_env->exec_type = LEXEC_REPL;
+
+    while (TRUE)
+    {
+        printf("\n");
+
+        char* input = readline(ANSI_STYLE_BOLD PROMPT_DISPLAY ANSI_RESET);
+        add_history(input);
+
+        lval_T* err = NULL;
+        lexy_ast_parse(input, lexy_repl_inline_seg, &err);
+
+        if (err != NULL) {
+            lval_print(lexy_current_env, err);
+            lval_del(err);
+        }
+
+        free(input);
     }
 }
 
 
 static void
-interrupt(int sign)
+lexy_cli_eval_inline_seg(lval_T* parsed_input, lval_T** err)
 {
-    free(lexy_current_env);
-    parser_cleanup();
+    while (parsed_input->counter)
+    {
+        lval_T* e = lval_eval(lexy_current_env, lval_pop(parsed_input, 0));
 
-    exit(0);
+        if (e->type == LTYPE_ERR)
+        {
+            if (*err != NULL)
+                lval_del(*err);
+
+            *err = lval_err(e->error);
+        }
+
+        lval_del(e);
+    }
+}
+
+static int
+lexy_cli_eval_code(char* input)
+{
+    lval_T* err = NULL;
+    lexy_ast_parse(input, lexy_cli_eval_inline_seg, &err);
+
+    if (err != NULL)
+    {
+        lval_print(lexy_current_env, err);
+        lval_del(err);
+
+        return 1;
+    }
+
+    return 0;
+}
+
+
+static int
+lexy_file_exec(char* filep)
+{
+    lexy_current_env->exec_type = LEXEC_FILE;
+
+    lval_T* args = lval_add(lval_sexpr(), lval_str(filep));
+    lval_T* res  = btinfn_load(lexy_current_env, args);
+
+    if (res->type == LTYPE_ERR)
+        lval_print(lexy_current_env, res);
+
+    int retcode = res->error != NULL ? 1 : 0;
+
+    lval_del(res);
+    return retcode;
+}
+
+
+int
+main(int argc, char** argv)
+{
+    signal(SIGINT, lexy_clean_exit);
+
+    char* input_code = NULL;
+    bool cli_flag_debug = FALSE;
+
+    char* bin_filename = argv[0];
+    int choice;
+
+    /* ... */
+    while ((choice = getopt(argc, argv, ":hvde:")) != -1)
+    {
+        switch(choice)
+        {
+            case 'h':
+                return lexy_help_message(0, bin_filename);
+
+            case 'v':
+                return lexy_version();
+
+            case 'd':
+                cli_flag_debug = TRUE;
+                break;
+
+            case 'e':
+                input_code = optarg;
+                break;
+
+            case ':': /* -e without operand */
+                printf("\nOption -%c requires a string operand\n", optopt);
+                return lexy_help_message(2, bin_filename);
+
+            case '?':
+                printf("Unknown flag -%c\n", optopt);
+                return lexy_help_message(2, bin_filename);
+        }
+    }
+
+    /* ... */
+    lexy_current_env = lenv_new();
+    lenv_init(lexy_current_env);
+    parser_init();
+
+    /* ... */
+    if (input_code != NULL) {
+        int retcode = lexy_cli_eval_code(input_code);
+
+        return retcode;
+    }
+
+    /* ... */
+    short int remaining_args = argc - optind;
+    switch(remaining_args)
+    {
+        case 0:
+            lexy_repl_start();
+            break;
+
+        case 1:
+            return lexy_file_exec(argv[argc - 1]);
+
+        default:
+            printf("fuck");
+            break;
+    }
+
+    return 0;
 }
