@@ -84,6 +84,7 @@ lval_T* lval_new(void)
 {
     lval_T* v    = malloc(sizeof(struct lval_S));
     v->condition = LCOND_UNSET;
+    v->error     = NULL;
 
     return v;
 }
