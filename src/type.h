@@ -3,11 +3,17 @@
 
 #include <stdlib.h>
 
-/* ----- */
-#define TLERR_BAD_NUM          "invalid number"
-#define TLERR_DIV_ZERO         "division by zero"
-#define TLERR_UNBOUND_SYM      "unbound symbol '%s'"
-#define TLERR_UNBOUND_VARIADIC "function format invalid. Symbol '&' not followed by single symbol"
+
+/* ... */
+#define bool unsigned short int
+#define TRUE 1
+#define FALSE 0
+
+/* ... */
+#define TLERR_BAD_NUM          "invalid number\n"
+#define TLERR_DIV_ZERO         "division by zero\n"
+#define TLERR_UNBOUND_SYM      "unbound symbol '%s'\n"
+#define TLERR_UNBOUND_VARIADIC "function format invalid. Symbol '&' not followed by single symbol\n"
 
 
 struct lval_S;
@@ -45,6 +51,7 @@ typedef enum lcond
 lcond_E;
 
 
+/* ... */
 typedef enum lexec
 {
     LEXEC_UNDEF,
