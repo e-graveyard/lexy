@@ -4,7 +4,7 @@
 #include "type.h"
 
 
-/* ----- */
+/* ... */
 #define SEE_REF " | see: #"
 
 #define BTIN_ADD_DESCR     "mathematical addition operator"              SEE_REF "add"
@@ -38,7 +38,7 @@
 #define BTIN_PRINT_DESCR   "sends a message to the STDOUT device"        SEE_REF "print"
 
 
-/* ----- */
+/* ... */
 lval_T* btinfn_add     (lenv_T* env, lval_T* args);
 lval_T* btinfn_div     (lenv_T* env, lval_T* args);
 lval_T* btinfn_eval    (lenv_T* env, lval_T* qexpr);

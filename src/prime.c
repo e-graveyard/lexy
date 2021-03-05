@@ -27,18 +27,18 @@ enum
 short int
 is_prime(const long n)
 {
-    if(n < 2)
+    if (n < 2)
         return IMPOSSIBLE_TO_DEFINE;
 
-    if(n < 4)
+    if (n < 4)
         return PRIME_NUMBER;
 
-    if((n % 2) == 0)
+    if ((n % 2) == 0)
         return NOT_PRIME;
 
-    for(size_t i = 3; i <= floor(sqrt((double) n)); i += 2)
+    for (size_t i = 3; i <= floor(sqrt((double) n)); i += 2)
     {
-        if((n % i) == 0)
+        if ((n % i) == 0)
             return NOT_PRIME;
     }
 
@@ -58,7 +58,7 @@ is_prime(const long n)
 long
 next_prime(long n)
 {
-    while(is_prime(n) != PRIME_NUMBER)
+    while (is_prime(n) != PRIME_NUMBER)
         n++;
 
     return n;

@@ -100,14 +100,14 @@ lenv_init(lenv_T* env)
 lval_T*
 lenv_put(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
 {
-    for(size_t i = 0; i < env->counter; i++)
+    for (size_t i = 0; i < env->counter; i++)
     {
-        if(strequ(env->symbols[i], var->symbol))
+        if (strequ(env->symbols[i], var->symbol))
         {
-            if(env->values[i]->condition != cond)
+            if (env->values[i]->condition != cond)
                 return lval_err("cannot reassign the variable condition");
 
-            if(env->values[i]->condition == LCOND_CONSTANT)
+            if (env->values[i]->condition == LCOND_CONSTANT)
                 return lval_err("cannot assign to a constant variable");
 
             lval_del(env->values[i]);
@@ -138,7 +138,7 @@ lenv_put(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
 lval_T*
 lenv_putg(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
 {
-    while(env->parent)
+    while (env->parent)
         env = env->parent;
 
     return lenv_put(env, var, value, cond);
@@ -151,7 +151,7 @@ lenv_putg(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
 void
 lenv_del(lenv_T* e)
 {
-    for(size_t i = 0; i < e->counter; i++)
+    for (size_t i = 0; i < e->counter; i++)
     {
         free(e->symbols[i]);
         lval_del(e->values[i]);
@@ -171,13 +171,13 @@ lenv_del(lenv_T* e)
 lval_T*
 lenv_get(lenv_T* env, lval_T* val)
 {
-    for(size_t i = 0; i < env->counter; i++)
+    for (size_t i = 0; i < env->counter; i++)
     {
-        if(strequ(val->symbol, env->symbols[i]))
+        if (strequ(val->symbol, env->symbols[i]))
             return lval_copy(env->values[i]);
     }
 
-    if(env->parent)
+    if (env->parent)
         return lenv_get(env->parent, val);
 
     return lval_err(TLERR_UNBOUND_SYM, val->symbol);
@@ -193,7 +193,7 @@ lenv_copy(lenv_T* env)
     nenv->symbols = malloc(sizeof(char*) * nenv->counter);
     nenv->values  = malloc(sizeof(struct lval_S) * nenv->counter);
 
-    for(size_t i = 0; i < nenv->counter; i++)
+    for (size_t i = 0; i < nenv->counter; i++)
     {
         nenv->symbols[i] = malloc(strlen(env->symbols[i]) + 1);
         strcpy(nenv->symbols[i], env->symbols[i]);

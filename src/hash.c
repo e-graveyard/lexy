@@ -106,7 +106,7 @@ ht_hash(const char* s, const long prime, const size_t b_len)
     long hash = 0;
     const size_t v_len = strlen(s);
 
-    for(size_t i = 0; i < v_len; i++)
+    for (size_t i = 0; i < v_len; i++)
     {
         hash += (long)pow(prime, v_len - (i + 1)) * s[i];
         hash %= b_len;
@@ -149,15 +149,15 @@ hti_del(ht_item_T* i)
 static void
 ht_resize(ht_index_T* ht, const uint32_t base_s)
 {
-    if(base_s < HT_INITIAL_BASE_SIZE)
+    if (base_s < HT_INITIAL_BASE_SIZE)
         return;
 
     ht_index_T* nht = ht_new_sized(base_s);
 
-    for(size_t i = 0; i < ht->size; i++)
+    for (size_t i = 0; i < ht->size; i++)
     {
         ht_item_T* item = ht->items[i];
-        if(item != NULL && item != &HT_DELETED_ITEM)
+        if (item != NULL && item != &HT_DELETED_ITEM)
             ht_insert(nht, item->key, item->val);
     }
 
@@ -194,7 +194,7 @@ static ht_index_T*
 ht_new_sized(const uint32_t base_s)
 {
     ht_index_T* ht = malloc(sizeof(struct ht_index_S));
-    if(ht == NULL)
+    if (ht == NULL)
         return NULL;
 
     ht->counter = 0;
@@ -202,7 +202,7 @@ ht_new_sized(const uint32_t base_s)
     ht->base_s  = base_s;
 
     ht->items   = calloc((size_t)ht->size, sizeof(ht_item_T*));
-    if(ht->items == NULL)
+    if (ht->items == NULL)
         return NULL;
 
     return ht;
@@ -219,10 +219,10 @@ ht_new()
 void
 ht_destroy(ht_index_T* t)
 {
-    for(size_t i = 0; i < t->size; i++)
+    for (size_t i = 0; i < t->size; i++)
     {
         ht_item_T* item = t->items[i];
-        if(item != NULL)
+        if (item != NULL)
             hti_del(item);
     }
 
@@ -234,7 +234,7 @@ ht_destroy(ht_index_T* t)
 void
 ht_insert(ht_index_T* t, const char* k, const char* v)
 {
-    if(ht_load_ratio(t) > 70)
+    if (ht_load_ratio(t) > 70)
         ht_resize_up(t);
 
     ht_item_T* i = hti_new(k, v);
@@ -243,9 +243,9 @@ ht_insert(ht_index_T* t, const char* k, const char* v)
     ht_item_T* cur_i = t->items[idx];
 
     size_t iter = 1;
-    while(cur_i != NULL)
+    while (cur_i != NULL)
     {
-        if(cur_i != &HT_DELETED_ITEM && strcmp(cur_i->key, k) == 0)
+        if (cur_i != &HT_DELETED_ITEM && strcmp(cur_i->key, k) == 0)
         {
             hti_del(cur_i);
             t->items[idx] = i;
@@ -270,9 +270,9 @@ ht_search(ht_index_T* t, const char* k)
     ht_item_T* i = t->items[idx];
 
     size_t iter = 1;
-    while(i != NULL)
+    while (i != NULL)
     {
-        if(i != &HT_DELETED_ITEM && strcmp(i->key, k) == 0)
+        if (i != &HT_DELETED_ITEM && strcmp(i->key, k) == 0)
             return i->val;
 
         idx = ht_get_hidx(k, t->size, iter);
@@ -287,7 +287,7 @@ ht_search(ht_index_T* t, const char* k)
 void
 ht_delete(ht_index_T* t, const char* k)
 {
-    if(ht_load_ratio(t) < 10)
+    if (ht_load_ratio(t) < 10)
         ht_resize_down(t);
 
     size_t idx = ht_get_hidx(k, t->size, 0);
@@ -295,9 +295,9 @@ ht_delete(ht_index_T* t, const char* k)
     ht_item_T* i = t->items[idx];
 
     size_t iter = 1;
-    while(i != NULL)
+    while (i != NULL)
     {
-        if(i != &HT_DELETED_ITEM && strcmp(i->key, k) == 0)
+        if (i != &HT_DELETED_ITEM && strcmp(i->key, k) == 0)
         {
             hti_del(i);
             t->items[idx] = &HT_DELETED_ITEM;

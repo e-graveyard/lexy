@@ -241,30 +241,30 @@ lval_qexpr(void)
 lval_T*
 lval_read(mpc_ast_t* t)
 {
-    if(strstr(t->tag, "number"))
+    if (strstr(t->tag, "number"))
         return lval_rnum(t);
 
-    if(strstr(t->tag, "string"))
+    if (strstr(t->tag, "string"))
         return lval_rstr(t);
 
-    if(strstr(t->tag, "symbol"))
+    if (strstr(t->tag, "symbol"))
         return lval_sym(t->contents);
 
     lval_T* x = NULL;
-    if(strequ(t->tag, ">") || strstr(t->tag, "sexpr"))
+    if (strequ(t->tag, ">") || strstr(t->tag, "sexpr"))
         x = lval_sexpr();
 
-    if(strstr(t->tag, "qexpr"))
+    if (strstr(t->tag, "qexpr"))
         x = lval_qexpr();
 
-    for(int i = 0; i < t->children_num; i++)
+    for (int i = 0; i < t->children_num; i++)
     {
-        if(strequ(t->children[i]->contents, "("))  continue;
-        if(strequ(t->children[i]->contents, ")"))  continue;
-        if(strequ(t->children[i]->contents, "{"))  continue;
-        if(strequ(t->children[i]->contents, "}"))  continue;
-        if(strequ(t->children[i]->tag, "regex"))   continue;
-        if(strstr(t->children[i]->tag, "comment")) continue;
+        if (strequ(t->children[i]->contents, "("))  continue;
+        if (strequ(t->children[i]->contents, ")"))  continue;
+        if (strequ(t->children[i]->contents, "{"))  continue;
+        if (strequ(t->children[i]->contents, "}"))  continue;
+        if (strequ(t->children[i]->tag, "regex"))   continue;
+        if (strstr(t->children[i]->tag, "comment")) continue;
 
         x = lval_add(x, lval_read(t->children[i]));
     }
@@ -331,7 +331,7 @@ lval_del(lval_T* v)
         case LTYPE_NUM: break;
 
         case LTYPE_FUN:
-            if(!v->builtin)
+            if (!v->builtin)
             {
                 lenv_del(v->environ);
                 lval_del(v->formals);
@@ -353,7 +353,7 @@ lval_del(lval_T* v)
 
         case LTYPE_SEXPR:
         case LTYPE_QEXPR:
-            for(size_t i = 0; i < v->counter; i++)
+            for (size_t i = 0; i < v->counter; i++)
                 lval_del(v->cell[i]);
 
             free(v->cell);
@@ -379,7 +379,7 @@ lval_copy(lval_T* val)
     switch(val->type)
     {
         case LTYPE_FUN:
-            if(val->builtin)
+            if (val->builtin)
             {
                 nval->builtin = val->builtin;
                 nval->btin_meta = val->btin_meta;
@@ -417,7 +417,7 @@ lval_copy(lval_T* val)
             nval->counter = val->counter;
             nval->cell = malloc(sizeof(struct lval_S) * nval->counter);
 
-            for(size_t i = 0; i < nval->counter; i++)
+            for (size_t i = 0; i < nval->counter; i++)
                 nval->cell[i] = lval_copy(val->cell[i]);
 
             break;
@@ -471,7 +471,7 @@ lval_take(lval_T* t, size_t i)
 lval_T*
 lval_join(lval_T* x, lval_T* y)
 {
-    while(y->counter)
+    while (y->counter)
         x = lval_add(x, lval_pop(y, 0));
 
     lval_del(y);
@@ -482,15 +482,15 @@ lval_join(lval_T* x, lval_T* y)
 lval_T*
 lval_call(lenv_T* env, lval_T* func, lval_T* args)
 {
-    if(func->builtin)
+    if (func->builtin)
         return func->builtin(env, args);
 
     size_t given = args->counter;
     size_t total = func->formals->counter;
 
-    while(args->counter)
+    while (args->counter)
     {
-        if(func->formals->counter == 0)
+        if (func->formals->counter == 0)
         {
             lval_del(args);
             return lval_err(
@@ -500,9 +500,9 @@ lval_call(lenv_T* env, lval_T* func, lval_T* args)
 
         lval_T* symbol = lval_pop(func->formals, 0);
 
-        if(strequ(symbol->symbol, "&"))
+        if (strequ(symbol->symbol, "&"))
         {
-            if(func->formals->counter != 1)
+            if (func->formals->counter != 1)
             {
                 lval_del(args);
                 return lval_err(TLERR_UNBOUND_VARIADIC);
@@ -527,9 +527,9 @@ lval_call(lenv_T* env, lval_T* func, lval_T* args)
 
     lval_del(args);
 
-    if(func->formals->counter > 0 && strequ(func->formals->cell[0]->symbol, "&"))
+    if (func->formals->counter > 0 && strequ(func->formals->cell[0]->symbol, "&"))
     {
-        if(func->formals->counter != 2)
+        if (func->formals->counter != 2)
             return lval_err(TLERR_UNBOUND_VARIADIC);
 
         lval_del(lval_pop(func->formals, 0));
@@ -543,7 +543,7 @@ lval_call(lenv_T* env, lval_T* func, lval_T* args)
         lval_del(value);
     }
 
-    if(func->formals->counter == 0)
+    if (func->formals->counter == 0)
     {
         func->environ->parent = env;
         return btinfn_eval(func->environ, lval_add(lval_sexpr(), lval_copy(func->body)));
@@ -559,14 +559,14 @@ lval_call(lenv_T* env, lval_T* func, lval_T* args)
 lval_T*
 lval_eval(lenv_T* env, lval_T* value)
 {
-    if(value->type == LTYPE_SYM)
+    if (value->type == LTYPE_SYM)
     {
         lval_T* nval = lenv_get(env, value);
         lval_del(value);
         return nval;
     }
 
-    if(value->type == LTYPE_SEXPR)
+    if (value->type == LTYPE_SEXPR)
         return lval_evsexp(env, value);
 
     return value;
@@ -579,21 +579,21 @@ lval_eval(lenv_T* env, lval_T* value)
 lval_T*
 lval_evsexp(lenv_T* env, lval_T* val)
 {
-    for(size_t i = 0; i < val->counter; i++)
+    for (size_t i = 0; i < val->counter; i++)
         val->cell[i] = lval_eval(env, val->cell[i]);
 
-    for(size_t i = 0; i < val->counter; i++)
-        if(val->cell[i]->type == LTYPE_ERR)
+    for (size_t i = 0; i < val->counter; i++)
+        if (val->cell[i]->type == LTYPE_ERR)
             return lval_take(val, i);
 
-    if(val->counter == 0)
+    if (val->counter == 0)
         return val;
 
-    if(val->counter == 1)
+    if (val->counter == 1)
         return lval_eval(env, lval_take(val, 0));
 
     lval_T* element = lval_pop(val, 0);
-    if(element->type != LTYPE_FUN)
+    if (element->type != LTYPE_FUN)
     {
         lval_T* err = lval_err(
             "S-Expression start with incorrect type. "
@@ -626,7 +626,7 @@ int lval_eq(lval_T* a, lval_T* b)
         case LTYPE_SYM: return strequ(a->symbol, b->symbol);
 
         case LTYPE_FUN:
-            if(a->builtin || b->builtin)
+            if (a->builtin || b->builtin)
                 return a->builtin == b->builtin;
             else
                 return (lval_eq(a->formals, b->formals) &&
@@ -634,10 +634,10 @@ int lval_eq(lval_T* a, lval_T* b)
 
         case LTYPE_QEXPR:
         case LTYPE_SEXPR:
-            if(a->counter != b->counter) return 0;
+            if (a->counter != b->counter) return 0;
 
-            for(size_t i = 0; i < a->counter; i++)
-                if(!lval_eq(a->cell[i], b->cell[i])) return 0;
+            for (size_t i = 0; i < a->counter; i++)
+                if (!lval_eq(a->cell[i], b->cell[i])) return 0;
 
             return 1;
     }
@@ -648,10 +648,10 @@ int lval_eq(lval_T* a, lval_T* b)
 void
 lval_exp_print(lenv_T* e, lval_T* t)
 {
-    for(size_t i = 0; i < t->counter; i++)
+    for (size_t i = 0; i < t->counter; i++)
     {
         lval_print(e, t->cell[i]);
-        if(i != (t->counter - 1))
+        if (i != (t->counter - 1))
             printf(" ");
     }
 }
@@ -665,7 +665,7 @@ lval_print(lenv_T* e, lval_T* t)
     switch(t->type)
     {
         case LTYPE_FUN:
-            if(t->builtin)
+            if (t->builtin)
             {
                 printf("<builtin(%s): %s>", t->btin_meta->name, t->btin_meta->description);
                 return;
@@ -682,7 +682,7 @@ lval_print(lenv_T* e, lval_T* t)
             break;
 
         case LTYPE_NUM:
-            if(isvint(t->number)) {
+            if (isvint(t->number)) {
                 GREEN_TXT(exec_is_repl, "%ld", (long)round(t->number));
                 break;
             }

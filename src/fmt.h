@@ -16,7 +16,7 @@
 #define ANSI_STYLE_BOLD     "\x1b[1m"
 #define ANSI_STYLE_DIM      "\x1b[2m"
 
-/* ----- */
+/* ... */
 #define COLOURED_TXT(must_apply, colour, text, ...) \
     if (must_apply) { \
         printf(colour text ANSI_RESET, __VA_ARGS__); \
@@ -48,7 +48,7 @@
 #define BOLD_TXT(must_apply, text, ...) \
     COLOURED_TXT(must_apply, ANSI_STYLE_BOLD, text, __VA_ARGS__);
 
-/* ----- */
+/* ... */
 unsigned short int strequ(const char* ref, const char* txt);
 unsigned short int isvint(double f);
 void psout(const char* txt);
