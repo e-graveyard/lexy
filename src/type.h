@@ -57,7 +57,7 @@ typedef enum lexec
     LEXEC_UNDEF,
     LEXEC_REPL,
     LEXEC_FILE,
-    LEXEC_STDIN
+    LEXEC_CLI
 }
 lexec_E;
 
