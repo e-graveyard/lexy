@@ -29,6 +29,10 @@
  */
 
 #include "parser.h"
+#include "type.h"
+
+
+bool parser_has_been_initialized = FALSE;
 
 
 void
@@ -55,10 +59,13 @@ parser_init()
         " lisp    :  /^/ <atom>* /$/ ;                 ",
 
         Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
+
+    parser_has_been_initialized = TRUE;
 }
 
 void
-parser_cleanup()
+parser_safe_cleanup()
 {
-    mpc_cleanup(8, Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
+    if (parser_has_been_initialized)
+        mpc_cleanup(8, Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
 }
