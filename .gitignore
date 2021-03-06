@@ -3,3 +3,8 @@
 
 # debug information
 lexy.dSYM
+
+# coverage files
+*.gcno
+*.gcda
+*.gcov
