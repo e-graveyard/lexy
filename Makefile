@@ -18,6 +18,9 @@ LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 build: $(MPC) $(LEXY_FILES)
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
 
+build-cov: CFLAGS += -coverage
+build-cov: build
+
 install:
 	mv $(ARTIFACT) /usr/bin
 
@@ -28,7 +31,7 @@ run:
 	./$(ARTIFACT)
 
 clean:
-	rm -f $(ARTIFACT)
+	rm -f $(ARTIFACT) *.gcno *.gcda *.gcov
 
 debug: CFLAGS += -g
 debug: clean
@@ -42,12 +45,12 @@ debug-mac: debug
 
 test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
 	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
-		&& ./$@; true \
+		&& ./$@ \
 		&& rm $@
 
 test-lexy: $(PTEST) $(MPC) $(filter-out src/lexy.c, $(LEXY_FILES)) $(LEXY_TEST_FILES)
 	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
-		&& ./$@; true \
+		&& ./$@ \
 		&& rm $@
 
 test: test-mpc test-lexy
