@@ -40,8 +40,7 @@
  *
  * compares the equality of two string values
  */
-unsigned short int
-strequ(const char* ref, const char* txt)
+unsigned short int strequ(const char* ref, const char* txt)
 {
     return strcmp(ref, txt) == 0;
 }
@@ -52,8 +51,7 @@ strequ(const char* ref, const char* txt)
  *
  * checks if a given double value is a round, integer number
  */
-unsigned short int
-isvint(const double f)
+unsigned short int isvint(const double f)
 {
     return fabs(roundf(f) - f) <= INTEGER_FLOAT_EPSILON;
 }

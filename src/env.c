@@ -20,8 +20,7 @@ lval_T* lval_sexpr  (void);
  *
  * Constructs a pointer to a new TL environment representation.
  */
-lenv_T*
-lenv_new(void)
+lenv_T* lenv_new(void)
 {
     lenv_T* e = malloc(sizeof(struct lenv_S));
 
@@ -38,8 +37,7 @@ lenv_new(void)
 /**
  * lenv_incbin - TL environment include built-in
  */
-void
-lenv_incb(lenv_T* env, char* fname, char* fdescr, lbtin fref)
+void lenv_incb(lenv_T* env, char* fname, char* fdescr, lbtin fref)
 {
     lval_T* symb = lval_sym(fname);
     lval_T* func = lval_fun(fname, fdescr, fref);
@@ -50,8 +48,7 @@ lenv_incb(lenv_T* env, char* fname, char* fdescr, lbtin fref)
 }
 
 
-void
-lenv_init(lenv_T* env)
+void lenv_init(lenv_T* env)
 {
     /* math operations */
     lenv_incb(env, "add",  BTIN_ADD_DESCR,  btinfn_add);
@@ -97,8 +94,7 @@ lenv_init(lenv_T* env)
 /**
  * lenv_put - Put variable to an inner environment
  */
-lval_T*
-lenv_put(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
+lval_T* lenv_put(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
 {
     for (size_t i = 0; i < env->counter; i++)
     {
@@ -135,8 +131,7 @@ lenv_put(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
 /**
  * lenv_put - Put variable to the global environment
  */
-lval_T*
-lenv_putg(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
+lval_T* lenv_putg(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
 {
     while (env->parent)
         env = env->parent;
@@ -148,8 +143,7 @@ lenv_putg(lenv_T* env, lval_T* var, lval_T* value, lcond_E cond)
 /**
  * lenv_del - Environment creation
  */
-void
-lenv_del(lenv_T* e)
+void lenv_del(lenv_T* e)
 {
     for (size_t i = 0; i < e->counter; i++)
     {
@@ -168,8 +162,7 @@ lenv_del(lenv_T* e)
  *
  * Takes an environment and returns a given expression if it exists.
  */
-lval_T*
-lenv_get(lenv_T* env, lval_T* val)
+lval_T* lenv_get(lenv_T* env, lval_T* val)
 {
     for (size_t i = 0; i < env->counter; i++)
     {
@@ -184,8 +177,7 @@ lenv_get(lenv_T* env, lval_T* val)
 }
 
 
-lenv_T*
-lenv_copy(lenv_T* env)
+lenv_T* lenv_copy(lenv_T* env)
 {
     lenv_T* nenv  = malloc(sizeof(struct lenv_S));
     nenv->parent  = env->parent;

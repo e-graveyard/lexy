@@ -24,8 +24,7 @@ enum
  *     1 : Prime.
  *
  */
-short int
-is_prime(const long n)
+short int is_prime(const long n)
 {
     if (n < 2)
         return IMPOSSIBLE_TO_DEFINE;
@@ -55,8 +54,7 @@ is_prime(const long n)
  * Returns:
  *     n : The next prime.
  */
-long
-next_prime(long n)
+long next_prime(long n)
 {
     while (is_prime(n) != PRIME_NUMBER)
         n++;

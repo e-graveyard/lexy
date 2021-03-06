@@ -46,8 +46,7 @@ lval_T* btinfn_load (lenv_T* env, lval_T* args);
 lval_T* lval_pop    (lval_T* t, size_t i);
 
 
-static void
-lexy_clean_exit(int sign)
+static void lexy_clean_exit(int sign)
 {
     parser_safe_cleanup();
 
@@ -58,8 +57,7 @@ lexy_clean_exit(int sign)
 }
 
 
-static int
-lexy_help_message(int ret_code, char* bin_filename)
+static int lexy_help_message(int ret_code, char* bin_filename)
 {
     printf("\nUsage %s [options] [script.lisp] [arguments]\n\n"
            "-h : show this help\n"
@@ -73,16 +71,14 @@ lexy_help_message(int ret_code, char* bin_filename)
 }
 
 
-static int
-lexy_version()
+static int lexy_version()
 {
     printf("%s\n", PROGRAM_VERSION);
     return 0;
 }
 
 
-static void
-lexy_ast_parse(char* input, void (*inline_routine)(lval_T*, lval_T**), lval_T** err)
+static void lexy_ast_parse(char* input, void (*inline_routine)(lval_T*, lval_T**), lval_T** err)
 {
     mpc_result_t r;
     if (mpc_parse("<stdin>", input, Lisp, &r))
@@ -99,8 +95,7 @@ lexy_ast_parse(char* input, void (*inline_routine)(lval_T*, lval_T**), lval_T** 
 }
 
 
-static void
-lexy_repl_inline_seg(lval_T* parsed_input, lval_T** err)
+static void lexy_repl_inline_seg(lval_T* parsed_input, lval_T** err)
 {
     lval_T* t = lval_eval(lexy_current_env, parsed_input);
 
@@ -112,8 +107,7 @@ lexy_repl_inline_seg(lval_T* parsed_input, lval_T** err)
 }
 
 
-static void
-lexy_repl_start()
+static void lexy_repl_start()
 {
     BOLD_TXT(TRUE, "\n%s %s %s/%s - '(help)' for documentation\n",
              PROGRAM_NAME, PROGRAM_VERSION, OS_KERNEL, OS_ARCH);
@@ -142,8 +136,7 @@ lexy_repl_start()
 }
 
 
-static void
-lexy_cli_eval_inline_seg(lval_T* parsed_input, lval_T** err)
+static void lexy_cli_eval_inline_seg(lval_T* parsed_input, lval_T** err)
 {
     while (parsed_input->counter)
     {
@@ -161,8 +154,7 @@ lexy_cli_eval_inline_seg(lval_T* parsed_input, lval_T** err)
     }
 }
 
-static int
-lexy_cli_eval_code(char* input)
+static int lexy_cli_eval_code(char* input)
 {
     lval_T* err = NULL;
     lexy_ast_parse(input, lexy_cli_eval_inline_seg, &err);
@@ -179,8 +171,7 @@ lexy_cli_eval_code(char* input)
 }
 
 
-static int
-lexy_file_exec(char* filep)
+static int lexy_file_exec(char* filep)
 {
     lexy_current_env->exec_type = LEXEC_FILE;
 
@@ -197,8 +188,7 @@ lexy_file_exec(char* filep)
 }
 
 
-int
-main(int argc, char** argv)
+int main(int argc, char** argv)
 {
     signal(SIGINT, lexy_clean_exit);
 
@@ -261,7 +251,8 @@ main(int argc, char** argv)
             return lexy_file_exec(argv[argc - 1]);
 
         default:
-            printf("fuck");
+            RED_TXT(TRUE, "\n%s\n", "Arguments to lexy programs are not implemented yet.");
+            exit(2);
             break;
     }
 

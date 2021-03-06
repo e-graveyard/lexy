@@ -35,8 +35,7 @@
 bool parser_has_been_initialized = FALSE;
 
 
-void
-parser_init()
+void parser_init()
 {
     Number  = mpc_new("number");
     String  = mpc_new("string");
@@ -63,8 +62,7 @@ parser_init()
     parser_has_been_initialized = TRUE;
 }
 
-void
-parser_safe_cleanup()
+void parser_safe_cleanup()
 {
     if (parser_has_been_initialized)
         mpc_cleanup(8, Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);

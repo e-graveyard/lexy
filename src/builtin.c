@@ -87,8 +87,7 @@ lval_T* btinfn_define (lenv_T* env, lval_T* qexpr, const char* fn);
 /**
  * builtin_order - Built-in object equality
  */
-lval_T*
-builtin_eq(lenv_T* env, lval_T* args, char* op)
+lval_T* builtin_eq(lenv_T* env, lval_T* args, char* op)
 {
     LASSERT_NUM(op, args, 2);
 
@@ -108,8 +107,7 @@ builtin_eq(lenv_T* env, lval_T* args, char* op)
 /**
  * builtin_order - Built-in numeric comparisons
  */
-lval_T*
-builtin_order(lenv_T* env, lval_T* args, char* op)
+lval_T* builtin_order(lenv_T* env, lval_T* args, char* op)
 {
     LASSERT_NUM(op, args, 2);
     LASSERT_TYPE(op, args, 0, LTYPE_NUM);
@@ -137,8 +135,7 @@ builtin_order(lenv_T* env, lval_T* args, char* op)
 /**
  * builtin_numop - Built-in numeric operations
  */
-lval_T*
-builtin_numop(lenv_T* env, lval_T* args, const char* op)
+lval_T* builtin_numop(lenv_T* env, lval_T* args, const char* op)
 {
     for (size_t i = 0; i < args->counter; i++)
     {
@@ -208,8 +205,7 @@ builtin_numop(lenv_T* env, lval_T* args, const char* op)
 /**
  * btinfn_cmp_gt - ">" built-in function
  */
-lval_T*
-btinfn_cmp_gt(lenv_T* env, lval_T* args)
+lval_T* btinfn_cmp_gt(lenv_T* env, lval_T* args)
 {
     return builtin_order(env, args, "gt");
 }
@@ -218,8 +214,7 @@ btinfn_cmp_gt(lenv_T* env, lval_T* args)
 /**
  * btinfn_cmp_ge - ">=" built-in function
  */
-lval_T*
-btinfn_cmp_ge(lenv_T* env, lval_T* args)
+lval_T* btinfn_cmp_ge(lenv_T* env, lval_T* args)
 {
     return builtin_order(env, args, "ge");
 }
@@ -238,8 +233,7 @@ btinfn_cmp_lt(lenv_T* env, lval_T* args)
 /**
  * btinfn_cmp_le - "<=" built-in function
  */
-lval_T*
-btinfn_cmp_le(lenv_T* env, lval_T* args)
+lval_T* btinfn_cmp_le(lenv_T* env, lval_T* args)
 {
     return builtin_order(env, args, "le");
 }
@@ -248,8 +242,7 @@ btinfn_cmp_le(lenv_T* env, lval_T* args)
 /**
  * btinfn_cmp_eq - "==" built-in function
  */
-lval_T*
-btinfn_cmp_eq(lenv_T* env, lval_T* args)
+lval_T* btinfn_cmp_eq(lenv_T* env, lval_T* args)
 {
     return builtin_eq(env, args, "eq");
 }
@@ -258,8 +251,7 @@ btinfn_cmp_eq(lenv_T* env, lval_T* args)
 /**
  * btinfn_cmp_ne - "!=" built-in function
  */
-lval_T*
-btinfn_cmp_ne(lenv_T* env, lval_T* args)
+lval_T* btinfn_cmp_ne(lenv_T* env, lval_T* args)
 {
     return builtin_eq(env, args, "ne");
 }
@@ -268,8 +260,7 @@ btinfn_cmp_ne(lenv_T* env, lval_T* args)
 /**
  * btinfn_add - "add" built-in function
  */
-lval_T*
-btinfn_add(lenv_T* env, lval_T* args)
+lval_T* btinfn_add(lenv_T* env, lval_T* args)
 {
     return builtin_numop(env, args, "add");
 }
@@ -278,8 +269,7 @@ btinfn_add(lenv_T* env, lval_T* args)
 /**
  * btinfn_sub - "sub" built-in function
  */
-lval_T*
-btinfn_sub(lenv_T* env, lval_T* args)
+lval_T* btinfn_sub(lenv_T* env, lval_T* args)
 {
     return builtin_numop(env, args, "sub");
 }
@@ -288,8 +278,7 @@ btinfn_sub(lenv_T* env, lval_T* args)
 /**
  * btinfn_mul - "mul" built-in function
  */
-lval_T*
-btinfn_mul(lenv_T* env, lval_T* args)
+lval_T* btinfn_mul(lenv_T* env, lval_T* args)
 {
     return builtin_numop(env, args, "mul");
 }
@@ -298,8 +287,7 @@ btinfn_mul(lenv_T* env, lval_T* args)
 /**
  * btinfn_div - "div" built-in function
  */
-lval_T*
-btinfn_div(lenv_T* env, lval_T* args)
+lval_T* btinfn_div(lenv_T* env, lval_T* args)
 {
     return builtin_numop(env, args, "div");
 }
@@ -308,8 +296,7 @@ btinfn_div(lenv_T* env, lval_T* args)
 /**
  * btinfn_mod - "mod" built-in function
  */
-lval_T*
-btinfn_mod(lenv_T* env, lval_T* args)
+lval_T* btinfn_mod(lenv_T* env, lval_T* args)
 {
     return builtin_numop(env, args, "mod");
 }
@@ -318,8 +305,7 @@ btinfn_mod(lenv_T* env, lval_T* args)
 /**
  * btinfn_pow - "pow" built-in function
  */
-lval_T*
-btinfn_pow(lenv_T* env, lval_T* args)
+lval_T* btinfn_pow(lenv_T* env, lval_T* args)
 {
     return builtin_numop(env, args, "pow");
 }
@@ -328,8 +314,7 @@ btinfn_pow(lenv_T* env, lval_T* args)
 /**
  * btinfn_max - "max" built-in function
  */
-lval_T*
-btinfn_max(lenv_T* env, lval_T* args)
+lval_T* btinfn_max(lenv_T* env, lval_T* args)
 {
     return builtin_numop(env, args, "max");
 }
@@ -338,8 +323,7 @@ btinfn_max(lenv_T* env, lval_T* args)
 /**
  * btinfn_min - "min" built-in function
  */
-lval_T*
-btinfn_min(lenv_T* env, lval_T* args)
+lval_T* btinfn_min(lenv_T* env, lval_T* args)
 {
     return builtin_numop(env, args, "min");
 }
@@ -348,8 +332,7 @@ btinfn_min(lenv_T* env, lval_T* args)
 /**
  * btinfn_sqrt - "sqrt" built-in function
  */
-lval_T*
-btinfn_sqrt(lenv_T* env, lval_T* args)
+lval_T* btinfn_sqrt(lenv_T* env, lval_T* args)
 {
     LASSERT_NUM("sqrt", args, 1);
     LASSERT_TYPE("sqrt", args, 0, LTYPE_NUM);
@@ -367,8 +350,7 @@ btinfn_sqrt(lenv_T* env, lval_T* args)
  *
  * Takes a Q-Expression and returns the first element of it.
  */
-lval_T*
-btinfn_head(lenv_T* env, lval_T* qexpr)
+lval_T* btinfn_head(lenv_T* env, lval_T* qexpr)
 {
     LASSERT_NUM("head", qexpr, 1);
     LASSERT_TYPE("head", qexpr, 0, LTYPE_QEXPR);
@@ -387,8 +369,7 @@ btinfn_head(lenv_T* env, lval_T* qexpr)
  *
  * Takes a Q-Expression and return it minus the first element.
  */
-lval_T*
-btinfn_tail(lenv_T* env, lval_T* qexpr)
+lval_T* btinfn_tail(lenv_T* env, lval_T* qexpr)
 {
     LASSERT_NUM("tail", qexpr, 1);
     LASSERT_TYPE("tail", qexpr, 0, LTYPE_QEXPR);
@@ -406,8 +387,7 @@ btinfn_tail(lenv_T* env, lval_T* qexpr)
  *
  * Takes a S-Expression and converts it to a Q-Expression.
  */
-lval_T*
-btinfn_list(lenv_T* env, lval_T* sexpr)
+lval_T* btinfn_list(lenv_T* env, lval_T* sexpr)
 {
     sexpr->type = LTYPE_QEXPR;
     return sexpr;
@@ -419,8 +399,7 @@ btinfn_list(lenv_T* env, lval_T* sexpr)
  *
  * Takes a Q-Expression and joins all of its arguments.
  */
-lval_T*
-btinfn_join(lenv_T* env, lval_T* qexprv)
+lval_T* btinfn_join(lenv_T* env, lval_T* qexprv)
 {
     for (size_t i = 0; i < qexprv->counter; i++)
     {
@@ -441,8 +420,7 @@ btinfn_join(lenv_T* env, lval_T* qexprv)
  *
  * Takes a Q-Expression and evaluates it as a S-Expression.
  */
-lval_T*
-btinfn_eval(lenv_T* env, lval_T* qexpr)
+lval_T* btinfn_eval(lenv_T* env, lval_T* qexpr)
 {
     LASSERT_NUM("eval", qexpr, 1);
     LASSERT_TYPE("eval", qexpr, 0, LTYPE_QEXPR);
@@ -454,36 +432,31 @@ btinfn_eval(lenv_T* env, lval_T* qexpr)
 }
 
 
-lval_T*
-btinfn_let(lenv_T* env, lval_T* qexpr)
+lval_T* btinfn_let(lenv_T* env, lval_T* qexpr)
 {
     return btinfn_define(env, qexpr, "let");
 }
 
 
-lval_T*
-btinfn_letc(lenv_T* env, lval_T* qexpr)
+lval_T* btinfn_letc(lenv_T* env, lval_T* qexpr)
 {
     return btinfn_define(env, qexpr, "letc");
 }
 
 
-lval_T*
-btinfn_global(lenv_T* env, lval_T* qexpr)
+lval_T* btinfn_global(lenv_T* env, lval_T* qexpr)
 {
     return btinfn_define(env, qexpr, "global");
 }
 
 
-lval_T*
-btinfn_globalc(lenv_T* env, lval_T* qexpr)
+lval_T* btinfn_globalc(lenv_T* env, lval_T* qexpr)
 {
     return btinfn_define(env, qexpr, "globalc");
 }
 
 
-lval_T*
-btinfn_define(lenv_T* env, lval_T* qexpr, const char* fn)
+lval_T* btinfn_define(lenv_T* env, lval_T* qexpr, const char* fn)
 {
     LASSERT_TYPE(fn, qexpr, 0, LTYPE_QEXPR);
 
@@ -528,8 +501,7 @@ btinfn_define(lenv_T* env, lval_T* qexpr, const char* fn)
 }
 
 
-lval_T*
-btinfn_lambda(lenv_T* env, lval_T* qexpr)
+lval_T* btinfn_lambda(lenv_T* env, lval_T* qexpr)
 {
     LASSERT_NUM("lambda", qexpr, 2);
     LASSERT_TYPE("lambda", qexpr, 0, LTYPE_QEXPR);
@@ -553,8 +525,7 @@ btinfn_lambda(lenv_T* env, lval_T* qexpr)
 }
 
 
-lval_T*
-btinfn_if(lenv_T* env, lval_T* args)
+lval_T* btinfn_if(lenv_T* env, lval_T* args)
 {
     LASSERT_NUM("if", args, 3);
     LASSERT_TYPE("if", args, 0, LTYPE_NUM);
@@ -571,8 +542,7 @@ btinfn_if(lenv_T* env, lval_T* args)
 }
 
 
-lval_T*
-btinfn_print(lenv_T* env, lval_T* args)
+lval_T* btinfn_print(lenv_T* env, lval_T* args)
 {
     for (size_t i = 0; i < args->counter; i++)
     {
@@ -586,8 +556,7 @@ btinfn_print(lenv_T* env, lval_T* args)
 }
 
 
-lval_T*
-btinfn_error(lenv_T* env, lval_T* args)
+lval_T* btinfn_error(lenv_T* env, lval_T* args)
 {
     LASSERT_NUM("error", args, 1);
     LASSERT_TYPE("error", args, 0, LTYPE_STR);
@@ -599,8 +568,7 @@ btinfn_error(lenv_T* env, lval_T* args)
 }
 
 
-lval_T*
-btinfn_load(lenv_T* env, lval_T* args)
+lval_T* btinfn_load(lenv_T* env, lval_T* args)
 {
     LASSERT_NUM("use", args, 1);
     LASSERT_TYPE("use", args, 0, LTYPE_STR);

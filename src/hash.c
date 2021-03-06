@@ -83,8 +83,7 @@ struct ht_index_S
 static ht_item_T HT_DELETED_ITEM = {NULL, NULL};
 
 
-char*
-dupstr(const char* s)
+char* dupstr(const char* s)
 {
     size_t len = (strlen(s) + 1);
     char* p = malloc(len);
@@ -93,15 +92,13 @@ dupstr(const char* s)
 }
 
 
-static int
-ht_load_ratio(const ht_index_T* ht)
+static int ht_load_ratio(const ht_index_T* ht)
 {
     return ((ht->counter * 100) / ht->size);
 }
 
 
-static size_t
-ht_hash(const char* s, const long prime, const size_t b_len)
+static size_t ht_hash(const char* s, const long prime, const size_t b_len)
 {
     long hash = 0;
     const size_t v_len = strlen(s);
@@ -116,8 +113,7 @@ ht_hash(const char* s, const long prime, const size_t b_len)
 }
 
 
-static size_t
-ht_get_hidx(const char* s, const size_t b_len, unsigned int attempt)
+static size_t ht_get_hidx(const char* s, const size_t b_len, unsigned int attempt)
 {
     const size_t ha = ht_hash(s, HT_PRIME_NUMBER_A, b_len);
     const size_t hb = ht_hash(s, HT_PRIME_NUMBER_B, b_len);
@@ -126,8 +122,7 @@ ht_get_hidx(const char* s, const size_t b_len, unsigned int attempt)
 }
 
 
-static ht_item_T*
-hti_new(const char* k, const char* v)
+static ht_item_T* hti_new(const char* k, const char* v)
 {
     ht_item_T* i = malloc(sizeof(struct ht_item_S));
     i->key = dupstr(k);
@@ -137,8 +132,7 @@ hti_new(const char* k, const char* v)
 }
 
 
-static void
-hti_del(ht_item_T* i)
+static void hti_del(ht_item_T* i)
 {
     free(i->key);
     free(i->val);
@@ -146,8 +140,7 @@ hti_del(ht_item_T* i)
 }
 
 
-static void
-ht_resize(ht_index_T* ht, const uint32_t base_s)
+static void ht_resize(ht_index_T* ht, const uint32_t base_s)
 {
     if (base_s < HT_INITIAL_BASE_SIZE)
         return;
@@ -176,22 +169,19 @@ ht_resize(ht_index_T* ht, const uint32_t base_s)
 }
 
 
-static void
-ht_resize_up(ht_index_T* ht)
+static void ht_resize_up(ht_index_T* ht)
 {
     ht_resize(ht, (ht->base_s * 2));
 }
 
 
-static void
-ht_resize_down(ht_index_T* ht)
+static void ht_resize_down(ht_index_T* ht)
 {
     ht_resize(ht, (ht->base_s / 2));
 }
 
 
-static ht_index_T*
-ht_new_sized(const uint32_t base_s)
+static ht_index_T* ht_new_sized(const uint32_t base_s)
 {
     ht_index_T* ht = malloc(sizeof(struct ht_index_S));
     if (ht == NULL)
@@ -209,15 +199,13 @@ ht_new_sized(const uint32_t base_s)
 }
 
 
-ht_index_T*
-ht_new()
+ht_index_T* ht_new()
 {
     return ht_new_sized(HT_INITIAL_BASE_SIZE);
 }
 
 
-void
-ht_destroy(ht_index_T* t)
+void ht_destroy(ht_index_T* t)
 {
     for (size_t i = 0; i < t->size; i++)
     {
@@ -231,8 +219,7 @@ ht_destroy(ht_index_T* t)
 }
 
 
-void
-ht_insert(ht_index_T* t, const char* k, const char* v)
+void ht_insert(ht_index_T* t, const char* k, const char* v)
 {
     if (ht_load_ratio(t) > 70)
         ht_resize_up(t);
@@ -262,8 +249,7 @@ ht_insert(ht_index_T* t, const char* k, const char* v)
 }
 
 
-char*
-ht_search(ht_index_T* t, const char* k)
+char* ht_search(ht_index_T* t, const char* k)
 {
     size_t idx = ht_get_hidx(k, t->size, 0);
 
@@ -284,8 +270,7 @@ ht_search(ht_index_T* t, const char* k)
 }
 
 
-void
-ht_delete(ht_index_T* t, const char* k)
+void ht_delete(ht_index_T* t, const char* k)
 {
     if (ht_load_ratio(t) < 10)
         ht_resize_down(t);

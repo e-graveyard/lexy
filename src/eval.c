@@ -63,8 +63,7 @@ lval_T* btinfn_list (lenv_T* env, lval_T* sexpr);
 /**
  * ltype_nrepr - TL type name representation
  */
-char*
-ltype_nrepr(int type)
+char* ltype_nrepr(int type)
 {
     switch(type)
     {
@@ -95,8 +94,7 @@ lval_T* lval_new(void)
  *
  * Constructs a pointer to a new TL function representation.
  */
-lval_T*
-lval_fun(char* name, char* description, lbtin func)
+lval_T* lval_fun(char* name, char* description, lbtin func)
 {
     lval_T* v  = lval_new();
     v->type    = LTYPE_FUN;
@@ -118,8 +116,7 @@ lval_fun(char* name, char* description, lbtin func)
  *
  * Constructs a pointer to a new TL lambda representation.
  */
-lval_T*
-lval_lambda(lval_T* formals, lval_T* body)
+lval_T* lval_lambda(lval_T* formals, lval_T* body)
 {
     lval_T* v  = lval_new();
     v->type    = LTYPE_FUN;
@@ -137,8 +134,7 @@ lval_lambda(lval_T* formals, lval_T* body)
  *
  * Constructs a pointer to a new TL number representation.
  */
-lval_T*
-lval_num(double n)
+lval_T* lval_num(double n)
 {
     lval_T* v = lval_new();
     v->type   = LTYPE_NUM;
@@ -148,8 +144,7 @@ lval_num(double n)
 }
 
 
-lval_T*
-lval_str(char* s)
+lval_T* lval_str(char* s)
 {
     lval_T* v = lval_new();
     v->type   = LTYPE_STR;
@@ -165,8 +160,7 @@ lval_str(char* s)
  *
  * Constructs a pointer to a new TL error representation.
  */
-lval_T*
-lval_err(const char* fmt, ...)
+lval_T* lval_err(const char* fmt, ...)
 {
     lval_T* v = lval_new();
     v->type   = LTYPE_ERR;
@@ -189,8 +183,7 @@ lval_err(const char* fmt, ...)
  *
  * Constructs a pointer to a new TL symbol representation.
  */
-lval_T*
-lval_sym(const char* s)
+lval_T* lval_sym(const char* s)
 {
     lval_T* v = lval_new();
     v->type   = LTYPE_SYM;
@@ -206,8 +199,7 @@ lval_sym(const char* s)
  *
  * Constructs a pointer to a new TL symbolic expression representation.
  */
-lval_T*
-lval_sexpr(void)
+lval_T* lval_sexpr(void)
 {
     lval_T* v  = lval_new();
     v->type    = LTYPE_SEXPR;
@@ -223,8 +215,7 @@ lval_sexpr(void)
  *
  * Constructs a pointer to a new TL quoted expression representation.
  */
-lval_T*
-lval_qexpr(void)
+lval_T* lval_qexpr(void)
 {
     lval_T* v  = lval_new();
     v->type    = LTYPE_QEXPR;
@@ -238,8 +229,7 @@ lval_qexpr(void)
 /**
  * lval_read - TL value reading
  */
-lval_T*
-lval_read(mpc_ast_t* t)
+lval_T* lval_read(mpc_ast_t* t)
 {
     if (strstr(t->tag, "number"))
         return lval_rnum(t);
@@ -276,8 +266,7 @@ lval_read(mpc_ast_t* t)
 /**
  * lval_rnum - TL numeric value reading
  */
-lval_T*
-lval_rnum(mpc_ast_t* t)
+lval_T* lval_rnum(mpc_ast_t* t)
 {
     errno = 0;
     double f = strtof(t->contents, NULL);
@@ -287,8 +276,7 @@ lval_rnum(mpc_ast_t* t)
         : lval_err(TLERR_BAD_NUM);
 }
 
-lval_T*
-lval_rstr(mpc_ast_t* t)
+lval_T* lval_rstr(mpc_ast_t* t)
 {
     t->contents[strlen(t->contents) - 1] = '\0';
     char* unescaped = malloc(strlen(t->contents + 1) + 1);
@@ -307,8 +295,7 @@ lval_rstr(mpc_ast_t* t)
  *
  * Adds a TL value to a S-Expression construct.
  */
-lval_T*
-lval_add(lval_T* v, lval_T* x)
+lval_T* lval_add(lval_T* v, lval_T* x)
 {
     v->counter++;
     v->cell = realloc(v->cell, sizeof(struct lval_S) * v->counter);
@@ -323,8 +310,7 @@ lval_add(lval_T* v, lval_T* x)
  *
  * Recursively deconstructs a TL value.
  */
-void
-lval_del(lval_T* v)
+void lval_del(lval_T* v)
 {
     switch(v->type)
     {
@@ -369,8 +355,7 @@ lval_del(lval_T* v)
  *
  * Takes an expression, copy it's content to a new memory location and returns it.
  */
-lval_T*
-lval_copy(lval_T* val)
+lval_T* lval_copy(lval_T* val)
 {
     lval_T* nval = malloc(sizeof(struct lval_S));
     nval->type = val->type;
@@ -433,8 +418,7 @@ lval_copy(lval_T* val)
  * Takes a S-Expression, extracts the element at index "i" from it and returns it.
  * The "pop" operation does not delete the original input list.
  */
-lval_T*
-lval_pop(lval_T* t, size_t i)
+lval_T* lval_pop(lval_T* t, size_t i)
 {
     lval_T* v = t->cell[i];
 
@@ -453,8 +437,7 @@ lval_pop(lval_T* t, size_t i)
  * Takes a S-Expression, extracts the element at index "i" from it and return it.
  * The "take" operation deletes the original input list;
  */
-lval_T*
-lval_take(lval_T* t, size_t i)
+lval_T* lval_take(lval_T* t, size_t i)
 {
     lval_T* v = lval_pop(t, i);
     lval_del(t);
@@ -468,8 +451,7 @@ lval_take(lval_T* t, size_t i)
  *
  * Takes two expressions and joins together all of its arguments.
  */
-lval_T*
-lval_join(lval_T* x, lval_T* y)
+lval_T* lval_join(lval_T* x, lval_T* y)
 {
     while (y->counter)
         x = lval_add(x, lval_pop(y, 0));
@@ -479,8 +461,7 @@ lval_join(lval_T* x, lval_T* y)
 }
 
 
-lval_T*
-lval_call(lenv_T* env, lval_T* func, lval_T* args)
+lval_T* lval_call(lenv_T* env, lval_T* func, lval_T* args)
 {
     if (func->builtin)
         return func->builtin(env, args);
@@ -556,8 +537,7 @@ lval_call(lenv_T* env, lval_T* func, lval_T* args)
 /**
  * lval_eval - TL value evaluation
  */
-lval_T*
-lval_eval(lenv_T* env, lval_T* value)
+lval_T* lval_eval(lenv_T* env, lval_T* value)
 {
     if (value->type == LTYPE_SYM)
     {
@@ -576,8 +556,7 @@ lval_eval(lenv_T* env, lval_T* value)
 /**
  * lval_evsexp - TL S-Expression evaluation
  */
-lval_T*
-lval_evsexp(lenv_T* env, lval_T* val)
+lval_T* lval_evsexp(lenv_T* env, lval_T* val)
 {
     for (size_t i = 0; i < val->counter; i++)
         val->cell[i] = lval_eval(env, val->cell[i]);
@@ -645,8 +624,7 @@ int lval_eq(lval_T* a, lval_T* b)
     return 0;
 }
 
-void
-lval_exp_print(lenv_T* e, lval_T* t)
+void lval_exp_print(lenv_T* e, lval_T* t)
 {
     for (size_t i = 0; i < t->counter; i++)
     {
@@ -657,8 +635,7 @@ lval_exp_print(lenv_T* e, lval_T* t)
 }
 
 
-void
-lval_print(lenv_T* e, lval_T* t)
+void lval_print(lenv_T* e, lval_T* t)
 {
     unsigned short int exec_is_repl = e->exec_type == LEXEC_REPL;
 
