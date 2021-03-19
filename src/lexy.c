@@ -28,16 +28,13 @@
 #include <getopt.h>
 #include <signal.h>
 
+#include "meta.h"
+
 #include "eval.h"
 #include "parser.h"
 #include "fmt.h"
 #include "type.h"
 
-
-#define OS_KERNEL       "Darwin"
-#define OS_ARCH         "x86_64"
-#define PROGRAM_NAME    "lexy"
-#define PROGRAM_VERSION "v0.1.0"
 #define PROMPT_DISPLAY  " ] "
 #define PROMPT_RESPONSE "~> "
 
@@ -89,6 +86,7 @@ static int lexy_help_message(int ret_code, char* bin_filename)
     printf("\nUsage %s [options] [script.lisp] [arguments]\n\n"
            "-h : show this help\n"
            "-v : print the lexy version\n"
+           "-r : print release information\n"
            "-d : enable the debug mode\n"
            "-e code : evaluate and execute a string of lexy\n"
            "\nThis project can be found at <https://github.com/caian-org/lexy>\n",
@@ -101,6 +99,13 @@ static int lexy_help_message(int ret_code, char* bin_filename)
 static int lexy_version()
 {
     printf("%s\n", PROGRAM_VERSION);
+    return 0;
+}
+
+
+static int lexy_release()
+{
+    printf("%s/%s @ %s, %s\n", TARGET_KERNEL, TARGET_ARCH, COMPILE_DATE, COMPILE_TIME);
     return 0;
 }
 
@@ -136,8 +141,8 @@ static void lexy_repl_inline_seg(lval_T* parsed_input, lval_T** err)
 
 static void lexy_repl_start()
 {
-    BOLD_TXT(TRUE, "\n%s %s %s/%s - '(help)' for documentation\n",
-             PROGRAM_NAME, PROGRAM_VERSION, OS_KERNEL, OS_ARCH);
+    BOLD_TXT(TRUE, "\nlexy %s %s/%s - '(help)' for documentation\n",
+             PROGRAM_VERSION, TARGET_KERNEL, TARGET_ARCH);
 
     GREY_TXT(TRUE, "%s\n", "press CTRL+c to exit");
 
@@ -226,7 +231,7 @@ int main(int argc, char** argv)
     int choice;
 
     /* ... */
-    while ((choice = getopt(argc, argv, ":hvde:")) != -1)
+    while ((choice = getopt(argc, argv, ":hvrde:")) != -1)
     {
         switch(choice)
         {
@@ -235,6 +240,9 @@ int main(int argc, char** argv)
 
             case 'v':
                 return lexy_version();
+
+            case 'r':
+                return lexy_release();
 
             case 'd':
                 cli_flag_debug = TRUE;

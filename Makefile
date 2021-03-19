@@ -10,28 +10,17 @@ ARTIFACT = lexy
 MPC = src/mpc.c
 PTEST = tests/ptest.c
 
-LEXY_FILES      = $(filter-out $(MPC), $(wildcard src/*.c))
+LEXY_FILES      = $(wildcard src/*.c)
 MPC_TEST_FILES  = $(wildcard tests/mpc/*.c)
 LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 
 
 build: $(MPC) $(LEXY_FILES)
-	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
+	@python3 scripts/write-meta.py
+	@$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
 
 build-cov: CFLAGS += -coverage
 build-cov: build
-
-install:
-	mv $(ARTIFACT) /usr/bin
-
-uninstall:
-	rm /usr/bin/$(ARTIFACT)
-
-run:
-	./$(ARTIFACT)
-
-clean:
-	rm -f $(ARTIFACT) *.gcno *.gcda *.gcov
 
 debug: CFLAGS += -g
 debug: clean
@@ -44,13 +33,25 @@ debug-mac: debug
 	lldb $(ARTIFACT)
 
 test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
-	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
+	@$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
 		&& ./$@ \
 		&& rm $@
 
 test-lexy: $(PTEST) $(MPC) $(filter-out src/lexy.c, $(LEXY_FILES)) $(LEXY_TEST_FILES)
-	$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
+	@$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
 		&& ./$@ \
 		&& rm $@
 
 test: test-mpc test-lexy
+
+install:
+	@mv $(ARTIFACT) /usr/bin
+
+uninstall:
+	@rm /usr/bin/$(ARTIFACT)
+
+run:
+	@./$(ARTIFACT)
+
+clean:
+	@rm -f $(ARTIFACT) *.gcno *.gcda *.gcov
