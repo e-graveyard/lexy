@@ -1,5 +1,9 @@
-# ignore the binary
+# binary
 /lexy
+/lexy.exe
+
+# auto-generated meta header
+src/meta.h
 
 # debug information
 lexy.dSYM
