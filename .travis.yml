@@ -41,7 +41,9 @@ install:
   - make
 
 script:
+  - ./lexy -h
   - ./lexy -v
   - ./lexy -r
+  - ./lexy examples/hello-world
   - ./lexy -e '(print (add 1 1))'
   - ./lexy -e '(use "lib/std") (print (nth-of {"a" "b" "c" "d" "e"} 2))'
