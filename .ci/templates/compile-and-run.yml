@@ -1,0 +1,7 @@
+steps:
+  - script: |
+      make
+      ./lexy -v
+      ./lexy -r
+      ./lexy -e "(print (add 1 1))"
+    displayName: CompileAndRun

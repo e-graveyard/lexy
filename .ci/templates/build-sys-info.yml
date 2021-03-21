@@ -11,3 +11,4 @@ steps:
       echo "=> Has C Compiler?"
       cc --version
       echo ""
+    displayName: BuildSysInfo

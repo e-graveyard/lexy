@@ -14,44 +14,28 @@ trigger:
 
 
 jobs:
-  - job: Build__Ubuntu_20_04
+  - job: Build__Ubuntu_18_04
     pool:
-      vmImage: 'ubuntu-20.04'
+      vmImage: 'ubuntu-18.04'
+    variables:
+      cc: gcc-10.1
     steps:
       - template: .ci/templates/build-sys-info.yml
-      - script: make
-
-  - job: Build__Ubuntu_16_04
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - template: .ci/templates/build-sys-info.yml
-      - script: make
-
-  - job: Build__MacOS_10_15
-    pool:
-      vmImage: 'macOS-10.15'
-    steps:
-      - template: .ci/templates/build-sys-info.yml
-      - script: make
+      - template: .ci/templates/compile-and-run.yml
 
   - job: Build__MacOS_10_14
     pool:
       vmImage: 'macOS-10.14'
     steps:
       - template: .ci/templates/build-sys-info.yml
-      - script: make
-
-  - job: Build__Windows_2019
-    pool:
-      vmImage: 'windows-2019'
-    steps:
-      - template: .ci/templates/build-sys-info.yml
-      - script: make
+      - template: .ci/templates/compile-and-run.yml
 
   - job: Build__Windows_2016
     pool:
       vmImage: 'vs2017-win2016'
+    variables:
+      cc: clang-cl
     steps:
+      - script: choco install llvm
       - template: .ci/templates/build-sys-info.yml
-      - script: make
+      - template: .ci/templates/compile-and-run.yml
