@@ -31,7 +31,7 @@ endif
 build: $(MPC) $(LEXY_FILES)
 	@printf "\nLEXY PRE-BUILD\n\n"
 	@printf "* readline found: "
-	@if [ "$(MISSING_READLINE)" == "0" ]; then printf "yes"; else printf "no"; fi
+	@if [ "$(MISSING_READLINE)" = "0" ]; then printf "yes"; else printf "no"; fi
 	@printf "\n\n"
 	@python3 utils/write-meta.py
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
