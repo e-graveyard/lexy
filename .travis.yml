@@ -1,10 +1,31 @@
-compiler: gcc
+sudo: true
+language: c
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - gcc
+  - clang
 
 addons:
   apt:
     packages:
       - libedit-dev
 
-script:
-  - time make
-  - time make test
+jobs:
+  include:
+    - stage: test
+      name: Tests
+      script: make test-mpc
+      script: make test-lexy
+
+    - stage: install
+      name: Install and Run
+      before_script: make
+      script: make install
+      after_script:
+        - lexy -v
+        - lexy -r
+        - lexy -e "(print (add 1 1))"
