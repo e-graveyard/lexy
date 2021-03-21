@@ -5,6 +5,8 @@ from os.path import join
 from os.path import dirname
 from os.path import abspath
 
+from textwrap import dedent
+
 
 def read_file(filepath):
     with open(filepath, 'r') as file:
@@ -17,6 +19,7 @@ def write_file(filepath, data):
 
 
 def main():
+    print('PRE BUILD: write-meta.py')
     now = datetime.now()
 
     compile_date = now.strftime('%Y-%m-%d')
@@ -27,6 +30,19 @@ def main():
 
     src_dir = abspath(join(dirname(__file__), '..', 'src'))
     src_file = lambda f: join(src_dir, f)
+
+    print(
+        dedent(
+            f'''
+            * src_dir: {src_dir}
+
+            * compile_date:  {compile_date}
+            * compile_time:  {compile_time}
+            * target_arch:   {target_arch}
+            * target_kernel: {target_kernel}
+            '''
+        )
+    )
 
     meta_content = read_file(src_file('_meta.h'))
     meta_content = (
