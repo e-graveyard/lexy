@@ -1,40 +1,50 @@
-sudo: required
 language: c
 
-os:
-  - linux
-  - osx
+branches:
+  except:
+    - master
 
-compiler:
-  - gcc
-  - clang
-
-addons:
-  apt:
-    packages:
-      - libedit-dev
-
-stages:
-  - test
-  - install
-
-jobs:
+matrix:
   include:
-    - stage: test
-      name: Tests
-      install: skip
-      script:
-        - make test-mpc
-      script:
-        - make test-lexy
+    - os: linux
+      dist: Focal
+      addons:
+        apt:
+          packages:
+            - libedit-dev
 
-    - stage: install
-      name: Install and Run
-      before_install:
-        - make
-      install:
-        - make install
-      script:
-        - lexy -v
-        - lexy -r
-        - lexy -e "(print (add 1 1))"
+    - os: linux
+      dist: Bionic
+      addons:
+        apt:
+          packages:
+            - libedit-dev
+
+    - os: linux
+      dist: Xenial
+      addons:
+        apt:
+          packages:
+            - libedit-dev
+
+    - os: osx
+      osx_image: xcode12
+
+    - os: osx
+      osx_image: xcode11.3
+
+    - os: osx
+      osx_image: xcode10.1
+
+
+before_install:
+  - make test
+
+install:
+  - make
+
+script:
+  - ./lexy -v
+  - ./lexy -r
+  - ./lexy -e '(print (add 1 1))'
+  - ./lexy -e '(use "lib/std") (print (nth-of {a b c d e} 3))'

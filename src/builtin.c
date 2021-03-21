@@ -88,16 +88,15 @@ lval_T* builtin_eq(lenv_T* env, lval_T* args, char* op)
 {
     LASSERT_NUM(op, args, 2);
 
-    double r;
+    int r = 0;
 
     if (strequ(op, "eq"))
         r = lval_eq(args->cell[0], args->cell[1]);
-
     if (strequ(op, "ne"))
         r = !lval_eq(args->cell[0], args->cell[1]);
 
     lval_del(args);
-    return lval_num(r);
+    return lval_num((double)r);
 }
 
 
@@ -110,7 +109,7 @@ lval_T* builtin_order(lenv_T* env, lval_T* args, char* op)
     LASSERT_TYPE(op, args, 0, LTYPE_NUM);
     LASSERT_TYPE(op, args, 1, LTYPE_NUM);
 
-    double r;
+    int r = 0;
 
     if (strequ(op, "gt"))
         r = (args->cell[0]->number > args->cell[1]->number);
@@ -125,7 +124,7 @@ lval_T* builtin_order(lenv_T* env, lval_T* args, char* op)
         r = (args->cell[0]->number <= args->cell[1]->number);
 
     lval_del(args);
-    return lval_num(r);
+    return lval_num((double)r);
 }
 
 
@@ -477,20 +476,24 @@ lval_T* btinfn_define(lenv_T* env, lval_T* qexpr, const char* fn)
         lval_T* p;
 
         if (strequ(fn, "let"))
+        {
             p = lenv_put(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_DYNAMIC);
-
-        if (strequ(fn, "letc"))
-            p = lenv_put(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_CONSTANT);
-
-        if (strequ(fn, "global"))
-            p = lenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_DYNAMIC);
-
-        if (strequ(fn, "globalc"))
-            p = lenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_CONSTANT);
-
-        if (p->type == LTYPE_ERR) {
-            return p;
         }
+        else if (strequ(fn, "letc"))
+        {
+            p = lenv_put(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_CONSTANT);
+        }
+        else if (strequ(fn, "global"))
+        {
+            p = lenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_DYNAMIC);
+        }
+        else  // if (strequ(fn, "globalc"))
+        {
+            p = lenv_putg(env, symbols->cell[i], qexpr->cell[i + 1], LCOND_CONSTANT);
+        }
+
+        if (p->type == LTYPE_ERR)
+            return p;
     }
 
     lval_del(qexpr);

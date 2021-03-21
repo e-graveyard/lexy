@@ -1,14 +1,24 @@
+parameters:
+  unixBased: 'yes'
+  clangCL: ''
+
+# only for debuging purposes
 steps:
-  - script: |
-      echo "=> Has Python3?"
-      python3 --version
-      echo ""
+  - script: python3 --version || echo 'no'
+    displayName: Check for Python 3.x
 
-      echo "=> Has Make?"
-      make --version
-      echo ""
+  - script: make --version || echo 'no'
+    displayName: Check for Make
 
-      echo "=> Has C Compiler?"
-      cc --version
-      echo ""
-    displayName: BuildSysInfo
+  - ${{ if eq(parameters.unixBased, 'yes') }}:
+    - script: cc --version || 'no'
+      displayName: Check for CC
+
+  - ${{ if eq(parameters.unixBased, 'no') }}:
+    - task: Bash@3
+      inputs:
+        targetType: inline
+        script: '"$CLANG_CL" --version'
+      env:
+        CLANG_CL: '${{ parameters.clangCL }}'
+      displayName: Check for CC

@@ -3,7 +3,7 @@ set -e
 HERE="$(pwd)/utils"
 BIN="${HERE}/has-readline"
 
-cc -o "$BIN" -x c - <<EOF
+"$CC" -o "$BIN" -x c - <<EOF
 
 #if !__has_include(<editline/readline.h>)
 #define __MISSING_READLINE

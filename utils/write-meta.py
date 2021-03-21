@@ -1,6 +1,7 @@
 import platform
 from datetime import datetime
 
+from os import environ
 from os.path import basename
 from os.path import join
 from os.path import dirname
@@ -21,7 +22,9 @@ def write_file(filepath, data):
 
 
 def get_compiler_info():
-    ret = check_output(['cc', '--version'])
+    compiler = environ['CC']
+
+    ret = check_output([compiler, '--version'])
     ret = ret.decode('utf-8')
     ret = ret.split('\n')
 

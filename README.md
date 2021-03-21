@@ -6,7 +6,7 @@
 [travis-url]: https://travis-ci.org/caian-org/lexy
 
 [azure-shield]: https://img.shields.io/azure-devops/build/caian-org/97c8ebe2-b395-407e-8b0f-8db0a1771869/9/master?logo=azure-pipelines&style=for-the-badge
-[azure-url]: https://dev.azure.com/caian-org/lexy
+[azure-url]: https://dev.azure.com/caian-org/lexy/_build
 
 [lgtm-shield]: https://img.shields.io/lgtm/grade/cpp/github/caian-org/lexy?logo=lgtm&style=for-the-badge
 [lgtm-url]: https://lgtm.com/projects/g/caian-org/lexy/context:cpp

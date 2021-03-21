@@ -17,9 +17,10 @@ jobs:
   - job: Build__Ubuntu_18_04
     pool:
       vmImage: 'ubuntu-18.04'
-    variables:
-      cc: gcc-10.1
     steps:
+      - script: sudo apt-get install libedit-dev
+        displayName: Install build dependencies
+
       - template: .ci/templates/build-sys-info.yml
       - template: .ci/templates/compile-and-run.yml
 
@@ -34,8 +35,16 @@ jobs:
     pool:
       vmImage: 'vs2017-win2016'
     variables:
-      cc: clang-cl
+      clangCL: 'C:\Program Files\LLVM\bin\clang-cl.exe'
     steps:
       - script: choco install llvm
+        displayName: Install build dependencies
+
       - template: .ci/templates/build-sys-info.yml
+        parameters:
+          unixBased: 'no'
+          clangCL: '$(clangCL)'
+
       - template: .ci/templates/compile-and-run.yml
+        parameters:
+          compiler: '$(clangCL)'

@@ -1,7 +1,20 @@
+parameters:
+  compiler: 'cc'
+
 steps:
-  - script: |
-      make
-      ./lexy -v
-      ./lexy -r
-      ./lexy -e "(print (add 1 1))"
-    displayName: CompileAndRun
+  - task: Bash@3
+    inputs:
+      targetType: inline
+      script: make build-release
+    env:
+      CC: '${{ parameters.compiler }}'
+    displayName: Compile with optimizations
+
+  - script: ./lexy -v
+    displayName: Show lexy version
+
+  - script: ./lexy -r
+    displayName: Show lexy release info
+
+  - script: ./lexy -e "(print (add 1 1))"
+    displayName: Evaluate code

@@ -14,7 +14,7 @@ LEXY_FILES      = $(wildcard src/*.c)
 MPC_TEST_FILES  = $(wildcard tests/mpc/*.c)
 LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 
-MISSING_READLINE = $(shell utils/has-readline.sh)
+MISSING_READLINE = $(shell CC=$(CC) utils/has-readline.sh)
 
 # 0 = FALSE, 1 = TRUE
 ifeq ($(MISSING_READLINE),0)
@@ -30,10 +30,11 @@ endif
 # base build target
 build: $(MPC) $(LEXY_FILES)
 	@printf "\nLEXY PRE-BUILD\n\n"
+	@printf "* CC: %s\n" "$(CC)"
 	@printf "* readline found: "
 	@if [ "$(MISSING_READLINE)" = "0" ]; then printf "yes"; else printf "no"; fi
 	@printf "\n\n"
-	@python3 utils/write-meta.py
+	@CC="$(CC)" python3 utils/write-meta.py
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
 
 # build with optimizations (binary release)
