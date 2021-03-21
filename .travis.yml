@@ -1,8 +1,5 @@
 language: c
 
-branches:
-  except:
-    - master
 
 matrix:
   include:
