@@ -1,10 +1,8 @@
 .PHONY: test-mpc test-lexy
 .DEFAULT_GOAL := build
 
-CC = cc
-
 CFLAGS = -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99
-LFLAGS = -ledit -lm
+LFLAGS = -lm
 
 # ---
 
@@ -16,38 +14,61 @@ LEXY_FILES      = $(wildcard src/*.c)
 MPC_TEST_FILES  = $(wildcard tests/mpc/*.c)
 LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 
+MISSING_READLINE = $(shell utils/has-readline.sh)
+
+# 0 = FALSE, 1 = TRUE
+ifeq ($(MISSING_READLINE),0)
+	# links editline if the lib is installed & available
+	LFLAGS += -ledit
+endif
+
 ifeq ($(OS),Windows_NT)
 	ARTIFACT = 'lexy.exe'
 endif
 
 
+# base build target
 build: $(MPC) $(LEXY_FILES)
-	@python3 scripts/write-meta.py
+	@printf "\nLEXY PRE-BUILD\n\n"
+	@printf "* readline found: "
+	@if [ "$(MISSING_READLINE)" == "0" ]; then printf "yes"; else printf "no"; fi
+	@printf "\n\n"
+	@python3 utils/write-meta.py
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
 
-build-cov: CFLAGS += -coverage
-build-cov: build
+# build with optimizations (binary release)
+build-release: CFLAGS += -Os
+build-release: build
 
+# build and generate coverage files
+build-cov: CFLAGS += -coverage
+build-cov: clean build
+
+# build more debuggable files
 debug: CFLAGS += -g
-debug: clean
 debug: build
 
-debug-gnu: debug
+# build debug and run with gdb (GCC toolchain)
+debug-gcc: debug
 	gdb $(ARTIFACT)
 
-debug-mac: debug
+# build debug and run with lldb (LLVM toolchain)
+debug-llvm: debug
 	lldb $(ARTIFACT)
 
+# compile test suite for MPC and run
 test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
 	@$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
 		&& ./$@ \
 		&& rm $@
 
+# compile test suite for lexy and run
 test-lexy: $(PTEST) $(MPC) $(filter-out src/lexy.c, $(LEXY_FILES)) $(LEXY_TEST_FILES)
 	@$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
 		&& ./$@ \
 		&& rm $@
 
+# run all tests
 test: test-mpc test-lexy
 
 install:
@@ -59,5 +80,6 @@ uninstall:
 run:
 	@./$(ARTIFACT)
 
+# clean the artifact and coverage-related files
 clean:
 	@rm -f $(ARTIFACT) *.gcno *.gcda *.gcov
