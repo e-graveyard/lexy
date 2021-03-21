@@ -43,10 +43,10 @@ def main():
 
     compiler_info = get_compiler_info()
 
-    src_dir = abspath(join(dirname(__file__), '..', 'src'))
+    core_dir = abspath(join(dirname(__file__), '..', 'core'))
 
-    meta_f = join(src_dir, '_meta.h')  # origin header file
-    meta_t = join(src_dir, 'meta.h')   # destination header file
+    meta_f = join(core_dir, '_meta.h')  # origin header file
+    meta_t = join(core_dir, 'meta.h')   # destination header file
 
     print(
         dedent(

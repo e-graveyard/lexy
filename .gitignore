@@ -3,7 +3,7 @@
 /lexy.exe
 
 # auto-generated meta header
-src/meta.h
+core/meta.h
 
 # debug information
 lexy.dSYM

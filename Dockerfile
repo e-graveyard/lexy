@@ -4,7 +4,7 @@ MAINTAINER Caian R. Ertl <hi@caian.org>
 
 FROM base AS build
 COPY Makefile .
-COPY src src
+COPY core core
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \

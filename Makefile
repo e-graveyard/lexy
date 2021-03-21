@@ -6,11 +6,11 @@ LFLAGS =
 
 # ---
 
-MPC      = src/mpc.c
+MPC      = core/mpc.c
 PTEST    = tests/ptest.c
 ARTIFACT = lexy
 
-LEXY_FILES      = $(wildcard src/*.c)
+LEXY_FILES      = $(wildcard core/*.c)
 MPC_TEST_FILES  = $(wildcard tests/mpc/*.c)
 LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 
@@ -70,7 +70,7 @@ test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
 		&& rm $@
 
 # compile test suite for lexy and run
-test-lexy: $(PTEST) $(MPC) $(filter-out src/lexy.c, $(LEXY_FILES)) $(LEXY_TEST_FILES)
+test-lexy: $(PTEST) $(MPC) $(filter-out core/lexy.c, $(LEXY_FILES)) $(LEXY_TEST_FILES)
 	@$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
 		&& ./$@ \
 		&& rm $@
