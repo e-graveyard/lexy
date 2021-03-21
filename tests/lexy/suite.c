@@ -1,5 +1,5 @@
 #include "../ptest.h"
-#include "../../src/fmt.h"
+#include "../../core/fmt.h"
 
 
 static void

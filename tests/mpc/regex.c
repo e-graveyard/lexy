@@ -1,5 +1,5 @@
 #include "../ptest.h"
-#include "../../src/mpc.h"
+#include "../../core/mpc.h"
 
 #include <string.h>
 #include <stdlib.h>
