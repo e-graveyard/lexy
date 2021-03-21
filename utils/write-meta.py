@@ -6,6 +6,7 @@ from os.path import join
 from os.path import dirname
 from os.path import abspath
 
+from subprocess import check_output
 from textwrap import dedent
 
 
@@ -19,15 +20,25 @@ def write_file(filepath, data):
         file.write(data)
 
 
+def get_compiler_info():
+    ret = check_output(['cc', '--version'])
+    ret = ret.decode('utf-8')
+    ret = ret.split('\n')
+
+    return ret[0]
+
+
 def main():
     print('>>> {}'.format(basename(__file__)))
     now = datetime.now()
 
-    compile_date = now.strftime('%Y-%m-%d')
-    compile_time = now.strftime('%H:%M:%S')
+    compilation_date = now.strftime('%Y-%m-%d')
+    compilation_time = now.strftime('%H:%M:%S')
 
     target_arch = platform.machine()
     target_kernel = platform.system()
+
+    compiler_info = get_compiler_info()
 
     src_dir = abspath(join(dirname(__file__), '..', 'src'))
 
@@ -37,20 +48,22 @@ def main():
     print(
         dedent(
             '''
-            * reading from:  {}
-            * writing to:    {}
+            * reading from: {}
+            * writing to:   {}
 
-            * compile_date:  {}
-            * compile_time:  {}
-            * target_arch:   {}
-            * target_kernel: {}
+            * target_arch:      {}
+            * target_kernel:    {}
+            * compiled_with:    {}
+            * compilation_date: {}
+            * compilation_time: {}
             '''.format(
                 meta_f,
                 meta_t,
-                compile_date,
-                compile_time,
                 target_arch,
-                target_kernel
+                target_kernel,
+                compiler_info,
+                compilation_date,
+                compilation_time,
             )
         )
     )
@@ -60,10 +73,11 @@ def main():
         '/* this file is auto-generated */'
         + '\n'
         + meta_content.format(
-            kernel=target_kernel,
             arch=target_arch,
-            cdate=compile_date,
-            ctime=compile_time
+            kernel=target_kernel,
+            compw=compiler_info,
+            cdate=compilation_date,
+            ctime=compilation_time
         )
     )
 

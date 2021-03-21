@@ -104,7 +104,11 @@ static int lexy_version()
 
 static int lexy_release()
 {
-    printf("%s/%s @ %s, %s\n", TARGET_KERNEL, TARGET_ARCH, COMPILE_DATE, COMPILE_TIME);
+    printf("compiled @ %s, %s\n"
+           "build w/ : %s\n"
+           "target   : %s/%s\n",
+           COMPILATION_TIME, COMPILATION_DATE, COMPILED_WITH, TARGET_KERNEL, TARGET_ARCH);
+
     return 0;
 }
 
