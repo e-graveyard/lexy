@@ -39,7 +39,10 @@
 #define PROMPT_RESPONSE "~> "
 
 
-#ifdef _WIN32
+#if __has_include(<editline/readline.h>)
+#include <editline/readline.h>
+
+#else
 #include <string.h>
 
 static char buffer[2048];
@@ -57,10 +60,6 @@ char* readline(char* prompt)
 
     return cpy;
 }
-
-#else
-
-#include <editline/readline.h>
 #endif
 
 
@@ -133,7 +132,6 @@ static void lexy_repl_inline_seg(lval_T* parsed_input, lval_T** err)
 
     GREY_TXT(1, "%s", PROMPT_RESPONSE);
     lval_print(lexy_current_env, t);
-    printf("\n");
 
     lval_del(t);
 }
