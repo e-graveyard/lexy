@@ -1,0 +1,27 @@
+parameters:
+  cygwinRoot: ''
+
+
+steps:
+  - script: choco install llvm
+    displayName: Install LLVM toolchain
+
+  - task: Bash@3
+    inputs:
+      targetType: inline
+      script: 'choco install cygwin --params="/InstallDir:$CYGWIN_ROOT"'
+    env:
+      CYGWIN_ROOT: '${{ parameters.cygwinRoot }}'
+    displayName: Install Cygwin
+
+  - task: Bash@3
+    inputs:
+      targetType: inline
+      script: |
+        "$CYGWIN_ROOT\cygwinsetup.exe" -qnNdO -R "$CYGWIN_ROOT" -s "$CYGWIN_MIRROR" -g -P ^
+        gengetopt,^
+        libedit-devel
+    env:
+      CYGWIN_ROOT: '${{ parameters.cygwinRoot }}'
+      CYGWIN_MIRROR: 'http://cygwin.mirror.constant.com'
+    displayName: Install build dependencies

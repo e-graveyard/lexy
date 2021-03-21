@@ -14,9 +14,11 @@ trigger:
 
 
 jobs:
+  # ------------------------
   - job: Build__Ubuntu_18_04
     pool:
       vmImage: 'ubuntu-18.04'
+
     steps:
       - script: sudo apt-get install libedit-dev
         displayName: Install build dependencies
@@ -24,21 +26,27 @@ jobs:
       - template: .ci/templates/build-sys-info.yml
       - template: .ci/templates/compile-and-run.yml
 
+  # ------------------------
   - job: Build__MacOS_10_14
     pool:
       vmImage: 'macOS-10.14'
+
     steps:
       - template: .ci/templates/build-sys-info.yml
       - template: .ci/templates/compile-and-run.yml
 
+  # ------------------------
   - job: Build__Windows_2016
     pool:
       vmImage: 'vs2017-win2016'
     variables:
       clangCL: 'C:\Program Files\LLVM\bin\clang-cl.exe'
+      cygwinRoot: '$(System.Workfolder)\cygwin'
+
     steps:
-      - script: choco install llvm
-        displayName: Install build dependencies
+      - template: .ci/templates/win-dependencies.yml
+        parameters:
+          cygwinRoot: '$(cygwinRoot)'
 
       - template: .ci/templates/build-sys-info.yml
         parameters:
@@ -48,3 +56,4 @@ jobs:
       - template: .ci/templates/compile-and-run.yml
         parameters:
           compiler: '$(clangCL)'
+          pathAppend: '$(cygwinRoot)'

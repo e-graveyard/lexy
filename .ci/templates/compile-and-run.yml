@@ -1,13 +1,18 @@
 parameters:
   compiler: 'cc'
+  pathAppend: ''
 
 steps:
   - task: Bash@3
     inputs:
       targetType: inline
-      script: make build-release
+      script: |
+        export PATH="$PATH:$PATH_TO_APPEND"
+        make build-release
     env:
       CC: '${{ parameters.compiler }}'
+      PATH_TO_APPEND: '${{ parameters.pathAppend }}'
+
     displayName: Compile with optimizations
 
   - script: ./lexy -v
@@ -16,5 +21,8 @@ steps:
   - script: ./lexy -r
     displayName: Show lexy release info
 
-  - script: ./lexy -e "(print (add 1 1))"
+  - script: ./lexy -e '(print (add 1 1))'
     displayName: Evaluate code
+
+  - script: ./lexy -e '(use "lib/std") (print (nth-of {"a" "b" "c" "d" "e"} 2))'
+    displayName: Evaluate code with lib import

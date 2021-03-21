@@ -1,8 +1,8 @@
 .PHONY: test-mpc test-lexy
 .DEFAULT_GOAL := build
 
-CFLAGS = -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99
-LFLAGS = -lm
+CFLAGS = -Wall -Wextra -Wno-unused-parameter
+LFLAGS =
 
 # ---
 
@@ -14,7 +14,7 @@ LEXY_FILES      = $(wildcard src/*.c)
 MPC_TEST_FILES  = $(wildcard tests/mpc/*.c)
 LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 
-MISSING_READLINE = $(shell CC=$(CC) utils/has-readline.sh)
+MISSING_READLINE = $(shell CC="$(CC)" utils/has-readline.sh)
 
 # 0 = FALSE, 1 = TRUE
 ifeq ($(MISSING_READLINE),0)
@@ -24,6 +24,11 @@ endif
 
 ifeq ($(OS),Windows_NT)
 	ARTIFACT = 'lexy.exe'
+else
+	LFLAGS += -lm
+
+	CFLAGS += -std=c99
+	CFLAGS += -pedantic
 endif
 
 
