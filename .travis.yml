@@ -18,13 +18,17 @@ jobs:
   include:
     - stage: test
       name: Tests
-      script: make test-mpc
-      script: make test-lexy
+      script:
+        - make test-mpc
+      script:
+        - make test-lexy
 
     - stage: install
       name: Install and Run
-      before_script: make
-      script: make install
+      before_script:
+        - make
+      script:
+        - make install
       after_script:
         - lexy -v
         - lexy -r
