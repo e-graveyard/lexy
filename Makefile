@@ -79,14 +79,14 @@ test-lexy: $(PTEST) $(MPC) $(filter-out core/lexy.c, $(LEXY_FILES)) $(LEXY_TEST_
 test: test-mpc test-lexy
 
 install:
-	@mv $(ARTIFACT) /usr/bin
+	@mv "$(ARTIFACT)" /usr/bin
 
 uninstall:
-	@rm /usr/bin/$(ARTIFACT)
+	@rm "/usr/bin/$(ARTIFACT)"
 
 run:
 	@./$(ARTIFACT)
 
 # clean the artifact and coverage-related files
 clean:
-	@rm -f $(ARTIFACT) *.gcno *.gcda *.gcov
+	@rm -rf "$(ARTIFACT)" "$(ARTIFACT).dSYM" *.gcno *.gcda *.gcov
