@@ -1,0 +1,13 @@
+steps:
+  - script: |
+      echo "=> Has Python3?"
+      python3 --version
+      echo ""
+
+      echo "=> Has Make?"
+      make --version
+      echo ""
+
+      echo "=> Has C Compiler?"
+      cc --version
+      echo ""
