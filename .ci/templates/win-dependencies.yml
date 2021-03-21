@@ -18,9 +18,10 @@ steps:
     inputs:
       targetType: inline
       script: |
-        "$CYGWIN_ROOT\cygwinsetup.exe" -qnNdO -R "$CYGWIN_ROOT" -s "$CYGWIN_MIRROR" -g -P ^
-        gengetopt,^
-        libedit-devel
+        "$CYGWIN_ROOT\cygwinsetup.exe" -qnNdO \
+          -R "$CYGWIN_ROOT" \
+          -s "$CYGWIN_MIRROR" \
+          -g -P gengetopt,libedit-devel
     env:
       CYGWIN_ROOT: '${{ parameters.cygwinRoot }}'
       CYGWIN_MIRROR: 'http://cygwin.mirror.constant.com'
