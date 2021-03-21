@@ -1,10 +1,14 @@
-[![Build Status][travis-shield]][travis-url]
+[![Build Status @ Travis-CI][travis-shield]][travis-url]
+[![Build Status @ Azure Pipelines][azure-shield]][azure-url]
 [![Code Quality][lgtm-shield]][lgtm-url]
 
-[travis-shield]: https://travis-ci.org/caian-org/lexy.svg?branch=master
+[travis-shield]: https://img.shields.io/travis/caian-org/lexy?logo=travis-ci&logoColor=FFF&style=for-the-badge
 [travis-url]: https://travis-ci.org/caian-org/lexy
 
-[lgtm-shield]: https://img.shields.io/lgtm/grade/cpp/g/caian-org/lexy.svg?logo=lgtm&logoWidth=18
+[azure-shield]: https://img.shields.io/azure-devops/build/caian-org/97c8ebe2-b395-407e-8b0f-8db0a1771869/9/master?logo=azure-pipelines&style=for-the-badge
+[azure-url]: https://dev.azure.com/caian-org/lexy
+
+[lgtm-shield]: https://img.shields.io/lgtm/grade/cpp/github/caian-org/lexy?logo=lgtm&style=for-the-badge
 [lgtm-url]: https://lgtm.com/projects/g/caian-org/lexy/context:cpp
 
 # LEXY: tiny, made up lisp
