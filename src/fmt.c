@@ -48,7 +48,7 @@ unsigned short int strequ(const char* ref, const char* txt)
  *
  * checks if a given double value is a round, integer number
  */
-unsigned short int isvint(const double f)
+unsigned short int isvint(const double d)
 {
-    return fabs(roundf(f) - f) <= INTEGER_FLOAT_EPSILON;
+    return fabs(round(d) - d) <= INTEGER_FLOAT_EPSILON;
 }

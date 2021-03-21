@@ -115,12 +115,12 @@ lval_T* lval_fun(char* name, char* description, lbtin func)
  */
 lval_T* lval_lambda(lval_T* formals, lval_T* body)
 {
-    lval_T* v  = lval_new();
-    v->type    = LTYPE_FUN;
-    v->builtin = NULL;
-    v->formals = formals;
-    v->body    = body;
-    v->environ = lenv_new();
+    lval_T* v      = lval_new();
+    v->type        = LTYPE_FUN;
+    v->builtin     = NULL;
+    v->formals     = formals;
+    v->body        = body;
+    v->environment = lenv_new();
 
     return v;
 }
@@ -316,7 +316,7 @@ void lval_del(lval_T* v)
         case LTYPE_FUN:
             if (!v->builtin)
             {
-                lenv_del(v->environ);
+                lenv_del(v->environment);
                 lval_del(v->formals);
                 lval_del(v->body);
             }
@@ -369,9 +369,9 @@ lval_T* lval_copy(lval_T* val)
             else
             {
                 nval->builtin = NULL;
-                nval->environ = lenv_copy(val->environ);
-                nval->formals = lval_copy(val->formals);
-                nval->body = lval_copy(val->body);
+                nval->environment = lenv_copy(val->environment);
+                nval->formals     = lval_copy(val->formals);
+                nval->body        = lval_copy(val->body);
             }
             break;
 
@@ -487,7 +487,7 @@ lval_T* lval_call(lenv_T* env, lval_T* func, lval_T* args)
             }
 
             lval_T* nsym = lval_pop(func->formals, 0);
-            lenv_put(func->environ, nsym, btinfn_list(env, args), LCOND_DYNAMIC);
+            lenv_put(func->environment, nsym, btinfn_list(env, args), LCOND_DYNAMIC);
 
             lval_del(symbol);
             lval_del(nsym);
@@ -497,7 +497,7 @@ lval_T* lval_call(lenv_T* env, lval_T* func, lval_T* args)
 
         lval_T* value  = lval_pop(args, 0);
 
-        lenv_put(func->environ, symbol, value, value->condition);
+        lenv_put(func->environment, symbol, value, value->condition);
 
         lval_del(symbol);
         lval_del(value);
@@ -515,7 +515,7 @@ lval_T* lval_call(lenv_T* env, lval_T* func, lval_T* args)
         lval_T* symbol = lval_pop(func->formals, 0);
         lval_T* value  = lval_qexpr();
 
-        lenv_put(func->environ, symbol, value, LCOND_DYNAMIC);
+        lenv_put(func->environment, symbol, value, LCOND_DYNAMIC);
 
         lval_del(symbol);
         lval_del(value);
@@ -523,8 +523,8 @@ lval_T* lval_call(lenv_T* env, lval_T* func, lval_T* args)
 
     if (func->formals->counter == 0)
     {
-        func->environ->parent = env;
-        return btinfn_eval(func->environ, lval_add(lval_sexpr(), lval_copy(func->body)));
+        func->environment->parent = env;
+        return btinfn_eval(func->environment, lval_add(lval_sexpr(), lval_copy(func->body)));
     }
 
     return lval_copy(func);

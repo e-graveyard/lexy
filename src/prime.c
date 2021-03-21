@@ -62,7 +62,7 @@ short int is_prime(const long n)
     if ((n % 2) == 0)
         return NOT_PRIME;
 
-    for (size_t i = 3; i <= floor(sqrt((double) n)); i += 2)
+    for (long i = 3; i <= floor(sqrt((double) n)); i += 2)
     {
         if ((n % i) == 0)
             return NOT_PRIME;

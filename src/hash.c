@@ -79,7 +79,7 @@ struct ht_index_S
 static ht_item_T HT_DELETED_ITEM = {NULL, NULL};
 
 
-char* dupstr(const char* s)
+static char* dupstr(const char* s)
 {
     size_t len = (strlen(s) + 1);
     char* p = malloc(len);
@@ -195,7 +195,7 @@ static ht_index_T* ht_new_sized(const uint32_t base_s)
 }
 
 
-ht_index_T* ht_new()
+ht_index_T* ht_new(void)
 {
     return ht_new_sized(HT_INITIAL_BASE_SIZE);
 }

@@ -101,7 +101,7 @@ struct lbtin_meta_S
 struct lval_S
 {
     size_t  counter;
-    lenv_T* environ;
+    lenv_T* environment;
 
     ltype_E type;
     lcond_E condition;

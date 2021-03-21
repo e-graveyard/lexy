@@ -29,10 +29,18 @@
 #include "type.h"
 
 
-bool parser_has_been_initialized = FALSE;
+static bool parser_has_been_initialized = FALSE;
+
+static mpc_parser_t* Number;
+static mpc_parser_t* String;
+static mpc_parser_t* Comment;
+static mpc_parser_t* Symbol;
+static mpc_parser_t* SExpr;
+static mpc_parser_t* QExpr;
+static mpc_parser_t* Atom;
 
 
-void parser_init()
+void parser_init(void)
 {
     Number  = mpc_new("number");
     String  = mpc_new("string");
@@ -59,7 +67,7 @@ void parser_init()
     parser_has_been_initialized = TRUE;
 }
 
-void parser_safe_cleanup()
+void parser_safe_cleanup(void)
 {
     if (parser_has_been_initialized)
         mpc_cleanup(8, Number, String, Comment, Symbol, SExpr, QExpr, Atom, Lisp);
