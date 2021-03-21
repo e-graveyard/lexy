@@ -11,7 +11,7 @@ steps:
         make build-release
     env:
       CC: '${{ parameters.compiler }}'
-      PATH_TO_APPEND: '${{ parameters.pathAppend }}'
+      PATH_TO_APPEND: '${{ parameters.pathAppend }}\bin'
 
     displayName: Compile with optimizations
 

@@ -35,6 +35,7 @@ endif
 # base build target
 build: $(MPC) $(LEXY_FILES)
 	@printf "\nLEXY PRE-BUILD\n\n"
+	@printf "* PATH: %s\n" "$(PATH)"
 	@printf "* CC: %s\n" "$(CC)"
 	@printf "* readline found: "
 	@if [ "$(MISSING_READLINE)" = "0" ]; then printf "yes"; else printf "no"; fi
