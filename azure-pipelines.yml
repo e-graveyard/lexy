@@ -14,25 +14,25 @@ trigger:
 
 
 jobs:
-  - job: Build__Ubuntu_20.04
+  - job: Build__Ubuntu_20_04
     pool:
       vmImage: 'ubuntu-20.04'
     steps:
       - script: make
 
-  - job: Build__Ubuntu_16.04
+  - job: Build__Ubuntu_16_04
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
       - script: make
 
-  - job: Build__MacOS_10.15
+  - job: Build__MacOS_10_15
     pool:
       vmImage: 'macOS-10.15'
     steps:
       - script: make
 
-  - job: Build__MacOS_10.14
+  - job: Build__MacOS_10_14
     pool:
       vmImage: 'macOS-10.14'
     steps:
