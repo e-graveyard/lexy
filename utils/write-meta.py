@@ -1,6 +1,7 @@
 import platform
 from datetime import datetime
 
+from os.path import basename
 from os.path import join
 from os.path import dirname
 from os.path import abspath
@@ -19,7 +20,7 @@ def write_file(filepath, data):
 
 
 def main():
-    print('PRE BUILD: write-meta.py')
+    print('>>> {}'.format(basename(__file__)))
     now = datetime.now()
 
     compile_date = now.strftime('%Y-%m-%d')
@@ -29,22 +30,32 @@ def main():
     target_kernel = platform.system()
 
     src_dir = abspath(join(dirname(__file__), '..', 'src'))
-    src_file = lambda f: join(src_dir, f)
+
+    meta_f = join(src_dir, '_meta.h')  # origin header file
+    meta_t = join(src_dir, 'meta.h')   # destination header file
 
     print(
         dedent(
-            f'''
-            * src_dir: {src_dir}
-
-            * compile_date:  {compile_date}
-            * compile_time:  {compile_time}
-            * target_arch:   {target_arch}
-            * target_kernel: {target_kernel}
             '''
+            * reading from:  {}
+            * writing to:    {}
+
+            * compile_date:  {}
+            * compile_time:  {}
+            * target_arch:   {}
+            * target_kernel: {}
+            '''.format(
+                meta_f,
+                meta_t,
+                compile_date,
+                compile_time,
+                target_arch,
+                target_kernel
+            )
         )
     )
 
-    meta_content = read_file(src_file('_meta.h'))
+    meta_content = read_file(meta_f)
     meta_content = (
         '/* this file is auto-generated */'
         + '\n'
@@ -56,7 +67,7 @@ def main():
         )
     )
 
-    write_file(src_file('meta.h'), meta_content)
+    write_file(meta_t, meta_content)
 
 
 if __name__ == '__main__':
