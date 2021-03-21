@@ -34,12 +34,12 @@
 #include "type.h"
 
 
-void    lval_del    (lval_T* v);
-lval_T* lval_sym    (const char* s);
-lval_T* lval_err    (const char* fmt, ...);
-lval_T* lval_fun    (char* name, char* description, lbtin func);
-lval_T* lval_copy   (lval_T* val);
-lval_T* lval_sexpr  (void);
+void    lval_del   (lval_T* v);
+lval_T* lval_sym   (const char* s);
+lval_T* lval_err   (const char* fmt, ...);
+lval_T* lval_fun   (char* name, char* description, lbtin func);
+lval_T* lval_copy  (lval_T* val);
+lval_T* lval_sexpr (void);
 
 
 /**
