@@ -5,19 +5,25 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99
 LFLAGS = -ledit -lm
-ARTIFACT = lexy
 
-MPC = src/mpc.c
-PTEST = tests/ptest.c
+# ---
+
+MPC      = src/mpc.c
+PTEST    = tests/ptest.c
+ARTIFACT = lexy
 
 LEXY_FILES      = $(wildcard src/*.c)
 MPC_TEST_FILES  = $(wildcard tests/mpc/*.c)
 LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 
+ifeq ($(OS),Windows_NT)
+	ARTIFACT = 'lexy.exe'
+endif
+
 
 build: $(MPC) $(LEXY_FILES)
 	@python3 scripts/write-meta.py
-	@$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
+	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
 
 build-cov: CFLAGS += -coverage
 build-cov: build
