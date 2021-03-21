@@ -1,4 +1,4 @@
-sudo: true
+sudo: required
 language: c
 
 os:
@@ -14,10 +14,15 @@ addons:
     packages:
       - libedit-dev
 
+stages:
+  - test
+  - install
+
 jobs:
   include:
     - stage: test
       name: Tests
+      install: skip
       script:
         - make test-mpc
       script:
@@ -25,11 +30,11 @@ jobs:
 
     - stage: install
       name: Install and Run
-      before_script:
+      before_install:
         - make
-      script:
+      install:
         - make install
-      after_script:
+      script:
         - lexy -v
         - lexy -r
         - lexy -e "(print (add 1 1))"
