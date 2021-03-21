@@ -18,34 +18,34 @@ jobs:
     pool:
       vmImage: 'ubuntu-20.04'
     steps:
-      - make
+      - script: make
 
   - job: Build__Ubuntu_16.04
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
-      - make
+      - script: make
 
   - job: Build__MacOS_10.15
     pool:
       vmImage: 'macOS-10.15'
     steps:
-      - make
+      - script: make
 
   - job: Build__MacOS_10.14
     pool:
       vmImage: 'macOS-10.14'
     steps:
-      - make
+      - script: make
 
   - job: Build__Windows_2019
     pool:
       vmImage: 'windows-2019'
     steps:
-      - make
+      - script: make
 
   - job: Build__Windows_2016
     pool:
       vmImage: 'vs2017-win2016'
     steps:
-      - make
+      - script: make
