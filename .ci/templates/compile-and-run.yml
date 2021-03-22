@@ -15,11 +15,14 @@ steps:
 
     displayName: Compile with optimizations
 
-  - script: ./lexy -v
-    displayName: Show lexy version
+  - script: |
+      ./lexy -h
+      ./lexy -v
+      ./lexy -r
+    displayName: Show lexy CLI info
 
-  - script: ./lexy -r
-    displayName: Show lexy release info
+  - script: ./lexy examples/hello-world
+    displayName: Run file
 
   - script: ./lexy -e '(print (add 1 1))'
     displayName: Evaluate code
