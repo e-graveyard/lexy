@@ -88,7 +88,7 @@ static int lexy_help_message(int ret_code, char* bin_filename)
            "-r : print release information\n"
            "-d : enable the debug mode\n"
            "-e code : evaluate and execute a string of lexy\n"
-           "\nThis project can be found at <https://github.com/caian-org/lexy>\n",
+           "\nThis project can be found at <https://github.com/caian-org/lexy>\n\n",
            bin_filename);
 
     return ret_code;
