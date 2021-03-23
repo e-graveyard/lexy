@@ -31,6 +31,7 @@
 
 static bool parser_has_been_initialized = FALSE;
 
+mpc_parser_t* Lisp;
 static mpc_parser_t* Number;
 static mpc_parser_t* String;
 static mpc_parser_t* Comment;

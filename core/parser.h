@@ -31,7 +31,7 @@
 #include "mpc.h"
 
 
-mpc_parser_t* Lisp;
+extern mpc_parser_t* Lisp;
 
 void parser_init(void);
 void parser_safe_cleanup(void);
