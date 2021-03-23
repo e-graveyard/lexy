@@ -37,7 +37,7 @@ matrix:
 
     # linux machines (other archs)
     - os: linux
-      dist: Xenial
+      dist: Focal
       arch: arm64
       addons:
         apt:
@@ -45,7 +45,7 @@ matrix:
             - libedit-dev
 
     - os: linux
-      dist: Xenial
+      dist: Focal
       arch: ppc64le
       addons:
         apt:
@@ -53,7 +53,7 @@ matrix:
             - libedit-dev
 
     - os: linux
-      dist: Xenial
+      dist: Focal
       arch: s390x
       addons:
         apt:
