@@ -1,10 +1,14 @@
-FROM debian:stretch-slim AS base
+# vi: ft=Dockerfile
+
+FROM alpine:3.13 AS base
 MAINTAINER Caian R. Ertl <hi@caian.org>
 
 
 FROM base AS build-env
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    build-essential \
+RUN apk add --no-cache \
+    gcc \
+    make \
+    musl-dev \
     libedit-dev \
     python3
 
@@ -17,13 +21,11 @@ COPY utils utils
 RUN make build-release
 
 
-FROM base as deps
-RUN apt-get update && apt-get install --no-install-recommends -y libedit-dev
+FROM base AS deps
+RUN apk add --no-cache libedit-dev
 
 
 FROM deps AS run
-
-WORKDIR lexy
 COPY --from=build lexy lexy
 COPY lib lib
-CMD ./lexy
+ENTRYPOINT ["/lexy"]
