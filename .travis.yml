@@ -3,6 +3,17 @@ language: c
 
 matrix:
   include:
+    # osx machines (x86-64)
+    - os: osx
+      osx_image: xcode12
+
+    - os: osx
+      osx_image: xcode11.3
+
+    - os: osx
+      osx_image: xcode10.1
+
+    # linux machines (x86-64)
     - os: linux
       dist: Focal
       addons:
@@ -24,14 +35,30 @@ matrix:
           packages:
             - libedit-dev
 
-    - os: osx
-      osx_image: xcode12
+    # linux machines (other archs)
+    - os: linux
+      dist: Xenial
+      arch: arm64
+      addons:
+        apt:
+          packages:
+            - libedit-dev
 
-    - os: osx
-      osx_image: xcode11.3
+    - os: linux
+      dist: Xenial
+      arch: ppc64le
+      addons:
+        apt:
+          packages:
+            - libedit-dev
 
-    - os: osx
-      osx_image: xcode10.1
+    - os: linux
+      dist: Xenial
+      arch: s390x
+      addons:
+        apt:
+          packages:
+            - libedit-dev
 
 
 before_install:
