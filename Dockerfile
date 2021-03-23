@@ -2,15 +2,19 @@ FROM debian:stretch-slim AS base
 MAINTAINER Caian R. Ertl <hi@caian.org>
 
 
-FROM base AS build
-COPY Makefile .
-COPY core core
-
+FROM base AS build-env
 RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
-    libedit-dev
+    libedit-dev \
+    python3
 
-RUN make
+
+FROM build-env AS build
+COPY Makefile .
+COPY core core
+COPY utils utils
+
+RUN make build-release
 
 
 FROM base as deps
