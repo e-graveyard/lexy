@@ -18,7 +18,7 @@ COPY Makefile .
 COPY core core
 COPY utils utils
 
-RUN make build-release
+RUN make build-release EFLAGS="-DLEXY_NO_COLORS"
 
 
 FROM base AS deps
