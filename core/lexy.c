@@ -146,13 +146,13 @@ static void lexy_repl_start()
     BOLD_TXT(TRUE, "\nlexy %s %s/%s - '(help)' for documentation\n",
              PROGRAM_VERSION, TARGET_KERNEL, TARGET_ARCH);
 
-    GREY_TXT(TRUE, "%s\n", "press CTRL+c to exit");
+    GREY_TXT(TRUE, "%s", "press CTRL+c to exit");
 
     lexy_current_env->exec_type = LEXEC_REPL;
 
     while (TRUE)
     {
-        printf("\n");
+        printf("\n\n");
 
         char* input = readline(ANSI_STYLE_BOLD PROMPT_DISPLAY ANSI_RESET);
         add_history(input);
