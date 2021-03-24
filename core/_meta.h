@@ -3,7 +3,7 @@
 #ifndef LEXY_META
 #define LEXY_META
 
-#define PROGRAM_VERSION  "v0.1.0"
+#define PROGRAM_VERSION  "UNRELEASED"
 #define TARGET_ARCH      "{arch}"
 #define TARGET_KERNEL    "{kernel}"
 #define COMPILED_WITH    "{compw}"
