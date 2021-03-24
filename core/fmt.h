@@ -32,6 +32,31 @@
 /* maximum tolerance value for what constitutes a "whole number" */
 #define INTEGER_FLOAT_EPSILON 0.000001
 
+#ifdef LEXY_NO_COLORS
+/* --- */
+#define COLOURED_TXT(must_apply, colour, text, ...) \
+    printf(text, __VA_ARGS__);
+
+#define ANSI_RESET          ""
+#define ANSI_COLOR_RED      ""
+#define ANSI_COLOR_GREEN    ""
+#define ANSI_COLOR_YELLOW   ""
+#define ANSI_COLOR_BLUE     ""
+#define ANSI_COLOR_MAGENTA  ""
+#define ANSI_COLOR_CYAN     ""
+#define ANSI_COLOR_GREY     ""
+#define ANSI_STYLE_BOLD     ""
+#define ANSI_STYLE_DIM      ""
+
+#else
+/* --- */
+#define COLOURED_TXT(must_apply, colour, text, ...) \
+    if (must_apply) { \
+        printf(colour text ANSI_RESET, __VA_ARGS__); \
+    } else { \
+        printf(text, __VA_ARGS__); \
+    }
+
 #define ANSI_RESET          "\x1b[0m"
 #define ANSI_COLOR_RED      "\x1b[31m"
 #define ANSI_COLOR_GREEN    "\x1b[32m"
@@ -42,14 +67,10 @@
 #define ANSI_COLOR_GREY     "\x1b[90m"
 #define ANSI_STYLE_BOLD     "\x1b[1m"
 #define ANSI_STYLE_DIM      "\x1b[2m"
+#endif
+
 
 /* ... */
-#define COLOURED_TXT(must_apply, colour, text, ...) \
-    if (must_apply) { \
-        printf(colour text ANSI_RESET, __VA_ARGS__); \
-    } else { \
-        printf(text, __VA_ARGS__); \
-    }
 
 #define RED_TXT(must_apply, text, ...) \
     COLOURED_TXT(must_apply, ANSI_COLOR_RED, text, __VA_ARGS__);
