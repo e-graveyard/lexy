@@ -8,7 +8,7 @@ steps:
       targetType: inline
       script: |
         export PATH="$PATH:$PATH_TO_APPEND"
-        make build-release
+        time make build-release
     env:
       CC: '${{ parameters.compiler }}'
       PATH_TO_APPEND: '${{ parameters.pathAppend }}\bin'
