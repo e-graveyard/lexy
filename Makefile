@@ -39,16 +39,19 @@ endif
 # base build target
 build: $(MPC) $(LEXY_FILES)
 	@printf "\nLEXY PRE-BUILD\n\n"
-	@printf "* CC: %s\n" "$(CC)"
+	@printf "* CC: %s (%s)\n" "$(CC)" "$(shell which $(CC))"
 	@printf "* EFLAGS: %s\n" "$(strip $(EFLAGS))"
 	@printf "* LFLAGS: %s\n" "$(strip $(LFLAGS))"
 	@printf "* CFLAGS: %s\n" "$(strip $(CFLAGS))"
-	@printf "* PATH: %s\n" "$(PATH)"
+	@printf "* PATH:\n" "$(PATH)"
+	@echo "$(PATH)" | tr ':' '\n' | xargs -n 1 printf "   - %s\n"
 	@printf "\n* readline found: "
 	@if [ "$(MISSING_READLINE)" = "0" ]; then printf "yes"; else printf "no"; fi
 	@printf "\n\n"
-	@CC="$(CC)" python3 utils/write-meta.py
-	@$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
+	CC="$(CC)" python3 utils/write-meta.py
+	@printf ">>> compiling\n"
+	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
+	@printf "\nDONE\n"
 
 # build with optimizations (binary release)
 build-release: CFLAGS += -Os
