@@ -38,7 +38,8 @@ endif
 
 # base build target
 build: $(MPC) $(LEXY_FILES)
-	@printf "\nLEXY PRE-BUILD\n\n"
+	@printf "\nLEXY BUILD\n"
+	@printf "\n>>> parameters\n"
 	@printf "* CC: %s (%s)\n" "$(CC)" "$(shell which $(CC))"
 	@printf "* EFLAGS: %s\n" "$(strip $(EFLAGS))"
 	@printf "* LFLAGS: %s\n" "$(strip $(LFLAGS))"
@@ -48,9 +49,12 @@ build: $(MPC) $(LEXY_FILES)
 	@printf "\n* readline found: "
 	@if [ "$(MISSING_READLINE)" = "0" ]; then printf "yes"; else printf "no"; fi
 	@printf "\n\n"
+	@printf "\n>>> write-meta\n"
 	CC="$(CC)" python3 utils/write-meta.py
-	@printf ">>> compiling\n"
+	@printf "\n>>> compile\n"
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $(ARTIFACT)
+	@printf "\n* binary size: "
+	@du -h $(ARTIFACT) | cut -f -1
 	@printf "\nDONE\n"
 
 # build with optimizations (binary release)

@@ -2,7 +2,6 @@ import platform
 from datetime import datetime
 
 from os import environ
-from os.path import basename
 from os.path import join
 from os.path import dirname
 from os.path import abspath
@@ -32,7 +31,6 @@ def get_compiler_info():
 
 
 def main():
-    print('>>> {}'.format(basename(__file__)))
     now = datetime.now()
 
     compilation_date = now.strftime('%Y-%m-%d')
