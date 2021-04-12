@@ -18,7 +18,6 @@ LEXY_TEST_FILES = $(wildcard tests/lexy/*.c)
 MISSING_READLINE = $(shell CC="$(CC)" utils/has-readline.sh)
 
 
-
 # 0 = FALSE, 1 = TRUE
 ifeq ($(MISSING_READLINE),0)
 	# links editline if the lib is installed & available
@@ -58,7 +57,7 @@ build: $(MPC) $(LEXY_FILES)
 	@printf "\nDONE\n"
 
 # build with optimizations (binary release)
-build-release: CFLAGS += -Os
+build-release: CFLAGS += -O3 -flto -DNDEBUG
 build-release: build
 
 # build and generate coverage files
@@ -78,7 +77,6 @@ debug-llvm: debug
 	lldb $(ARTIFACT)
 
 
-
 # compile test suite for MPC and run
 test-mpc: $(PTEST) $(MPC) $(MPC_TEST_FILES)
 	@$(CC) $(CFLAGS) -Wno-unused $^ $(LFLAGS) -o $@ \
@@ -93,7 +91,6 @@ test-lexy: $(PTEST) $(MPC) $(filter-out core/lexy.c, $(LEXY_FILES)) $(LEXY_TEST_
 
 # run all tests
 test: test-mpc test-lexy
-
 
 
 install:
